@@ -1,0 +1,159 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-Thin.otf') format('opentype');
+  font-weight: 100;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-ExtraLight.otf') format('opentype');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-Light.otf') format('opentype');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-Regular.otf') format('opentype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-Medium.otf') format('opentype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-SemiBold.otf') format('opentype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-Bold.otf') format('opentype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-ExtraBold.otf') format('opentype');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mersad';
+  src: url('/fonts/Mersad-Black.otf') format('opentype');
+  font-weight: 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 99%;
+    --foreground: 0 0% 10%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 0 0% 10%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 0 0% 10%;
+
+    --primary: 130 55% 40%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 0 0% 96%;
+    --secondary-foreground: 0 0% 10%;
+
+    --muted: 0 0% 94%;
+    --muted-foreground: 0 0% 40%;
+
+    --accent: 130 55% 40%;
+    --accent-foreground: 0 0% 100%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 0 0% 91%;
+    --input: 0 0% 91%;
+    --ring: 130 55% 40%;
+
+    --radius: 0.75rem;
+
+    --glass-bg: 0 0% 100% / 0.55;
+    --glass-border: 0 0% 100% / 0.25;
+
+    --sidebar-background: 0 0% 97%;
+    --sidebar-foreground: 0 0% 10%;
+    --sidebar-primary: 130 55% 40%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 0 0% 94%;
+    --sidebar-accent-foreground: 0 0% 10%;
+    --sidebar-border: 0 0% 91%;
+    --sidebar-ring: 130 55% 40%;
+
+    --villa-available: 145 50% 42%;
+    --villa-reserved: 40 80% 50%;
+    --villa-sold: 0 60% 50%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html {
+    background: hsl(0 0% 98%);
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: "Mersad", sans-serif;
+    font-weight: 300;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 20% 50%, hsl(130 55% 40% / 0.03) 0%, transparent 50%),
+      radial-gradient(ellipse at 80% 20%, hsl(130 30% 50% / 0.02) 0%, transparent 50%),
+      radial-gradient(ellipse at 50% 80%, hsl(130 40% 40% / 0.02) 0%, transparent 50%);
+    pointer-events: none;
+    z-index: -1;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: "Mersad", system-ui, sans-serif;
+    font-weight: 500;
+  }
+}
+

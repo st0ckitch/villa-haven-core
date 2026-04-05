@@ -1,0 +1,162 @@
+import { useEffect, useState } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
+import { Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
+
+const FIELDS = [
+  { key: "olimpo_hero_image", label: "Hero Image", type: "image" },
+  { key: "olimpo_title", label: "Page Title", type: "text" },
+  { key: "olimpo_description", label: "Description", type: "textarea" },
+  { key: "olimpo_vision_title", label: "Vision / Directions Title", type: "text" },
+  { key: "olimpo_vision_text", label: "Vision / Directions Text", type: "textarea" },
+  { key: "olimpo_video_url", label: "Video URL (YouTube/Vimeo/MP4)", type: "text" },
+  { key: "olimpo_join_title", label: "Club Membership Title", type: "text" },
+  { key: "olimpo_join_description", label: "Club Membership Description", type: "textarea" },
+  { key: "olimpo_member_services", label: "Member Services (one per line)", type: "textarea" },
+] as const;
+
+interface ProjectRender {
+  id: string;
+  project: string;
+  title: string;
+  image_url: string;
+  sort_order: number;
+}
+
+const OlimpoManagement = () => {
+  const [values, setValues] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState<string | null>(null);
+  const [renders, setRenders] = useState<ProjectRender[]>([]);
+  const [uploadingRender, setUploadingRender] = useState(false);
+  const { toast } = useToast();
+
+  useEffect(() => {
+    (async () => {
+      const [settingsRes, rendersRes] = await Promise.all([
+        supabase.from("site_settings").select("key, value").in("key", FIELDS.map((f) => f.key)),
+        supabase.from("project_renders").select("*").eq("project", "olimpo").order("sort_order"),
+      ]);
+      if (settingsRes.data) {
+        const map: Record<string, string> = {};
+        settingsRes.data.forEach((r: { key: string; value: string }) => (map[r.key] = r.value));
+        setValues(map);
+      }
+      if (rendersRes.data) setRenders(rendersRes.data as ProjectRender[]);
+      setLoading(false);
+    })();
+  }, []);
+
+  const handleUpload = async (key: string, file: File) => {
+    setUploading(key);
+    const ext = file.name.split(".").pop();
+    const path = `olimpo/${key}-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("renders").upload(path, file);
+    if (error) { toast({ title: "Upload failed", variant: "destructive" }); setUploading(null); return; }
+    const { data: urlData } = supabase.storage.from("renders").getPublicUrl(path);
+    setValues((v) => ({ ...v, [key]: urlData.publicUrl }));
+    setUploading(null);
+  };
+
+  const handleRenderUpload = async (file: File) => {
+    setUploadingRender(true);
+    const ext = file.name.split(".").pop();
+    const path = `olimpo/render-${Date.now()}.${ext}`;
+    const { error } = await supabase.storage.from("renders").upload(path, file);
+    if (error) { toast({ title: "Upload failed", variant: "destructive" }); setUploadingRender(false); return; }
+    const { data: urlData } = supabase.storage.from("renders").getPublicUrl(path);
+    const { data } = await supabase.from("project_renders").insert({
+      project: "olimpo", title: "", image_url: urlData.publicUrl, sort_order: renders.length,
+    }).select().single();
+    if (data) setRenders((r) => [...r, data as ProjectRender]);
+    setUploadingRender(false);
+  };
+
+  const deleteRender = async (id: string) => {
+    await supabase.from("project_renders").delete().eq("id", id);
+    setRenders((r) => r.filter((x) => x.id !== id));
+  };
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      for (const { key } of FIELDS) {
+        const val = values[key] ?? "";
+        const { data } = await supabase.from("site_settings").update({ value: val, updated_at: new Date().toISOString() }).eq("key", key).select();
+        if (!data?.length) await supabase.from("site_settings").insert({ key, value: val });
+      }
+      toast({ title: "Olimpo page saved" });
+    } catch { toast({ title: "Error saving", variant: "destructive" }); }
+    setSaving(false);
+  };
+
+  if (loading) return <div className="flex items-center justify-center p-12"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>;
+
+  return (
+    <div className="p-6 max-w-2xl">
+      <h1 className="text-2xl font-serif mb-6">Olimpo Page</h1>
+
+      <Card className="mb-6">
+        <CardHeader className="pb-2"><CardTitle className="text-sm font-sans font-medium">Render Gallery</CardTitle></CardHeader>
+        <CardContent>
+          <div className="grid grid-cols-3 gap-3 mb-3">
+            {renders.map((r) => (
+              <div key={r.id} className="relative group">
+                <img src={r.image_url} alt={r.title} className="rounded-lg w-full aspect-video object-cover" />
+                <button onClick={() => deleteRender(r.id)} className="absolute top-1 right-1 bg-destructive text-destructive-foreground rounded-full p-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            ))}
+          </div>
+          <label className="flex items-center gap-2 cursor-pointer text-sm font-sans text-primary hover:underline">
+            {uploadingRender ? <Loader2 className="w-4 h-4 animate-spin" /> : <Plus className="w-4 h-4" />}
+            Add Render Image
+            <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleRenderUpload(f); }} />
+          </label>
+        </CardContent>
+      </Card>
+
+      <div className="space-y-4">
+        {FIELDS.map(({ key, label, type }) => (
+          <Card key={key}>
+            <CardHeader className="pb-2"><CardTitle className="text-sm font-sans font-medium">{label}</CardTitle></CardHeader>
+            <CardContent>
+              {type === "image" ? (
+                <div className="space-y-3">
+                  {values[key] && (
+                    <div className="relative w-full max-w-xs">
+                      <img src={values[key]} alt={label} className="rounded-lg w-full h-auto" />
+                      <button onClick={() => setValues((v) => ({ ...v, [key]: "" }))} className="absolute top-1 right-1 bg-foreground/70 text-background rounded-full p-1"><X className="w-3 h-3" /></button>
+                    </div>
+                  )}
+                  <label className="flex items-center gap-2 cursor-pointer text-sm font-sans text-primary hover:underline">
+                    {uploading === key ? <Loader2 className="w-4 h-4 animate-spin" /> : <Upload className="w-4 h-4" />}
+                    Upload Image
+                    <input type="file" accept="image/*" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleUpload(key, f); }} />
+                  </label>
+                </div>
+              ) : type === "textarea" ? (
+                <Textarea value={values[key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [key]: e.target.value }))} rows={4} />
+              ) : (
+                <Input value={values[key] ?? ""} onChange={(e) => setValues((v) => ({ ...v, [key]: e.target.value }))} />
+              )}
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+
+      <Button onClick={handleSave} disabled={saving} className="mt-6">
+        {saving && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
+        Save Olimpo Page
+      </Button>
+    </div>
+  );
+};
+
+export default OlimpoManagement;
