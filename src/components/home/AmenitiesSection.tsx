@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { InfrastructureTicker } from "@/components/InfrastructureTicker";
+import { SplitText } from "@/components/SplitText";
 
 const CountUp = ({ target, suffix }: { target: number; suffix: string }) => {
   const [count, setCount] = useState(0);
@@ -96,10 +97,10 @@ export const AmenitiesSection = () => {
               {t("amenities.title1")}
             </p>
             <h2 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.1]">
-              World-class
+              <SplitText text="World-class" split="char" stagger={0.03} as="span" />
               <br />
-              <span className="font-medium bg-gradient-to-r from-foreground via-foreground/80 to-foreground/50 bg-clip-text text-transparent">
-                infrastructure
+              <span className="font-medium text-foreground">
+                <SplitText text="infrastructure" split="char" stagger={0.03} delay={0.3} as="span" />
               </span>
             </h2>
           </div>

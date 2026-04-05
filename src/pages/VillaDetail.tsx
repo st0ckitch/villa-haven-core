@@ -88,39 +88,58 @@ const VillaDetail = () => {
   return (
     <Layout>
       <SEO title={`${villa.name} — Igavi`} description={description || `${villa.name} — ${villa.size_sqm} m², ${villa.bedrooms} bedrooms`} />
-      <div className="container mx-auto px-6 pt-24 lg:pt-32 pb-10 lg:pb-16">
-        <Link to={section ? `/projects/${section}` : "/site-plan"} className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors font-sans text-sm mb-8">
+
+      {/* Decorative orbs */}
+      <div className="absolute inset-x-0 top-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-[15%] right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,hsl(130_55%_40%/0.05)_0%,transparent_70%)] animate-orb-float" />
+      </div>
+
+      <div className="container mx-auto px-6 pt-28 lg:pt-32 pb-10 lg:pb-16">
+        <Link to={section ? `/projects/${section}` : "/site-plan"} className="inline-flex items-center gap-2 text-muted-foreground hover:text-[hsl(130_55%_30%)] transition-colors font-sans text-sm mb-8">
           <ArrowLeft className="w-4 h-4" /> {t("villa.backToProperties")}
         </Link>
 
+        {/* Hero image with glass frame */}
         {heroImage && (
-          <div className="aspect-[16/9] rounded-2xl overflow-hidden mb-8 cursor-pointer" onClick={() => openLightbox(galleryImages.findIndex(i => i.id === heroImage.id))}>
-            <img src={heroImage.image_url} alt={villa.name} className="w-full h-full object-cover hover:scale-105 transition-transform duration-500" />
+          <div className="relative mb-10">
+            <div className="absolute -inset-3 bg-gradient-to-r from-[hsl(130_55%_40%/0.12)] via-[hsl(130_55%_50%/0.18)] to-[hsl(130_55%_40%/0.12)] rounded-[28px] blur-2xl -z-10 opacity-50" />
+            <div className="p-1.5 rounded-[20px] bg-gradient-to-br from-[hsl(130_55%_40%/0.2)] via-white/40 to-[hsl(130_55%_40%/0.1)] backdrop-blur-md shadow-[0_16px_48px_rgba(45,143,67,0.1)]">
+              <div className="aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer group" onClick={() => openLightbox(galleryImages.findIndex(i => i.id === heroImage.id))}>
+                <img src={heroImage.image_url} alt={villa.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+              </div>
+            </div>
           </div>
         )}
 
-        <div className="grid lg:grid-cols-3 gap-10">
+        <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
           <div className="lg:col-span-2 space-y-8">
             <div>
-              <div className="flex items-start gap-3 mb-3">
-                <h1 className="text-2xl md:text-3xl lg:text-4xl">{villa.name}</h1>
-                <Badge variant="outline" className={`mt-2 font-sans text-xs border ${statusColors[villa.status]}`}>{t(`sitePlan.${villa.status}`)}</Badge>
+              <div className="flex items-start gap-3 mb-3 flex-wrap">
+                <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground">{villa.name}</h1>
+                <Badge variant="outline" className={`mt-2 font-sans text-xs border ${statusColors[villa.status]} ${villa.status === "available" ? "animate-pulse" : ""}`}>{t(`sitePlan.${villa.status}`)}</Badge>
               </div>
-              {villa.price && <p className="text-2xl font-sans font-semibold text-primary">${Number(villa.price).toLocaleString()}</p>}
+              {villa.price && <p className="text-2xl font-sans font-semibold text-[hsl(130_55%_30%)]">${Number(villa.price).toLocaleString()}</p>}
             </div>
 
-            <div className="flex flex-wrap gap-6 py-6 border-y border-border">
-              <div className="flex items-center gap-2 font-sans">
-                <Maximize className="w-5 h-5 text-muted-foreground" />
-                <div><p className="text-sm text-muted-foreground">{t("villa.size")}</p><p className="font-medium text-foreground">{villa.size_sqm} m²</p></div>
+            {/* Spec chips in glass style */}
+            <div className="flex flex-wrap gap-2.5">
+              <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center">
+                  <Maximize className="w-3.5 h-3.5 text-[hsl(130_55%_35%)]" strokeWidth={2} />
+                </div>
+                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.size")}:</span> <span className="font-medium text-foreground">{villa.size_sqm} m²</span></span>
               </div>
-              <div className="flex items-center gap-2 font-sans">
-                <BedDouble className="w-5 h-5 text-muted-foreground" />
-                <div><p className="text-sm text-muted-foreground">{t("villa.bedrooms")}</p><p className="font-medium text-foreground">{villa.bedrooms}</p></div>
+              <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center">
+                  <BedDouble className="w-3.5 h-3.5 text-[hsl(130_55%_35%)]" strokeWidth={2} />
+                </div>
+                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.bedrooms")}:</span> <span className="font-medium text-foreground">{villa.bedrooms}</span></span>
               </div>
-              <div className="flex items-center gap-2 font-sans">
-                <Bath className="w-5 h-5 text-muted-foreground" />
-                <div><p className="text-sm text-muted-foreground">{t("villa.bathrooms")}</p><p className="font-medium text-foreground">{villa.bathrooms}</p></div>
+              <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
+                <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center">
+                  <Bath className="w-3.5 h-3.5 text-[hsl(130_55%_35%)]" strokeWidth={2} />
+                </div>
+                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.bathrooms")}:</span> <span className="font-medium text-foreground">{villa.bathrooms}</span></span>
               </div>
             </div>
 
@@ -145,11 +164,11 @@ const VillaDetail = () => {
               ].filter((s) => s.value != null && s.value !== "" && s.value !== 0);
               if (specs.length === 0) return null;
               return (
-                <div>
-                  <h2 className="text-xl mb-4">{t("villa.specifications")}</h2>
+                <div className="relative bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] rounded-2xl p-6 md:p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                  <h2 className="font-sans text-xl font-medium mb-5 text-foreground">{t("villa.specifications")}</h2>
                   <div className="grid sm:grid-cols-2 gap-x-8 gap-y-3">
                     {specs.map((spec) => (
-                      <div key={spec.label} className="flex justify-between py-2 border-b border-border font-sans text-sm">
+                      <div key={spec.label} className="flex justify-between py-2 border-b border-[hsl(130_55%_40%/0.08)] font-sans text-sm">
                         <span className="text-muted-foreground">{spec.label}</span>
                         <span className="font-medium text-foreground">{spec.value}</span>
                       </div>
@@ -160,19 +179,27 @@ const VillaDetail = () => {
             })()}
 
             {description && (
-              <div>
-                <h2 className="text-xl mb-4">{t("villa.description")}</h2>
-                <p className="font-sans text-muted-foreground leading-relaxed whitespace-pre-line">{description}</p>
+              <div className="relative bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] rounded-2xl p-6 md:p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                <div className="flex gap-5">
+                  <div className="w-1 bg-gradient-to-b from-[hsl(130_55%_40%)] via-[hsl(130_55%_50%)] to-[hsl(130_55%_40%/0.2)] rounded-full shrink-0" />
+                  <div className="flex-1">
+                    <h2 className="font-sans text-xl font-medium mb-3 text-foreground">{t("villa.description")}</h2>
+                    <p className="font-sans text-muted-foreground leading-relaxed whitespace-pre-line">{description}</p>
+                  </div>
+                </div>
               </div>
             )}
 
             {features && features.length > 0 && (
-              <div>
-                <h2 className="text-xl mb-4">{t("villa.features")}</h2>
+              <div className="relative bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] rounded-2xl p-6 md:p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                <h2 className="font-sans text-xl font-medium mb-5 text-foreground">{t("villa.features")}</h2>
                 <div className="grid sm:grid-cols-2 gap-3">
                   {features.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2 font-sans text-sm">
-                      <CheckCircle2 className="w-4 h-4 text-primary flex-shrink-0" /><span>{feature}</span>
+                    <div key={i} className="flex items-center gap-2.5 font-sans text-sm">
+                      <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center shrink-0">
+                        <CheckCircle2 className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2.5} />
+                      </div>
+                      <span className="text-foreground/80">{feature}</span>
                     </div>
                   ))}
                 </div>
@@ -184,11 +211,11 @@ const VillaDetail = () => {
 
             {galleryImages.length > 1 && (
               <div>
-                <h2 className="text-xl mb-4">{t("villa.gallery")}</h2>
+                <h2 className="font-sans text-xl font-medium mb-4 text-foreground">{t("villa.gallery")}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {galleryImages.map((img, i) => (
-                    <div key={img.id} className="aspect-[4/3] rounded-xl overflow-hidden cursor-pointer" onClick={() => openLightbox(i)}>
-                      <img src={img.image_url} alt={`${villa.name} ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" loading="lazy" />
+                    <div key={img.id} className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(45,143,67,0.12)] hover:border-[hsl(130_55%_40%/0.3)] hover:-translate-y-0.5 transition-all duration-300 group" onClick={() => openLightbox(i)}>
+                      <img src={img.image_url} alt={`${villa.name} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
                     </div>
                   ))}
                 </div>
@@ -196,10 +223,12 @@ const VillaDetail = () => {
             )}
           </div>
 
+          {/* Glass sidebar */}
           <div className="lg:col-span-1">
-            <div className="sticky top-24 bg-card border border-border rounded-2xl p-6 space-y-6 text-card-foreground">
+            <div className="sticky top-28 bg-white/60 backdrop-blur-xl border border-[hsl(130_55%_40%/0.15)] rounded-3xl p-6 space-y-6 text-card-foreground shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
               <div>
-                <h3 className="text-lg mb-2 text-card-foreground">{t("villa.inquire")}</h3>
+                <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_35%)] mb-2">{t("villa.inquire")}</p>
+                <h3 className="font-sans text-lg font-medium mb-2 text-foreground">{t("villa.inquire")}</h3>
                 <p className="font-sans text-sm text-muted-foreground mb-4">{t("villa.inquireDesc")}</p>
               </div>
               <VillaContactForm villaName={plotZone ? `${villa.name} + ${plotZone.name}` : villa.name} />

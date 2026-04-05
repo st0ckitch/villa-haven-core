@@ -1,4 +1,5 @@
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { MagneticButton } from "@/components/MagneticButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
 import { Crown, ArrowRight } from "lucide-react";
@@ -23,8 +24,8 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
     <section className="relative py-16 lg:py-20 overflow-hidden">
       {/* Background decorative orbs */}
       <div className="absolute inset-0 -z-10 pointer-events-none">
-        <div className="absolute top-1/2 right-0 w-[600px] h-[600px] -translate-y-1/2 bg-[radial-gradient(circle,hsl(130_55%_40%/0.08)_0%,transparent_70%)]" />
-        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-[radial-gradient(circle,hsl(130_55%_50%/0.05)_0%,transparent_70%)]" />
+        <div className="absolute top-1/2 right-0 w-[600px] h-[600px] -translate-y-1/2 bg-[radial-gradient(circle,hsl(130_55%_40%/0.08)_0%,transparent_70%)] animate-orb-float" />
+        <div className="absolute bottom-0 left-1/4 w-[400px] h-[400px] bg-[radial-gradient(circle,hsl(130_55%_50%/0.05)_0%,transparent_70%)] animate-orb-float-reverse" />
       </div>
 
       <div className="container mx-auto px-6 max-w-6xl">
@@ -54,17 +55,19 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
                   )}
                 </div>
 
-                <Link
-                  to="/contact"
-                  className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full
-                    bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white
-                    hover:from-[#359e4d] hover:to-[#44b862]
-                    shadow-[0_8px_24px_rgba(45,143,67,0.35)] hover:shadow-[0_12px_32px_rgba(45,143,67,0.45)]
-                    transition-all font-sans text-sm font-semibold whitespace-nowrap"
-                >
-                  {t("contact.ctaButton")}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </Link>
+                <MagneticButton strength={0.25}>
+                  <Link
+                    to="/contact"
+                    className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full
+                      bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white
+                      hover:from-[#359e4d] hover:to-[#44b862]
+                      shadow-[0_8px_24px_rgba(45,143,67,0.35)] hover:shadow-[0_12px_32px_rgba(45,143,67,0.45)]
+                      transition-all font-sans text-sm font-semibold whitespace-nowrap"
+                  >
+                    {t("contact.ctaButton")}
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </Link>
+                </MagneticButton>
               </div>
 
               {/* Numbered service grid */}

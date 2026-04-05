@@ -12,6 +12,7 @@ import { ClubMembershipCTA } from "@/components/ClubMembershipCTA";
 import { ProjectHero } from "@/components/ProjectHero";
 import { GlassVideoFrame } from "@/components/GlassVideoFrame";
 import { ServicesGlassGrid } from "@/components/ServicesGlassGrid";
+import { TiltCard } from "@/components/TiltCard";
 import {
   Loader2,
   Dumbbell,
@@ -164,19 +165,23 @@ const Olimpo = () => {
             const Icon = d.icon;
             return (
               <AnimatedSection key={d.key} delay={i * 60}>
-                <div className="group relative bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-6 flex flex-col items-center text-center gap-4
-                  shadow-[0_2px_16px_rgba(0,0,0,0.04)]
-                  hover:bg-white hover:shadow-[0_8px_32px_rgba(45,143,67,0.15)] hover:border-[hsl(130_55%_40%/0.25)] hover:scale-[1.03] hover:-translate-y-0.5
-                  transition-all duration-300 cursor-default">
-                  <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(130_55%_40%/0.12)] to-[hsl(130_55%_40%/0.04)]
-                    group-hover:from-[hsl(130_55%_40%/0.2)] group-hover:to-[hsl(130_55%_40%/0.08)]
-                    flex items-center justify-center transition-all duration-300">
-                    <Icon className="w-6 h-6 text-[hsl(130_55%_35%)] group-hover:text-[hsl(130_55%_30%)] transition-colors duration-300" strokeWidth={1.8} />
+                <TiltCard maxTilt={7} scale={1.04} glare={false}>
+                  <div className="group relative bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-6 flex flex-col items-center text-center gap-4
+                    shadow-[0_2px_16px_rgba(0,0,0,0.04)]
+                    hover:bg-white hover:shadow-[0_8px_32px_rgba(45,143,67,0.15)] hover:border-[hsl(130_55%_40%/0.25)]
+                    transition-all duration-300 cursor-default">
+                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(130_55%_40%/0.12)] to-[hsl(130_55%_40%/0.04)]
+                      group-hover:from-[hsl(130_55%_40%/0.2)] group-hover:to-[hsl(130_55%_40%/0.08)]
+                      flex items-center justify-center transition-all duration-300"
+                      style={{ transform: "translateZ(25px)" }}>
+                      <Icon className="w-6 h-6 text-[hsl(130_55%_35%)] group-hover:text-[hsl(130_55%_30%)] transition-colors duration-300" strokeWidth={1.8} />
+                    </div>
+                    <span className="font-sans text-sm font-medium text-foreground/75 group-hover:text-foreground transition-colors duration-300 leading-tight"
+                      style={{ transform: "translateZ(15px)" }}>
+                      {t(`olimpo.${d.key}`)}
+                    </span>
                   </div>
-                  <span className="font-sans text-sm font-medium text-foreground/75 group-hover:text-foreground transition-colors duration-300 leading-tight">
-                    {t(`olimpo.${d.key}`)}
-                  </span>
-                </div>
+                </TiltCard>
               </AnimatedSection>
             );
           })}

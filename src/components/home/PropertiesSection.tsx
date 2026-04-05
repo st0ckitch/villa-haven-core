@@ -1,5 +1,6 @@
 import { BedDouble, Bath, Maximize } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
+import { TiltCard } from "@/components/TiltCard";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useQuery } from "@tanstack/react-query";
@@ -61,6 +62,7 @@ export const PropertiesSection = () => {
           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
             {displayVillas.map((villa, i) => (
               <AnimatedSection key={villa.id} delay={i * 80}>
+                <TiltCard maxTilt={5} scale={1.02} glare={false}>
                 <Link to={`/projects/${(villa as any).section || 'a-section'}/${villa.slug || villa.id}`}>
                   <div className="group bg-white/50 backdrop-blur-lg text-card-foreground rounded-2xl overflow-hidden border border-white/20 hover:shadow-[0_8px_40px_rgba(0,0,0,0.12)] hover:bg-white/60 hover:ring-1 hover:ring-white/30 transition-all duration-300 cursor-pointer">
                     <div className="aspect-[4/3] overflow-hidden">
@@ -89,6 +91,7 @@ export const PropertiesSection = () => {
                     </div>
                   </div>
                 </Link>
+                </TiltCard>
               </AnimatedSection>
             ))}
           </div>

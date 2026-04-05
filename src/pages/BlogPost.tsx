@@ -102,42 +102,68 @@ const BlogPostPage = () => {
         { name: t("blog.title"), url: "/blog" },
         { name: localTitle, url: `/blog/${post.slug}` },
       ]} />
-      <article className="pt-24 lg:pt-32 pb-16 lg:pb-24">
+      {/* Decorative orbs */}
+      <div className="absolute inset-x-0 top-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-[10%] right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,hsl(130_55%_40%/0.05)_0%,transparent_70%)] animate-orb-float" />
+      </div>
+
+      <article className="pt-28 lg:pt-32 pb-16 lg:pb-24">
         <div className="container mx-auto px-6 max-w-3xl">
-          <Link to="/blog" className="flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground font-sans mb-6">
+          <Link to="/blog" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-[hsl(130_55%_30%)] font-sans mb-8 transition-colors">
             <ArrowLeft className="w-4 h-4" /> {t("blog.backToBlog")}
           </Link>
 
-          <span className="text-xs font-sans font-medium text-primary uppercase tracking-wider">
+          {/* Category pill */}
+          <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_30%)] mb-4">
             {post.category}
           </span>
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif mt-2 mb-4">{localTitle}</h1>
+          <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mt-2 mb-6 leading-[1.1]">{localTitle}</h1>
 
-          <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground font-sans mb-8">
-            <span className="flex items-center gap-1.5"><User className="w-3.5 h-3.5" />{post.author}</span>
-            <span className="flex items-center gap-1.5"><Calendar className="w-3.5 h-3.5" />{new Date(post.created_at).toLocaleDateString()}</span>
-            <span className="flex items-center gap-1.5"><Clock className="w-3.5 h-3.5" />{post.read_time_minutes} {t("blog.minRead")}</span>
+          {/* Metadata glass chips */}
+          <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-sans mb-10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)]">
+              <User className="w-3 h-3 text-[hsl(130_55%_35%)]" />{post.author}
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)]">
+              <Calendar className="w-3 h-3 text-[hsl(130_55%_35%)]" />{new Date(post.created_at).toLocaleDateString()}
+            </span>
+            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)]">
+              <Clock className="w-3 h-3 text-[hsl(130_55%_35%)]" />{post.read_time_minutes} {t("blog.minRead")}
+            </span>
           </div>
 
+          {/* Hero image in glass frame */}
           {post.featured_image_url && (
-            <div className="aspect-video rounded-xl overflow-hidden mb-8">
-              <img src={post.featured_image_url} alt={localTitle} className="w-full h-full object-cover" />
+            <div className="relative mb-10">
+              <div className="absolute -inset-2 bg-gradient-to-r from-[hsl(130_55%_40%/0.15)] via-[hsl(130_55%_50%/0.2)] to-[hsl(130_55%_40%/0.15)] rounded-[24px] blur-xl -z-10 opacity-50" />
+              <div className="p-1.5 rounded-[20px] bg-gradient-to-br from-[hsl(130_55%_40%/0.25)] via-white/50 to-[hsl(130_55%_40%/0.1)] backdrop-blur-md shadow-[0_12px_40px_rgba(45,143,67,0.12)]">
+                <div className="aspect-video rounded-2xl overflow-hidden">
+                  <img src={post.featured_image_url} alt={localTitle} className="w-full h-full object-cover" />
+                </div>
+              </div>
             </div>
           )}
 
-          <div
-            className="prose prose-lg max-w-none font-sans prose-headings:font-serif prose-a:text-primary prose-headings:text-foreground prose-p:text-foreground/80 prose-li:text-foreground/80 prose-strong:text-foreground"
-            dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(localContent) }}
-          />
+          {/* Glass content card with accent bar */}
+          <div className="relative bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] rounded-3xl p-8 md:p-12 shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
+            <div className="flex gap-6">
+              <div className="hidden md:block w-1 bg-gradient-to-b from-[hsl(130_55%_40%)] via-[hsl(130_55%_50%)] to-[hsl(130_55%_40%/0.2)] rounded-full shrink-0" />
+              <div
+                className="prose prose-lg max-w-none font-sans prose-headings:font-sans prose-headings:font-medium prose-a:text-[hsl(130_55%_30%)] prose-headings:text-foreground prose-p:text-foreground/80 prose-li:text-foreground/80 prose-strong:text-foreground"
+                dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(localContent) }}
+              />
+            </div>
+          </div>
 
-          <div className="border-t border-border mt-12 pt-6">
-            <p className="text-sm text-muted-foreground font-sans mb-3">{t("blog.share")}</p>
+          {/* Share as glass chips */}
+          <div className="mt-12">
+            <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-primary/50 mb-3">{t("blog.share")}</p>
             <div className="flex gap-2">
               <a
                 href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(localTitle)}&url=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-muted rounded-full text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+                className="px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-sm font-sans text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-[hsl(130_55%_30%)] transition-all duration-300 hover:-translate-y-0.5"
               >
                 Twitter
               </a>
@@ -145,27 +171,31 @@ const BlogPostPage = () => {
                 href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-4 py-2 bg-muted rounded-full text-sm font-sans text-muted-foreground hover:text-foreground transition-colors"
+                className="px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-sm font-sans text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-[hsl(130_55%_30%)] transition-all duration-300 hover:-translate-y-0.5"
               >
                 LinkedIn
               </a>
             </div>
           </div>
 
+          {/* Related posts */}
           {related.length > 0 && (
             <div className="mt-16">
-              <h2 className="text-2xl font-serif mb-6">{t("blog.relatedPosts")}</h2>
+              <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">{t("blog.relatedPosts")}</p>
+              <h2 className="font-sans text-2xl md:text-3xl font-light tracking-tight text-foreground mb-6">
+                {t("blog.relatedPosts")}
+              </h2>
               <div className="grid sm:grid-cols-3 gap-4">
                 {related.map((r) => (
-                  <Link key={r.id} to={`/blog/${r.slug}`} className="group bg-card border border-border rounded-xl overflow-hidden">
+                  <Link key={r.id} to={`/blog/${r.slug}`} className="group block bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:bg-white hover:border-[hsl(130_55%_40%/0.2)] hover:shadow-[0_8px_24px_rgba(45,143,67,0.1)] hover:-translate-y-0.5 transition-all duration-300">
                     {r.featured_image_url && (
                       <div className="aspect-video overflow-hidden">
                         <img src={r.featured_image_url} alt={getLocalizedField(r, "title", language)} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" loading="lazy" />
                       </div>
                     )}
-                    <div className="p-3 text-card-foreground">
-                      <h3 className="font-serif text-sm text-card-foreground group-hover:text-primary transition-colors">{getLocalizedField(r, "title", language)}</h3>
-                      <p className="text-xs text-muted-foreground font-sans mt-1">{r.read_time_minutes} {t("blog.minRead")}</p>
+                    <div className="p-4">
+                      <h3 className="font-sans text-sm font-medium text-foreground group-hover:text-[hsl(130_55%_30%)] transition-colors leading-snug">{getLocalizedField(r, "title", language)}</h3>
+                      <p className="text-xs text-muted-foreground font-sans mt-2">{r.read_time_minutes} {t("blog.minRead")}</p>
                     </div>
                   </Link>
                 ))}

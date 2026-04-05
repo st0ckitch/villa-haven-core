@@ -11,6 +11,10 @@ import { ProtectedRoute } from "@/components/ProtectedRoute";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { Analytics } from "@/components/Analytics";
 import { CookieBanner } from "@/components/CookieBanner";
+import { SmoothScroll } from "@/components/SmoothScroll";
+import { ScrollProgress } from "@/components/ScrollProgress";
+import { NoiseOverlay } from "@/components/NoiseOverlay";
+import { Cursor } from "@/components/Cursor";
 
 const Index = lazy(() => import("./pages/Index"));
 const NotFound = lazy(() => import("./pages/NotFound"));
@@ -54,59 +58,64 @@ const App = () => (
   <HelmetProvider>
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <AuthProvider>
-            <Analytics />
-            <CookieBanner />
-            <Suspense fallback={<PageLoader />}>
-              <Routes>
-                <Route path="/" element={<Index />} />
-                <Route path="/gallery" element={<Gallery />} />
-                <Route path="/site-plan" element={<SitePlan />} />
-                <Route path="/blog" element={<Blog />} />
-                <Route path="/blog/:slug" element={<BlogPostPage />} />
-                <Route path="/villas/:slug" element={<VillaDetail />} />
-                <Route path="/projects/:section" element={<ProjectSection />} />
-                <Route path="/projects/:section/:slug" element={<VillaDetail />} />
-                <Route path="/contact" element={<Contact />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/polograph" element={<Polograph />} />
-                <Route path="/olimpo" element={<Olimpo />} />
-                <Route path="/equestrian" element={<Equestrian />} />
-                <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-                <Route path="/terms" element={<Terms />} />
-                <Route path="/admin/login" element={<AdminLogin />} />
-                <Route path="/reset-password" element={<ResetPassword />} />
-                <Route
-                  path="/admin"
-                  element={
-                    <ProtectedRoute>
-                      <AdminLayout />
-                    </ProtectedRoute>
-                  }
-                >
-                  <Route index element={<Dashboard />} />
-                  <Route path="villas" element={<VillaManagement />} />
-                  <Route path="blog" element={<BlogManagement />} />
-                  <Route path="blog/:id" element={<BlogEditor />} />
-                  <Route path="renders" element={<RendersManagement />} />
-                  <Route path="sliders" element={<SliderManagement />} />
-                  <Route path="plot-map" element={<PlotManager />} />
-                  <Route path="settings" element={<SiteSettings />} />
-                  <Route path="about" element={<AboutManagement />} />
-                  <Route path="polograph" element={<PolographManagement />} />
-                  <Route path="olimpo" element={<OlimpoManagement />} />
-                  <Route path="equestrian" element={<EquestrianManagement />} />
-                </Route>
-                <Route path="*" element={<NotFound />} />
-              </Routes>
-            </Suspense>
-          </AuthProvider>
-        </BrowserRouter>
-      </TooltipProvider>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <AuthProvider>
+              <SmoothScroll>
+                <ScrollProgress />
+                <NoiseOverlay />
+                <Cursor />
+                <Analytics />
+                <CookieBanner />
+                <Suspense fallback={<PageLoader />}>
+                  <Routes>
+                    <Route path="/" element={<Index />} />
+                    <Route path="/gallery" element={<Gallery />} />
+                    <Route path="/site-plan" element={<SitePlan />} />
+                    <Route path="/blog" element={<Blog />} />
+                    <Route path="/blog/:slug" element={<BlogPostPage />} />
+                    <Route path="/villas/:slug" element={<VillaDetail />} />
+                    <Route path="/projects/:section" element={<ProjectSection />} />
+                    <Route path="/projects/:section/:slug" element={<VillaDetail />} />
+                    <Route path="/contact" element={<Contact />} />
+                    <Route path="/about" element={<About />} />
+                    <Route path="/polograph" element={<Polograph />} />
+                    <Route path="/olimpo" element={<Olimpo />} />
+                    <Route path="/equestrian" element={<Equestrian />} />
+                    <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+                    <Route path="/terms" element={<Terms />} />
+                    <Route path="/admin/login" element={<AdminLogin />} />
+                    <Route path="/reset-password" element={<ResetPassword />} />
+                    <Route
+                      path="/admin"
+                      element={
+                        <ProtectedRoute>
+                          <AdminLayout />
+                        </ProtectedRoute>
+                      }
+                    >
+                      <Route index element={<Dashboard />} />
+                      <Route path="villas" element={<VillaManagement />} />
+                      <Route path="blog" element={<BlogManagement />} />
+                      <Route path="blog/:id" element={<BlogEditor />} />
+                      <Route path="renders" element={<RendersManagement />} />
+                      <Route path="sliders" element={<SliderManagement />} />
+                      <Route path="plot-map" element={<PlotManager />} />
+                      <Route path="settings" element={<SiteSettings />} />
+                      <Route path="about" element={<AboutManagement />} />
+                      <Route path="polograph" element={<PolographManagement />} />
+                      <Route path="olimpo" element={<OlimpoManagement />} />
+                      <Route path="equestrian" element={<EquestrianManagement />} />
+                    </Route>
+                    <Route path="*" element={<NotFound />} />
+                  </Routes>
+                </Suspense>
+              </SmoothScroll>
+            </AuthProvider>
+          </BrowserRouter>
+        </TooltipProvider>
       </LanguageProvider>
     </QueryClientProvider>
   </HelmetProvider>

@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Menu, X, MapPin, Globe, ChevronDown } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { MagneticButton } from "@/components/MagneticButton";
 import { useLanguage, Language, languageNames } from "@/contexts/LanguageContext";
 
 export const Navbar = () => {
@@ -162,11 +163,13 @@ export const Navbar = () => {
             <MapPin className="w-4 h-4" />
             <span>{t("nav.location")}</span>
           </button>
-          <Link to="/contact">
-            <Button size="sm" className="rounded-full gap-1.5">
-              {t("nav.leaveRequest")}
-            </Button>
-          </Link>
+          <MagneticButton strength={0.3}>
+            <Link to="/contact">
+              <Button size="sm" className="rounded-full gap-1.5">
+                {t("nav.leaveRequest")}
+              </Button>
+            </Link>
+          </MagneticButton>
         </div>
 
         <button className="lg:hidden text-foreground" onClick={() => setIsOpen(!isOpen)}>

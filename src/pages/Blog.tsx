@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { SEO } from "@/components/SEO";
+import { AnimatedSection } from "@/components/AnimatedSection";
+import { TiltCard } from "@/components/TiltCard";
 import { supabase } from "@/integrations/supabase/client";
 import { Clock, Calendar } from "lucide-react";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
@@ -34,34 +36,54 @@ const Blog = () => {
   return (
     <Layout>
       <SEO title={t("blog.title")} description={t("blog.subtitle")} />
-      <section className="pt-24 lg:pt-32 pb-16 lg:pb-24">
-        <div className="container mx-auto px-6">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif mb-4">{t("blog.title")}</h1>
-          <p className="text-muted-foreground font-sans mb-8 max-w-lg">{t("blog.subtitle")}</p>
 
-          {/* Category filters */}
+      {/* Decorative gradient orbs */}
+      <div className="absolute inset-x-0 top-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-[20%] right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,hsl(130_55%_40%/0.05)_0%,transparent_70%)] animate-orb-float" />
+        <div className="absolute top-0 left-0 w-[400px] h-[400px] bg-[radial-gradient(circle,hsl(130_55%_50%/0.04)_0%,transparent_70%)] animate-orb-float-reverse" />
+      </div>
+
+      <section className="pt-28 lg:pt-32 pb-16 lg:pb-24">
+        <div className="container mx-auto px-6">
+          <AnimatedSection>
+            <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
+              {t("blog.title")}
+            </p>
+            <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-4">
+              {t("blog.latestTitle")}
+            </h1>
+            <p className="text-muted-foreground font-sans mb-8 max-w-lg">{t("blog.subtitle")}</p>
+          </AnimatedSection>
+
+          {/* Glass category filters */}
           {categories.length > 0 && (
-            <div className="flex flex-wrap gap-2 mb-10">
-              <button
-                onClick={() => setActiveCategory("all")}
-                className={`px-4 py-2 rounded-full text-sm font-sans font-medium transition-colors ${
-                  activeCategory === "all" ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white" : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {t("blog.allCategories")}
-              </button>
-              {categories.map((cat) => (
+            <AnimatedSection delay={100}>
+              <div className="flex flex-wrap gap-2 mb-12">
                 <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.slug)}
-                  className={`px-4 py-2 rounded-full text-sm font-sans font-medium transition-colors ${
-                    activeCategory === cat.slug ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white" : "bg-muted text-muted-foreground hover:bg-muted/80"
+                  onClick={() => setActiveCategory("all")}
+                  className={`px-5 py-2.5 rounded-full text-sm font-sans font-medium transition-all duration-300 ${
+                    activeCategory === "all"
+                      ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white shadow-[0_4px_16px_rgba(45,143,67,0.3)]"
+                      : "bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-foreground"
                   }`}
                 >
-                  {cat.name}
+                  {t("blog.allCategories")}
                 </button>
-              ))}
-            </div>
+                {categories.map((cat) => (
+                  <button
+                    key={cat.id}
+                    onClick={() => setActiveCategory(cat.slug)}
+                    className={`px-5 py-2.5 rounded-full text-sm font-sans font-medium transition-all duration-300 ${
+                      activeCategory === cat.slug
+                        ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white shadow-[0_4px_16px_rgba(45,143,67,0.3)]"
+                        : "bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-foreground"
+                    }`}
+                  >
+                    {cat.name}
+                  </button>
+                ))}
+              </div>
+            </AnimatedSection>
           )}
 
           {loading ? (
@@ -72,44 +94,54 @@ const Blog = () => {
             <p className="text-muted-foreground font-sans">{t("blog.noPosts")}</p>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filtered.map((post) => (
-                <Link
-                  key={post.id}
-                  to={`/blog/${post.slug}`}
-                  className="group bg-card border border-border rounded-xl overflow-hidden hover:shadow-lg transition-shadow"
-                >
-                  {post.featured_image_url && (
-                    <div className="aspect-video overflow-hidden">
-                      <img
-                        src={post.featured_image_url}
-                        alt={getLocalizedField(post, "title", language)}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-                        loading="lazy"
-                      />
-                    </div>
-                  )}
-                  <div className="p-5 text-card-foreground">
-                    <span className="text-xs font-sans font-medium text-primary uppercase tracking-wider">
-                      {post.category}
-                    </span>
-                    <h2 className="font-serif text-lg mt-1.5 mb-2 text-card-foreground group-hover:text-primary transition-colors">
-                      {getLocalizedField(post, "title", language)}
-                    </h2>
-                    <p className="text-sm text-muted-foreground font-sans line-clamp-2 mb-3">
-                      {getLocalizedField(post, "excerpt", language)}
-                    </p>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground font-sans">
-                      <span className="flex items-center gap-1">
-                        <Calendar className="w-3 h-3" />
-                        {new Date(post.created_at).toLocaleDateString()}
-                      </span>
-                      <span className="flex items-center gap-1">
-                        <Clock className="w-3 h-3" />
-                        {post.read_time_minutes} {t("blog.min")}
-                      </span>
-                    </div>
-                  </div>
-                </Link>
+              {filtered.map((post, i) => (
+                <AnimatedSection key={post.id} delay={i * 80}>
+                  <TiltCard maxTilt={5} scale={1.02} glare={false}>
+                    <Link
+                      to={`/blog/${post.slug}`}
+                      className="group block bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl overflow-hidden
+                        shadow-[0_2px_16px_rgba(0,0,0,0.04)]
+                        hover:bg-white hover:shadow-[0_8px_32px_rgba(45,143,67,0.12)] hover:border-[hsl(130_55%_40%/0.2)]
+                        transition-all duration-300"
+                    >
+                      {post.featured_image_url && (
+                        <div className="aspect-video overflow-hidden relative">
+                          <img
+                            src={post.featured_image_url}
+                            alt={getLocalizedField(post, "title", language)}
+                            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                            loading="lazy"
+                          />
+                          {post.category && (
+                            <div className="absolute top-3 left-3">
+                              <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-[10px] font-sans font-bold uppercase tracking-[0.15em] text-[hsl(130_55%_30%)] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+                                {post.category}
+                              </span>
+                            </div>
+                          )}
+                        </div>
+                      )}
+                      <div className="p-5 text-card-foreground">
+                        <h2 className="font-sans text-lg font-medium mt-1 mb-2 text-foreground group-hover:text-[hsl(130_55%_30%)] transition-colors leading-tight">
+                          {getLocalizedField(post, "title", language)}
+                        </h2>
+                        <p className="text-sm text-muted-foreground font-sans line-clamp-2 mb-3 leading-relaxed">
+                          {getLocalizedField(post, "excerpt", language)}
+                        </p>
+                        <div className="flex items-center gap-3 text-xs text-muted-foreground font-sans">
+                          <span className="flex items-center gap-1">
+                            <Calendar className="w-3 h-3" />
+                            {new Date(post.created_at).toLocaleDateString()}
+                          </span>
+                          <span className="flex items-center gap-1">
+                            <Clock className="w-3 h-3" />
+                            {post.read_time_minutes} {t("blog.min")}
+                          </span>
+                        </div>
+                      </div>
+                    </Link>
+                  </TiltCard>
+                </AnimatedSection>
               ))}
             </div>
           )}

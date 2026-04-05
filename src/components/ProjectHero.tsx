@@ -1,5 +1,6 @@
 import { ChevronRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { SplitText } from "@/components/SplitText";
 
 interface ProjectHeroProps {
   image: string;
@@ -52,9 +53,9 @@ export const ProjectHero = ({ image, breadcrumb, title, subtitle, badge, backLin
             <span className="text-foreground/50">{breadcrumb}</span>
           </div>
 
-          {/* Title */}
+          {/* Title with character reveal */}
           <h1 className="font-sans text-3xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground leading-[1.05] mb-3">
-            {title}
+            <SplitText text={title} split="char" stagger={0.03} as="span" />
           </h1>
 
           {/* Subtitle */}

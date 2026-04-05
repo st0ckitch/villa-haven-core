@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { Layout } from "@/components/Layout";
 import { PlotMapPublic } from "@/components/PlotMapPublic";
 import { SEO } from "@/components/SEO";
+import { AnimatedSection } from "@/components/AnimatedSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const SitePlan = () => {
@@ -16,30 +17,56 @@ const SitePlan = () => {
   return (
     <Layout>
       <SEO title={t("sitePlan.title")} description={t("sitePlan.subtitle")} />
-      <section className="pt-24 lg:pt-32 pb-16 lg:pb-24">
+
+      {/* Decorative orbs */}
+      <div className="absolute inset-x-0 top-0 -z-10 pointer-events-none overflow-hidden">
+        <div className="absolute top-[20%] right-0 w-[500px] h-[500px] bg-[radial-gradient(circle,hsl(130_55%_40%/0.05)_0%,transparent_70%)] animate-orb-float" />
+      </div>
+
+      <section className="pt-28 lg:pt-32 pb-16 lg:pb-24">
         <div className="container mx-auto px-6">
-          <h1 className="text-2xl md:text-3xl lg:text-4xl font-serif mb-4">{t("sitePlan.title")}</h1>
-          <p className="text-muted-foreground font-sans mb-8 max-w-lg">
-            {t("sitePlan.subtitle")}
-          </p>
+          <AnimatedSection>
+            <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
+              {t("sitePlan.title")}
+            </p>
+            <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-4">
+              {t("sitePlan.title")}
+            </h1>
+            <p className="text-muted-foreground font-sans mb-10 max-w-lg">
+              {t("sitePlan.subtitle")}
+            </p>
+          </AnimatedSection>
 
-          <div className="flex flex-wrap gap-2 mb-6">
-            {statusKeys.map((status) => (
-              <button
-                key={status}
-                onClick={() => setStatusFilter(status)}
-                className={`px-4 py-2 rounded-full text-sm font-sans font-medium transition-colors ${
-                  statusFilter === status
-                    ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white"
-                    : "bg-muted text-muted-foreground hover:bg-muted/80"
-                }`}
-              >
-                {t(`sitePlan.${status}`)} ({counts[status]})
-              </button>
-            ))}
-          </div>
+          {/* Glass filter buttons */}
+          <AnimatedSection delay={100}>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {statusKeys.map((status) => (
+                <button
+                  key={status}
+                  onClick={() => setStatusFilter(status)}
+                  className={`px-5 py-2.5 rounded-full text-sm font-sans font-medium transition-all duration-300 ${
+                    statusFilter === status
+                      ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white shadow-[0_4px_16px_rgba(45,143,67,0.3)]"
+                      : "bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-foreground"
+                  }`}
+                >
+                  {t(`sitePlan.${status}`)} ({counts[status]})
+                </button>
+              ))}
+            </div>
+          </AnimatedSection>
 
-          <PlotMapPublic statusFilter={statusFilter} onCounts={handleCounts} />
+          {/* Glass frame for map */}
+          <AnimatedSection delay={200}>
+            <div className="relative">
+              <div className="absolute -inset-3 bg-gradient-to-r from-[hsl(130_55%_40%/0.12)] via-[hsl(130_55%_50%/0.18)] to-[hsl(130_55%_40%/0.12)] rounded-[28px] blur-2xl -z-10 opacity-50" />
+              <div className="p-1.5 rounded-[20px] bg-gradient-to-br from-[hsl(130_55%_40%/0.2)] via-white/40 to-[hsl(130_55%_40%/0.1)] backdrop-blur-md shadow-[0_16px_48px_rgba(45,143,67,0.1)]">
+                <div className="rounded-[16px] overflow-hidden bg-white/60 backdrop-blur-md">
+                  <PlotMapPublic statusFilter={statusFilter} onCounts={handleCounts} />
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
         </div>
       </section>
     </Layout>

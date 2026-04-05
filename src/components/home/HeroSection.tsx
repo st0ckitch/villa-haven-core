@@ -1,5 +1,5 @@
-import { useState, useEffect, useCallback } from "react";
-import { AnimatePresence, motion } from "framer-motion";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -89,6 +89,22 @@ export const HeroSection = () => {
 
   const current = slides[activeSlide];
 
+  // Scroll-driven parallax hooks (must be called before any early returns)
+  const heroRef = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"],
+  });
+  // Layer 1 (back): image scales + moves slower
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
+  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
+  // Layer 2 (mid): overlay darkens as you scroll
+  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.4, 0.85]);
+  // Layer 3 (front): title floats UP faster + fades + blurs
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
+  const titleBlur = useTransform(scrollYProgress, [0, 0.6], (v) => `blur(${v * 8}px)`);
+
   // Video mode
   if (heroMode === "video" && heroVideoUrl) {
     const embed = getEmbedUrl(heroVideoUrl);
@@ -118,25 +134,40 @@ export const HeroSection = () => {
     );
   }
 
-  // Slider mode (default)
+  // Slider mode (default) with 3D parallax layers
   return (
-    <section className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden">
-      <AnimatePresence mode="popLayout">
-        <motion.img
-          key={activeSlide}
-          src={current.image_url}
-          alt={current.title || "Hero slide"}
-          initial={{ opacity: 0, scale: 1.08 }}
-          animate={{ opacity: 1, scale: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 1.2, ease: "easeInOut" }}
-          className="absolute inset-0 w-full h-full object-cover"
-        />
-      </AnimatePresence>
-      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/20 to-transparent" />
+    <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden">
+      {/* Layer 1: Parallax image */}
+      <motion.div
+        className="absolute inset-0"
+        style={{ y: imageY, scale: imageScale }}
+      >
+        <AnimatePresence mode="popLayout">
+          <motion.img
+            key={activeSlide}
+            src={current.image_url}
+            alt={current.title || "Hero slide"}
+            initial={{ opacity: 0, scale: 1.08 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 1.2, ease: "easeInOut" }}
+            className="absolute inset-0 w-full h-full object-cover"
+          />
+        </AnimatePresence>
+      </motion.div>
 
+      {/* Layer 2: Animated overlay that darkens on scroll */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none"
+        style={{ opacity: overlayOpacity }}
+      />
+
+      {/* Layer 3: Title with reverse parallax + blur exit */}
       {(current.title || current.description) && (
-        <div className="relative z-10 container mx-auto px-6">
+        <motion.div
+          className="relative z-10 container mx-auto px-6"
+          style={{ y: titleY, opacity: titleOpacity, filter: titleBlur }}
+        >
           <AnimatePresence mode="wait">
             <motion.div
               key={activeSlide}
@@ -158,7 +189,7 @@ export const HeroSection = () => {
               )}
             </motion.div>
           </AnimatePresence>
-        </div>
+        </motion.div>
       )}
 
       <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex gap-2 bg-white/10 backdrop-blur-md rounded-full px-4 py-2 border border-white/15">

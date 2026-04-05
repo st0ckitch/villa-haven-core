@@ -21,7 +21,8 @@
       "Bash(sed -i '' 's/py-20 lg:py-28/py-12 lg:py-16/g' AboutSection.tsx AmenitiesSection.tsx BlogSection.tsx ContactSection.tsx MapSection.tsx PropertiesSection.tsx ServicesSection.tsx)",
       "Bash(sed -i '' 's/py-20 lg:py-32/py-14 lg:py-20/g' SloganSection.tsx)",
       "Bash(sed -i '' 's/py-20 md:py-28 lg:py-36/py-14 md:py-20 lg:py-24/g' BrandHeader.tsx)",
-      "Bash(sed -i '' 's/py-14 lg:py-20/py-10 lg:py-14/g' LeaveRequestSection.tsx)"
+      "Bash(sed -i '' 's/py-14 lg:py-20/py-10 lg:py-14/g' LeaveRequestSection.tsx)",
+      "Bash(/usr/local/bin/npm install:*)"
     ]
   }
 }
