@@ -1,11 +1,11 @@
 import { useEffect, useState, useRef, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage } from "@/contexts/LanguageContext";
-import { Calculator, ArrowRight, X } from "lucide-react";
+import { Calculator, X } from "lucide-react";
 import { PlotPriceDialog } from "@/components/PlotPriceDialog";
+import { getZoneCategory } from "@/lib/zoneCategory";
 
 interface PlotZone {
   id: string;
@@ -34,9 +34,9 @@ const statusColors: Record<string, string> = {
 };
 
 const statusLabels: Record<string, Record<string, string>> = {
-  en: { available: "Available", reserved: "Reserved", sold: "Sold" },
+  en: { available: "Free", reserved: "Reserved", sold: "Sold" },
   ka: { available: "თავისუფალი", reserved: "დაჯავშნილი", sold: "გაყიდული" },
-  ru: { available: "Доступно", reserved: "Забронировано", sold: "Продано" },
+  ru: { available: "Свободно", reserved: "Забронировано", sold: "Продано" },
 };
 
 interface PlotMapPublicProps {
@@ -61,7 +61,6 @@ export const PlotMapPublic = ({ statusFilter, onCounts }: PlotMapPublicProps) =>
     const rect = containerRef.current.getBoundingClientRect();
     setTooltipPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
   }, []);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchData = async () => {
@@ -127,9 +126,25 @@ export const PlotMapPublic = ({ statusFilter, onCounts }: PlotMapPublicProps) =>
   const handleZoneClick = (zone: PlotZone) => {
     if (zone.status !== "available") return;
     setSelectedZone(zone);
+    // Push history state so browser Back closes popup instead of leaving the page
+    window.history.pushState({ plotPopup: zone.id }, "");
   };
 
-  const closePopup = () => setSelectedZone(null);
+  const closePopup = useCallback(() => {
+    setSelectedZone(null);
+    // Unwind the history entry we added on open (only if the top entry is our popup marker)
+    if (window.history.state?.plotPopup) {
+      window.history.back();
+    }
+  }, []);
+
+  // Listen for browser Back while popup is open
+  useEffect(() => {
+    if (!selectedZone) return;
+    const onPop = () => setSelectedZone(null);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [selectedZone]);
 
   const pointsToSvg = (points: { x: number; y: number }[]) =>
     points.map((p) => `${p.x},${p.y}`).join(" ");
@@ -140,10 +155,10 @@ export const PlotMapPublic = ({ statusFilter, onCounts }: PlotMapPublicProps) =>
     setPriceDialog({ open: true, villa, zone });
   };
 
-  const navigateToVilla = (villa: AssignedVilla, zoneId: string) => {
+  const buildVillaHref = (villa: AssignedVilla, zoneId: string) => {
     const section = villa.section || "a-section";
     const slug = villa.slug || villa.id;
-    navigate(`/projects/${section}/${slug}?plot=${zoneId}`);
+    return `/projects/${section}/${slug}?plot=${zoneId}`;
   };
 
   if (loading) {
@@ -237,102 +252,119 @@ export const PlotMapPublic = ({ statusFilter, onCounts }: PlotMapPublicProps) =>
         </div>
       </div>
 
-      {/* Zone Detail Popup (overlay) */}
+      {/* Zone Detail Popup — top sheet on desktop, bottom sheet on mobile */}
       {selectedZone && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm" onClick={closePopup}>
+        <>
+          {/* Backdrop */}
           <div
-            className="bg-card border border-border rounded-2xl shadow-2xl w-full max-w-lg mx-4 overflow-hidden animate-in fade-in zoom-in-95 duration-200"
+            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+            onClick={closePopup}
+          />
+          {/* Sheet */}
+          <div
+            className="
+              fixed z-50 left-1/2 -translate-x-1/2 w-full max-w-lg px-4
+              bottom-0 pb-4 sm:bottom-auto sm:pb-0
+              sm:top-24
+              animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-top-4 duration-200
+            "
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Header */}
-            <div className="flex items-center justify-between p-5 border-b border-border">
-              <div>
-                <h3 className="font-serif text-lg font-semibold text-foreground">{selectedZone.name}</h3>
-                <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground font-sans">
-                  {selectedZone.size_sqm && <span>{selectedZone.size_sqm} m²</span>}
-                  {selectedZone.price != null && (
-                    <span className="font-semibold text-foreground">${Number(selectedZone.price).toLocaleString()}</span>
-                  )}
-                  <Badge
-                    className="text-[10px] px-1.5 py-0 border-0"
-                    style={{ backgroundColor: statusColors[selectedZone.status], color: "white" }}
-                  >
-                    {labels[selectedZone.status]}
-                  </Badge>
+            <div className="bg-card border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden">
+              {/* Header */}
+              <div className="flex items-center justify-between p-5 border-b border-border">
+                <div>
+                  <h3 className="font-serif text-lg font-semibold text-foreground">
+                    {getZoneCategory(selectedZone.name)}
+                  </h3>
+                  <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground font-sans">
+                    {selectedZone.size_sqm && <span>{selectedZone.size_sqm} m²</span>}
+                    {selectedZone.price != null && (
+                      <span className="font-semibold text-foreground">${Number(selectedZone.price).toLocaleString()}</span>
+                    )}
+                    <Badge
+                      className="text-[10px] px-1.5 py-0 border-0"
+                      style={{ backgroundColor: statusColors[selectedZone.status], color: "white" }}
+                    >
+                      {labels[selectedZone.status]}
+                    </Badge>
+                  </div>
                 </div>
+                <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={closePopup}>
+                  <X className="w-4 h-4" />
+                </Button>
               </div>
-              <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0" onClick={closePopup}>
-                <X className="w-4 h-4" />
-              </Button>
-            </div>
 
-            {/* Description */}
-            {selectedZone.description && (
-              <div className="px-5 pt-4">
-                <p className="text-sm text-muted-foreground font-sans leading-relaxed">{selectedZone.description}</p>
-              </div>
-            )}
+              {/* Description */}
+              {selectedZone.description && (
+                <div className="px-5 pt-4">
+                  <p className="text-sm text-muted-foreground font-sans leading-relaxed">{selectedZone.description}</p>
+                </div>
+              )}
 
-            {/* Villas */}
-            <div className="p-5 space-y-4">
-              {zoneVillas.length > 0 ? (
-                <>
-                  <p className="text-xs uppercase tracking-wider text-muted-foreground font-sans font-medium">
-                    {t("plotMap.availableVillas") || "Available Villas"}
-                  </p>
-                  <div className="grid gap-3">
-                    {zoneVillas.map((villa) => (
-                      <div key={villa.id} className="flex gap-3 items-center p-3 rounded-xl border border-border bg-muted/30 hover:bg-muted/60 transition-colors">
-                        {/* Hero image */}
-                        {villa.heroImage ? (
-                          <img
-                            src={villa.heroImage}
-                            alt={villa.name}
-                            className="w-20 h-14 rounded-lg object-cover shrink-0"
-                          />
-                        ) : (
-                          <div className="w-20 h-14 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                            <span className="text-[10px] text-muted-foreground font-sans">No image</span>
-                          </div>
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-sans font-medium text-foreground truncate">{villa.name}</p>
-                          {villa.price != null && (
-                            <p className="text-xs text-muted-foreground font-sans">${Number(villa.price).toLocaleString()}</p>
-                          )}
-                        </div>
-                        <div className="flex gap-1 shrink-0">
+              {/* Villas */}
+              <div className="p-5 space-y-4">
+                {zoneVillas.length > 0 ? (
+                  <>
+                    <p className="text-xs uppercase tracking-wider text-muted-foreground font-sans font-medium">
+                      {t("plotMap.availableVillas")}
+                    </p>
+                    <div className="grid gap-3">
+                      {zoneVillas.map((villa) => (
+                        <div
+                          key={villa.id}
+                          className="flex gap-3 items-center p-3 rounded-xl border border-border bg-muted/30 hover:bg-muted/60 transition-colors"
+                        >
+                          {/* Photo + name/price (clickable, opens villa in new tab) */}
+                          <a
+                            href={buildVillaHref(villa, selectedZone.id)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex gap-3 items-center flex-1 min-w-0 group"
+                          >
+                            {villa.heroImage ? (
+                              <img
+                                src={villa.heroImage}
+                                alt={villa.name}
+                                className="w-20 h-14 rounded-lg object-cover shrink-0 transition-transform group-hover:scale-105"
+                              />
+                            ) : (
+                              <div className="w-20 h-14 rounded-lg bg-muted flex items-center justify-center shrink-0">
+                                <span className="text-[10px] text-muted-foreground font-sans">No image</span>
+                              </div>
+                            )}
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-sans font-medium text-foreground truncate group-hover:text-[hsl(130_55%_30%)] transition-colors">
+                                {villa.name}
+                              </p>
+                              {villa.price != null && (
+                                <p className="text-xs text-muted-foreground font-sans">${Number(villa.price).toLocaleString()}</p>
+                              )}
+                            </div>
+                          </a>
+                          {/* Calculator-only button */}
                           <Button
                             variant="ghost"
                             size="icon"
-                            className="h-8 w-8"
+                            className="h-8 w-8 shrink-0"
                             onClick={() => handleCalculate(villa, selectedZone)}
                             title={t("plotMap.calculate") || "Calculate"}
                           >
                             <Calculator className="w-3.5 h-3.5" />
                           </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8"
-                            onClick={() => navigateToVilla(villa, selectedZone.id)}
-                            title={t("plotMap.viewVilla") || "View Villa"}
-                          >
-                            <ArrowRight className="w-3.5 h-3.5" />
-                          </Button>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </>
-              ) : (
-                <p className="text-sm text-muted-foreground font-sans text-center py-4">
-                  No villas assigned to this zone yet.
-                </p>
-              )}
+                      ))}
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-sm text-muted-foreground font-sans text-center py-4">
+                    No villas assigned to this zone yet.
+                  </p>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+        </>
       )}
 
       {/* Price / Contact Dialog */}

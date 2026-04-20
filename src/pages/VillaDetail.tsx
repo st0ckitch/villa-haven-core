@@ -11,6 +11,7 @@ import { ArrowLeft, BedDouble, Bath, Maximize, MapPin, CheckCircle2 } from "luci
 import { useState } from "react";
 import { VillaContactForm } from "@/components/VillaContactForm";
 import { VillaPlotSummary } from "@/components/villa/VillaPlotSummary";
+import { getZoneCategory } from "@/lib/zoneCategory";
 
 const statusColors: Record<string, string> = {
   available: "bg-villa-available/15 text-villa-available border-villa-available/30",
@@ -44,6 +45,16 @@ const VillaDetail = () => {
       return data;
     },
     enabled: !!villa?.id,
+  });
+
+  // All project renders — used to build combined lightbox (villa images first, renders after)
+  const { data: allRenders = [] } = useQuery({
+    queryKey: ["all-renders"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("renders").select("*").order("sort_order");
+      if (error) throw error;
+      return data || [];
+    },
   });
 
   // Fetch plot zone if ?plot= param is present
@@ -117,6 +128,11 @@ const VillaDetail = () => {
               <div className="flex items-start gap-3 mb-3 flex-wrap">
                 <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground">{villa.name}</h1>
                 <Badge variant="outline" className={`mt-2 font-sans text-xs border ${statusColors[villa.status]} ${villa.status === "available" ? "animate-pulse" : ""}`}>{t(`sitePlan.${villa.status}`)}</Badge>
+                {plotZone && (
+                  <span className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-[hsl(130_55%_40%/0.1)] border border-[hsl(130_55%_40%/0.25)] text-[11px] font-sans font-semibold tracking-wide text-[hsl(130_55%_30%)]">
+                    {getZoneCategory(plotZone.name)}
+                  </span>
+                )}
               </div>
               {villa.price && <p className="text-2xl font-sans font-semibold text-[hsl(130_55%_30%)]">${Number(villa.price).toLocaleString()}</p>}
             </div>
@@ -127,19 +143,19 @@ const VillaDetail = () => {
                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center">
                   <Maximize className="w-3.5 h-3.5 text-[hsl(130_55%_35%)]" strokeWidth={2} />
                 </div>
-                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.size")}:</span> <span className="font-medium text-foreground">{villa.size_sqm} m²</span></span>
+                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.size")}</span> <span className="font-medium text-foreground">{villa.size_sqm} m²</span></span>
               </div>
               <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center">
                   <BedDouble className="w-3.5 h-3.5 text-[hsl(130_55%_35%)]" strokeWidth={2} />
                 </div>
-                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.bedrooms")}:</span> <span className="font-medium text-foreground">{villa.bedrooms}</span></span>
+                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.bedrooms")}</span> <span className="font-medium text-foreground">{villa.bedrooms}</span></span>
               </div>
               <div className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] shadow-[0_2px_12px_rgba(0,0,0,0.04)]">
                 <div className="w-7 h-7 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center">
                   <Bath className="w-3.5 h-3.5 text-[hsl(130_55%_35%)]" strokeWidth={2} />
                 </div>
-                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.bathrooms")}:</span> <span className="font-medium text-foreground">{villa.bathrooms}</span></span>
+                <span className="font-sans text-sm"><span className="text-muted-foreground">{t("villa.bathrooms")}</span> <span className="font-medium text-foreground">{villa.bathrooms}</span></span>
               </div>
             </div>
 
@@ -228,7 +244,7 @@ const VillaDetail = () => {
             <div className="sticky top-28 bg-white/60 backdrop-blur-xl border border-[hsl(130_55%_40%/0.15)] rounded-3xl p-6 space-y-6 text-card-foreground shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
               <div>
                 <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_35%)] mb-2">{t("villa.inquire")}</p>
-                <h3 className="font-sans text-lg font-medium mb-2 text-foreground">{t("villa.inquire")}</h3>
+                <h3 className="font-sans text-lg font-medium mb-2 text-foreground">{t("villa.inquireTitle")}</h3>
                 <p className="font-sans text-sm text-muted-foreground mb-4">{t("villa.inquireDesc")}</p>
               </div>
               <VillaContactForm villaName={plotZone ? `${villa.name} + ${plotZone.name}` : villa.name} />
@@ -243,7 +259,18 @@ const VillaDetail = () => {
       </div>
 
       {lightboxOpen && galleryImages.length > 0 && (
-        <Lightbox images={galleryImages.map((img) => ({ url: img.image_url, title: villa.name }))} currentIndex={lightboxIndex} onClose={() => setLightboxOpen(false)} />
+        <Lightbox
+          images={[
+            // Villa's own photos first
+            ...galleryImages.map((img) => ({ url: img.image_url, title: villa.name })),
+            // Then all other project renders (dedupe by URL so we don't repeat villa hero if it's also a render)
+            ...allRenders
+              .filter((r: any) => !galleryImages.some((img) => img.image_url === r.image_url))
+              .map((r: any) => ({ url: r.image_url, title: r.title || "" })),
+          ]}
+          currentIndex={lightboxIndex}
+          onClose={() => setLightboxOpen(false)}
+        />
       )}
     </Layout>
   );

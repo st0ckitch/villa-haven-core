@@ -29,7 +29,6 @@ export const Navbar = () => {
   ];
 
   const navLinks = [
-    { label: t("nav.home"), to: "/" },
     { label: t("nav.chooseVilla"), to: "/site-plan", hasDropdown: "villa" },
     { label: t("nav.projects"), to: "#", hasDropdown: "projects" },
     { label: t("nav.aboutUs"), to: "/about" },
@@ -180,9 +179,6 @@ export const Navbar = () => {
       {isOpen && (
         <div className="lg:hidden bg-background/90 backdrop-blur-xl border border-border/30 rounded-2xl mt-2 mx-2 shadow-xl">
           <nav className="container mx-auto px-6 py-6 flex flex-col gap-4">
-            <Link to="/" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
-              {t("nav.home")}
-            </Link>
             <Link to="/site-plan" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
               {t("nav.chooseVilla")}
             </Link>

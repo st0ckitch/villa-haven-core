@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { MessageCircle, X, Phone } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -33,9 +33,27 @@ const channels = [
 
 export const FloatingContactButton = () => {
   const [open, setOpen] = useState(false);
+  const leaveTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleEnter = () => {
+    if (leaveTimer.current) {
+      clearTimeout(leaveTimer.current);
+      leaveTimer.current = null;
+    }
+    setOpen(true);
+  };
+
+  const handleLeave = () => {
+    // Small delay so moving cursor between buttons doesn't collapse
+    leaveTimer.current = setTimeout(() => setOpen(false), 150);
+  };
 
   return (
-    <div className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-3">
+    <div
+      className="fixed bottom-6 right-6 z-50 flex flex-col items-center gap-3"
+      onMouseEnter={handleEnter}
+      onMouseLeave={handleLeave}
+    >
       <AnimatePresence>
         {open &&
           channels.map((channel, i) => (

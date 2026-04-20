@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Youtube, BookOpen, Download } from "lucide-react";
+import { Mail, Phone, MapPin, Facebook, Instagram, Linkedin, Twitter, Youtube, BookOpen, Download } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -32,6 +32,7 @@ export const Footer = () => {
     { name: "Facebook", url: settings.social_facebook, icon: Facebook },
     { name: "Instagram", url: settings.social_instagram, icon: Instagram },
     { name: "LinkedIn", url: settings.social_linkedin, icon: Linkedin },
+    { name: "X", url: settings.social_x, icon: Twitter },
     { name: "YouTube", url: settings.social_youtube, icon: Youtube },
   ].filter((s) => s.url);
 

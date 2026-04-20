@@ -22,7 +22,11 @@
       "Bash(sed -i '' 's/py-20 lg:py-32/py-14 lg:py-20/g' SloganSection.tsx)",
       "Bash(sed -i '' 's/py-20 md:py-28 lg:py-36/py-14 md:py-20 lg:py-24/g' BrandHeader.tsx)",
       "Bash(sed -i '' 's/py-14 lg:py-20/py-10 lg:py-14/g' LeaveRequestSection.tsx)",
-      "Bash(/usr/local/bin/npm install:*)"
+      "Bash(/usr/local/bin/npm install:*)",
+      "Bash(python3 -m markitdown \"/Users/user/Downloads/Site Igavi Development Comments.pptx\")",
+      "Bash(pip3 install *)",
+      "Read(//Users/user/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/4a2c5a25-61f6-4f95-81c3-36260ef77b7e/de4e7ca1-8875-4d91-9ceb-9ff4504aefa4/skills/pptx/**)",
+      "Bash(python3 scripts/thumbnail.py \"/Users/user/Downloads/Site Igavi Development Comments.pptx\")"
     ]
   }
 }

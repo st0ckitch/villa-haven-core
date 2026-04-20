@@ -11,9 +11,10 @@ const SETTING_KEYS = [
   { key: "contact_email", label: "Email" },
   { key: "contact_phone", label: "Phone" },
   { key: "contact_address", label: "Address" },
-  { key: "social_instagram", label: "Instagram URL" },
   { key: "social_facebook", label: "Facebook URL" },
+  { key: "social_instagram", label: "Instagram URL" },
   { key: "social_linkedin", label: "LinkedIn URL" },
+  { key: "social_x", label: "X (Twitter) URL" },
   { key: "social_youtube", label: "YouTube URL" },
 ];
 

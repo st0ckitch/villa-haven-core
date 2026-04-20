@@ -28,6 +28,12 @@ const KEYS = [
   "polograph_delivery_text",
 ];
 
+// Client-requested default content (Slides 10–11 of feedback PPTX).
+// Admin-entered values in site_settings take precedence — these only render when empty.
+const POLOGRAPH_DEFAULT_TITLE = "პოლოგრაფი იგავისგან";
+const POLOGRAPH_DEFAULT_DESCRIPTION =
+  "სიმწვანეში ჩაფლული ეკო-მეგობრული, უნიკალური საცხოვრებელი გარემო, სადაც მობინადრეები კომფორტულად და ჰარმონიულად გრძნობენ თავს.";
+
 const Polograph = () => {
   const { t } = useLanguage();
   const [statusFilter, setStatusFilter] = useState("all");
@@ -77,9 +83,9 @@ const Polograph = () => {
       {c.polograph_hero_image && (
         <ProjectHero
           image={c.polograph_hero_image}
-          breadcrumb={c.polograph_title || t("nav.polograph")}
-          title={c.polograph_title || t("nav.polograph")}
-          subtitle={c.polograph_description?.split("\n")[0]?.slice(0, 140) || ""}
+          breadcrumb={c.polograph_title || POLOGRAPH_DEFAULT_TITLE}
+          title={c.polograph_title || POLOGRAPH_DEFAULT_TITLE}
+          subtitle={(c.polograph_description || POLOGRAPH_DEFAULT_DESCRIPTION).split("\n")[0]?.slice(0, 140) || ""}
           badge={t("nav.projects")}
           backLink={{ label: t("nav.home"), to: "/" }}
         />
@@ -89,8 +95,8 @@ const Polograph = () => {
       <AnimatedSection>
         <RenderGalleryWithDescription
           project="polograph"
-          title={c.polograph_title || t("nav.polograph")}
-          description={c.polograph_description || ""}
+          title={c.polograph_title || POLOGRAPH_DEFAULT_TITLE}
+          description={c.polograph_description || POLOGRAPH_DEFAULT_DESCRIPTION}
           visionTitle={c.polograph_vision_title}
           visionText={c.polograph_vision_text}
         />
@@ -106,14 +112,9 @@ const Polograph = () => {
       {/* 4. Interactive Site Plan */}
       <div className="container mx-auto px-6 py-16 max-w-6xl">
         <AnimatedSection>
-          <div className="text-center mb-10">
-            <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
-              {t("polograph.sitePlanTitle")}
-            </p>
-            <h2 className="font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground">
-              {t("polograph.sitePlanTitle")}
-            </h2>
-          </div>
+          <p className="font-sans text-base md:text-lg text-foreground/80 mb-10 max-w-3xl leading-relaxed">
+            {t("sitePlan.instruction")}
+          </p>
 
           {/* Glass filter buttons */}
           <div className="flex flex-wrap justify-center gap-2 mb-8">

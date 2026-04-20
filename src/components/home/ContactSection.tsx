@@ -175,7 +175,7 @@ export const ContactSection = () => {
               {/* Right Column — Glassmorphic Map */}
               <div className="relative rounded-2xl overflow-hidden bg-white/15 backdrop-blur-xl border border-white/20 shadow-2xl min-h-[320px] lg:min-h-0">
                 <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11901.5!2d44.75!3d41.75!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDHCsDQ1JzAwLjAiTiA0NMKwNDUnMDAuMCJF!5e0!3m2!1sen!2sge!4v1700000000000"
+                  src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d2975!2d44.982456!3d41.51629!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!1zNDHCsDMwJzU4LjYiTiA0NMKwNTgnNTYuOCJF!5e0!3m2!1sen!2sge!4v1700000000000"
                   className="w-full h-full absolute inset-0"
                   style={{ border: 0, filter: "grayscale(0.3) contrast(1.05)" }}
                   allowFullScreen
