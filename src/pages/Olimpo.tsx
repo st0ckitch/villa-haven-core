@@ -118,11 +118,11 @@ const Olimpo = () => {
     <Layout>
       <SEO title={`${titleText} — Igavi`} description={descriptionText.slice(0, 160)} />
 
-      {/* 1. Hero — no duplicate small kicker, big Georgian title only */}
+      {/* 1. Hero — breadcrumb uses short generic label to avoid duplicate with title (slide 11) */}
       {c.olimpo_hero_image && (
         <ProjectHero
           image={c.olimpo_hero_image}
-          breadcrumb={titleText}
+          breadcrumb={t("footer.olimpo")}
           title={titleText}
           subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
           badge={t("nav.projects")}

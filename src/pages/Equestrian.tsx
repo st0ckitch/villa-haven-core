@@ -101,11 +101,11 @@ const Ipodromi = () => {
     <Layout>
       <SEO title={`${titleText} — Igavi`} description={descriptionText.slice(0, 160)} />
 
-      {/* 1. Hero with glass card */}
+      {/* 1. Hero — breadcrumb uses short generic label to avoid duplicate with title (slide 14) */}
       {c.equestrian_hero_image && (
         <ProjectHero
           image={c.equestrian_hero_image}
-          breadcrumb={titleText}
+          breadcrumb={t("footer.equestrian")}
           title={titleText}
           subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
           badge={t("nav.projects")}
@@ -170,10 +170,12 @@ const Ipodromi = () => {
         </div>
       )}
 
-      {/* 5. Equestrian Club banner — horizontal banner as sub-section of Ipodromi (slide 16) */}
+      {/* 5. Equestrian Club sub-section (slide 16)
+           Banner = horizontal image + centered title ONLY (no button, no text).
+           Description follows BELOW the banner as plain text. */}
       <div className="container mx-auto px-6 pb-12 lg:pb-16 max-w-6xl">
         <AnimatedSection>
-          <div className="relative rounded-3xl overflow-hidden min-h-[220px] md:min-h-[260px] flex items-center
+          <div className="relative rounded-3xl overflow-hidden h-[200px] md:h-[280px] flex items-center justify-center
             bg-gradient-to-r from-[hsl(130_55%_40%/0.15)] via-[hsl(130_55%_50%/0.25)] to-[hsl(130_55%_40%/0.15)]
             backdrop-blur-md border border-[hsl(130_55%_40%/0.2)]
             shadow-[0_12px_40px_rgba(45,143,67,0.15)]">
@@ -183,19 +185,20 @@ const Ipodromi = () => {
               alt=""
               aria-hidden
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-              className="absolute inset-0 w-full h-full object-cover opacity-30"
+              className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/60 via-white/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40" />
 
-            <div className="relative p-8 md:p-12 w-full text-center md:text-left">
-              <h3 className="font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground mb-3">
-                <span className="font-medium">{t("ipodromi.equestrianClubBannerTitle")}</span>
-              </h3>
-              <p className="font-sans text-sm md:text-base text-foreground/75 leading-relaxed max-w-2xl mx-auto md:mx-0">
-                {t("ipodromi.equestrianClubDescription")}
-              </p>
-            </div>
+            {/* Title-only, centered */}
+            <h3 className="relative font-sans text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-white text-center px-6 drop-shadow-lg">
+              {t("ipodromi.equestrianClubBannerTitle")}
+            </h3>
           </div>
+
+          {/* Description below the banner, as plain text */}
+          <p className="mt-6 font-sans text-base md:text-lg text-muted-foreground leading-relaxed max-w-3xl">
+            {t("ipodromi.equestrianClubDescription")}
+          </p>
         </AnimatedSection>
       </div>
 

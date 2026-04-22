@@ -89,11 +89,11 @@ const Polograph = () => {
     <Layout>
       <SEO title={`${titleText} — Igavi`} description={descriptionText.slice(0, 160)} />
 
-      {/* 1. Hero with glass card — no small "Polograph by Igavi" subtitle, only big Georgian title */}
+      {/* 1. Hero with glass card — breadcrumb uses generic project label to avoid duplicate title (slide 6) */}
       {c.polograph_hero_image && (
         <ProjectHero
           image={c.polograph_hero_image}
-          breadcrumb={titleText}
+          breadcrumb={t("footer.polograph")}
           title={titleText}
           subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
           badge={t("nav.projects")}
