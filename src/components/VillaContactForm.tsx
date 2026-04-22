@@ -8,6 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { submitLeadToBitrix } from "@/lib/bitrix";
 
 const formSchema = z.object({
   full_name: z.string().trim().min(1).max(100),
@@ -47,6 +48,15 @@ export const VillaContactForm = ({ villaName }: VillaContactFormProps) => {
         property_interest: villaName,
       });
       if (error) throw error;
+
+      // Fire-and-forget Bitrix24 Lead creation — villa name appears in lead description.
+      submitLeadToBitrix({
+        full_name: values.full_name,
+        email: values.email,
+        phone: values.phone,
+        message: values.message,
+        property_interest: villaName,
+      });
 
       toast({ title: t("contact.successTitle"), description: t("contact.successDesc") });
       reset();

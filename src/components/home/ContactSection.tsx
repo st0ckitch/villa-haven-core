@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { z } from "zod";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PhoneInput } from "@/components/PhoneInput";
+import { submitLeadToBitrix } from "@/lib/bitrix";
 
 const contactSchema = z.object({
   first_name: z.string().trim().min(1).max(50),
@@ -80,18 +81,15 @@ export const ContactSection = () => {
       const { error } = await supabase.from("contact_submissions").insert(payload as any);
       if (error) throw error;
 
-      const webhookUrl = import.meta.env.VITE_CRM_WEBHOOK_URL;
-      if (webhookUrl) {
-        try {
-          await fetch(webhookUrl, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(payload),
-          });
-        } catch {
-          // Webhook failure is non-critical
-        }
-      }
+      // Fire-and-forget Bitrix24 Lead creation. Never blocks UX.
+      submitLeadToBitrix({
+        full_name: payload.full_name,
+        email: payload.email,
+        phone: payload.phone,
+        message: payload.message,
+        preferred_channels: payload.preferred_channels,
+        property_interest: null,
+      });
 
       toast({ title: t("contact.successTitle"), description: t("contact.successDesc") });
       form.reset();

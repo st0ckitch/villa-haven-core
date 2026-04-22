@@ -28,7 +28,14 @@
       "Read(//Users/user/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/4a2c5a25-61f6-4f95-81c3-36260ef77b7e/de4e7ca1-8875-4d91-9ceb-9ff4504aefa4/skills/pptx/**)",
       "Bash(python3 scripts/thumbnail.py \"/Users/user/Downloads/Site Igavi Development Comments.pptx\")",
       "Bash(python3 -m markitdown \"/Users/user/Downloads/Site Igavi Dev  21.04.pptx\")",
-      "Bash(python3 -m markitdown \"/Users/user/Downloads/Site Igavi Dev Siaxleebi  21.04.pptx\")"
+      "Bash(python3 -m markitdown \"/Users/user/Downloads/Site Igavi Dev Siaxleebi  21.04.pptx\")",
+      "Bash(curl -s \"https://igavidevelopment.bitrix24.ru/rest/1/45qnf46k8gncd48s/profile.json\")",
+      "Bash(python3 -m json.tool)",
+      "Bash(curl -s \"https://igavidevelopment.bitrix24.ru/rest/1/45qnf46k8gncd48s/crm.lead.fields.json\")",
+      "Bash(curl -s \"https://igavidevelopment.bitrix24.ru/rest/1/y1f7f0wgf1ymeao4/profile.json\")",
+      "Bash(curl -s \"https://igavidevelopment.bitrix24.ru/rest/1/y1f7f0wgf1ymeao4/crm.lead.fields.json\")",
+      "Bash(python3 -c \"import sys,json; d=json.load\\(sys.stdin\\); print\\('✓ CRM WORKS' if 'result' in d else '✗ ERROR: '+d.get\\('error_description', str\\(d\\)\\)\\)\")",
+      "Bash(curl -s -X POST https://igavidevelopment.bitrix24.ru/rest/1/y1f7f0wgf1ymeao4/crm.lead.add.json -H 'Content-Type: application/json' -d '{ *)"
     ]
   }
 }
