@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 import { BlogPostingLd, BreadcrumbLd } from "@/components/JsonLd";
 import { supabase } from "@/integrations/supabase/client";
 import DOMPurify from "dompurify";
-import { ArrowLeft, Calendar, Clock, User } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, User, Facebook, Instagram } from "lucide-react";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 
 type BlogPost = Record<string, any>;
@@ -160,20 +160,22 @@ const BlogPostPage = () => {
             <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-primary/50 mb-3">{t("blog.share")}</p>
             <div className="flex gap-2">
               <a
-                href={`https://twitter.com/intent/tweet?text=${encodeURIComponent(localTitle)}&url=${encodeURIComponent(window.location.href)}`}
+                href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-sm font-sans text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-[hsl(130_55%_30%)] transition-all duration-300 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-sm font-sans text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-[hsl(130_55%_30%)] transition-all duration-300 hover:-translate-y-0.5"
               >
-                Twitter
+                <Facebook className="w-3.5 h-3.5" />
+                Facebook
               </a>
               <a
-                href={`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(window.location.href)}`}
+                href={`https://www.instagram.com/?url=${encodeURIComponent(window.location.href)}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-sm font-sans text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-[hsl(130_55%_30%)] transition-all duration-300 hover:-translate-y-0.5"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-sm font-sans text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-[hsl(130_55%_30%)] transition-all duration-300 hover:-translate-y-0.5"
               >
-                LinkedIn
+                <Instagram className="w-3.5 h-3.5" />
+                Instagram
               </a>
             </div>
           </div>
@@ -181,7 +183,6 @@ const BlogPostPage = () => {
           {/* Related posts */}
           {related.length > 0 && (
             <div className="mt-16">
-              <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">{t("blog.relatedPosts")}</p>
               <h2 className="font-sans text-2xl md:text-3xl font-light tracking-tight text-foreground mb-6">
                 {t("blog.relatedPosts")}
               </h2>

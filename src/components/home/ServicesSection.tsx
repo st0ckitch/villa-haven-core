@@ -31,14 +31,8 @@ export const ServicesSection = () => {
   ];
 
   return (
-    <section className="py-12 lg:py-16 bg-card">
+    <section className="py-8 lg:py-10 bg-card">
       <div className="container mx-auto px-6">
-        <AnimatedSection>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl mb-12 lg:mb-16">
-            {t("services.titleEm")}
-          </h2>
-        </AnimatedSection>
-
         <AnimatedSection delay={100}>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-5 auto-rows-[320px] md:auto-rows-[380px]">
             {/* Card 1 — Polograph */}

@@ -3,7 +3,6 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { InfrastructureTicker } from "@/components/InfrastructureTicker";
-import { SplitText } from "@/components/SplitText";
 
 const CountUp = ({ target, suffix }: { target: number; suffix: string }) => {
   const [count, setCount] = useState(0);
@@ -90,19 +89,12 @@ export const AmenitiesSection = () => {
       </div>
 
       <div className="container mx-auto px-6">
-        {/* Header */}
+        {/* Single thin-line heading above infrastructure marquee (client feedback slide 3) */}
         <AnimatedSection>
-          <div className="mb-14 max-w-2xl">
-            <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/60 mb-3">
-              {t("amenities.title1")}
+          <div className="mb-6 text-center">
+            <p className="text-xs md:text-sm font-sans font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)]">
+              {t("projects.multipleInfra")}
             </p>
-            <h2 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.1]">
-              <SplitText text="World-class" split="char" stagger={0.03} as="span" />
-              <br />
-              <span className="font-medium text-foreground">
-                <SplitText text="infrastructure" split="char" stagger={0.03} delay={0.3} as="span" />
-              </span>
-            </h2>
           </div>
         </AnimatedSection>
 

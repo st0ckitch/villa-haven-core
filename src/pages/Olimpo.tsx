@@ -15,18 +15,24 @@ import { ServicesGlassGrid } from "@/components/ServicesGlassGrid";
 import { TiltCard } from "@/components/TiltCard";
 import {
   Loader2,
-  Dumbbell,
-  Hotel,
-  Sparkles,
   Trophy,
+  Target,
+  LayoutGrid,
+  CircleDashed,
+  Sparkles,
+  HeartPulse,
+  Hotel,
+  Dumbbell,
+  Circle,
   TreePine,
+  PartyPopper,
+  Waves,
+  Car,
   ConciergeBell,
   ShieldCheck,
   Trees,
-  Car,
   Wrench,
   SprayCan,
-  Waves,
   Heart,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
@@ -50,12 +56,24 @@ const APARTMENT_TYPES = [
   { key: "aptPenthouse", icon: "🌆" },
 ];
 
-const DIRECTIONS = [
-  { icon: Trophy, key: "direction_sports" },
-  { icon: Dumbbell, key: "direction_equestrian" },
-  { icon: Hotel, key: "direction_hotel" },
-  { icon: Sparkles, key: "direction_wellness" },
-  { icon: TreePine, key: "direction_recreation" },
+/**
+ * Olimpo advantages — 13 items per client PPTX slide 12.
+ * Renamed section heading from "Main Directions" to "ოლიმპოს უპირატესობები".
+ */
+const ADVANTAGES = [
+  { icon: Trophy, key: "adv_footballStadiums" },
+  { icon: Target, key: "adv_tennisCourts" },
+  { icon: LayoutGrid, key: "adv_padelCourts" },
+  { icon: CircleDashed, key: "adv_volleyballCourt" },
+  { icon: Sparkles, key: "adv_wellnessCenter" },
+  { icon: HeartPulse, key: "adv_sportsHealthCenter" },
+  { icon: Hotel, key: "adv_hotel" },
+  { icon: Dumbbell, key: "adv_sportsHall" },
+  { icon: Circle, key: "adv_billiards" },
+  { icon: TreePine, key: "adv_recreationZones" },
+  { icon: PartyPopper, key: "adv_entertainmentSpaces" },
+  { icon: Waves, key: "adv_pools" },
+  { icon: Car, key: "adv_parking" },
 ];
 
 const SERVICES = [
@@ -93,18 +111,20 @@ const Olimpo = () => {
 
   const c = content || {};
   const memberServices = c.olimpo_member_services ? c.olimpo_member_services.split("\n").filter(Boolean) : [];
+  const descriptionText = c.olimpo_description || t("olimpo.descriptionDefault");
+  const titleText = c.olimpo_title || "Olimpo";
 
   return (
     <Layout>
-      <SEO title={`${c.olimpo_title || "Olimpo"} — Igavi`} description={c.olimpo_description?.slice(0, 160) || ""} />
+      <SEO title={`${titleText} — Igavi`} description={descriptionText.slice(0, 160)} />
 
-      {/* 1. Hero — glass overlay card */}
+      {/* 1. Hero — no duplicate small kicker, big Georgian title only */}
       {c.olimpo_hero_image && (
         <ProjectHero
           image={c.olimpo_hero_image}
-          breadcrumb={c.olimpo_title || "Olimpo"}
-          title={c.olimpo_title || "Olimpo"}
-          subtitle={c.olimpo_description?.split("\n")[0]?.slice(0, 140) || ""}
+          breadcrumb={titleText}
+          title={titleText}
+          subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
           badge={t("nav.projects")}
           backLink={{ label: t("nav.home"), to: "/" }}
         />
@@ -114,8 +134,8 @@ const Olimpo = () => {
       <AnimatedSection>
         <RenderGalleryWithDescription
           project="olimpo"
-          title={c.olimpo_title || "Olimpo"}
-          description={c.olimpo_description || ""}
+          title={titleText}
+          description={descriptionText}
           visionTitle={c.olimpo_vision_title}
           visionText={c.olimpo_vision_text}
           extraContent={
@@ -141,43 +161,36 @@ const Olimpo = () => {
         />
       </AnimatedSection>
 
-      {/* 3. Video with glass frame */}
-      {c.olimpo_video_url && (
-        <div className="container mx-auto px-6 pb-16 md:pb-24 max-w-5xl">
-          <AnimatedSection>
-            <GlassVideoFrame url={c.olimpo_video_url} label={t("nav.projects")} />
-          </AnimatedSection>
-        </div>
-      )}
-
-      {/* 4. Main Directions — Glass Grid */}
-      <div className="container mx-auto px-6 pb-16 lg:pb-24 max-w-5xl">
+      {/* 3. Olimpo Advantages — BEFORE video (slide 12) */}
+      <div className="container mx-auto px-6 pb-12 lg:pb-16 max-w-6xl">
         <AnimatedSection>
-          <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
-            {t("projects.mainDirections")}
-          </p>
-          <h2 className="font-sans text-3xl md:text-4xl font-light tracking-tight text-foreground mb-10">
-            Main <span className="font-medium">Directions</span>
-          </h2>
+          <div className="mb-8">
+            <h2 className="font-sans text-3xl md:text-4xl font-light tracking-tight text-foreground mb-3">
+              <span className="font-medium">{t("olimpo.advantagesTitle")}</span>
+            </h2>
+            <p className="font-sans text-sm md:text-base text-muted-foreground max-w-3xl leading-relaxed">
+              {t("olimpo.advantagesIntro")}
+            </p>
+          </div>
         </AnimatedSection>
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
-          {DIRECTIONS.map((d, i) => {
+          {ADVANTAGES.map((d, i) => {
             const Icon = d.icon;
             return (
-              <AnimatedSection key={d.key} delay={i * 60}>
-                <TiltCard maxTilt={7} scale={1.04} glare={false}>
-                  <div className="group relative bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-6 flex flex-col items-center text-center gap-4
+              <AnimatedSection key={d.key} delay={i * 40}>
+                <TiltCard maxTilt={6} scale={1.03} glare={false}>
+                  <div className="group relative bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-4 md:p-5 flex flex-col items-center text-center gap-3
                     shadow-[0_2px_16px_rgba(0,0,0,0.04)]
                     hover:bg-white hover:shadow-[0_8px_32px_rgba(45,143,67,0.15)] hover:border-[hsl(130_55%_40%/0.25)]
-                    transition-all duration-300 cursor-default">
-                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(130_55%_40%/0.12)] to-[hsl(130_55%_40%/0.04)]
+                    transition-all duration-300 cursor-default h-full">
+                    <div className="w-11 h-11 md:w-12 md:h-12 rounded-xl bg-gradient-to-br from-[hsl(130_55%_40%/0.12)] to-[hsl(130_55%_40%/0.04)]
                       group-hover:from-[hsl(130_55%_40%/0.2)] group-hover:to-[hsl(130_55%_40%/0.08)]
                       flex items-center justify-center transition-all duration-300"
-                      style={{ transform: "translateZ(25px)" }}>
-                      <Icon className="w-6 h-6 text-[hsl(130_55%_35%)] group-hover:text-[hsl(130_55%_30%)] transition-colors duration-300" strokeWidth={1.8} />
+                      style={{ transform: "translateZ(20px)" }}>
+                      <Icon className="w-5 h-5 text-[hsl(130_55%_35%)] group-hover:text-[hsl(130_55%_30%)] transition-colors duration-300" strokeWidth={1.8} />
                     </div>
-                    <span className="font-sans text-sm font-medium text-foreground/75 group-hover:text-foreground transition-colors duration-300 leading-tight"
-                      style={{ transform: "translateZ(15px)" }}>
+                    <span className="font-sans text-xs md:text-sm font-medium text-foreground/75 group-hover:text-foreground transition-colors duration-300 leading-tight"
+                      style={{ transform: "translateZ(10px)" }}>
                       {t(`olimpo.${d.key}`)}
                     </span>
                   </div>
@@ -188,21 +201,27 @@ const Olimpo = () => {
         </div>
       </div>
 
+      {/* 4. Video — moved AFTER advantages */}
+      {c.olimpo_video_url && (
+        <div className="container mx-auto px-6 pb-12 md:pb-16 max-w-5xl">
+          <AnimatedSection>
+            <GlassVideoFrame url={c.olimpo_video_url} label={t("nav.projects")} />
+          </AnimatedSection>
+        </div>
+      )}
+
       {/* 5. Infrastructure Ticker */}
-      <div className="py-12">
+      <div className="py-10">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <div className="text-center mb-8">
-              <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
-                {t("olimpo.infrastructureTitle")}
+            <div className="text-center mb-6">
+              <p className="text-xs md:text-sm font-sans font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)]">
+                {t("projects.multipleInfra")}
               </p>
-              <h2 className="font-sans text-2xl md:text-3xl font-light tracking-tight text-foreground">
-                World-class <span className="font-medium">infrastructure</span>
-              </h2>
             </div>
           </AnimatedSection>
         </div>
-        <div className="relative py-8 overflow-hidden">
+        <div className="relative py-6 overflow-hidden">
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[hsl(130_55%_40%/0.05)] via-[hsl(130_55%_50%/0.12)] to-[hsl(130_55%_40%/0.05)]" />
           <InfrastructureTicker />
         </div>
@@ -216,7 +235,7 @@ const Olimpo = () => {
         services={memberServices}
       />
 
-      {/* 7. Services Grid */}
+      {/* 7. Services Grid (subset — concierge, security, landscape, parking, maintenance, cleaning, pool, spa) */}
       <ServicesGlassGrid
         items={SERVICES}
         namespace="olimpo"

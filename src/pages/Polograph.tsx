@@ -13,8 +13,18 @@ import { PlotMapPublic } from "@/components/PlotMapPublic";
 import { ProjectHero } from "@/components/ProjectHero";
 import { GlassVideoFrame } from "@/components/GlassVideoFrame";
 import { GlassInfoCard } from "@/components/GlassInfoCard";
-import { StatsGlassPanel } from "@/components/StatsGlassPanel";
-import { Loader2 } from "lucide-react";
+import { HelicopterBanner } from "@/components/HelicopterBanner";
+import { GreenFrameSection } from "@/components/GreenFrameSection";
+import { ServicesGlassGrid } from "@/components/ServicesGlassGrid";
+import {
+  Loader2,
+  ConciergeBell,
+  ShieldCheck,
+  Car,
+  Wrench,
+  Trees,
+  SprayCan,
+} from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const KEYS = [
@@ -28,15 +38,20 @@ const KEYS = [
   "polograph_delivery_text",
 ];
 
-// Client-requested default content (Slides 10–11 of feedback PPTX).
-// Admin-entered values in site_settings take precedence — these only render when empty.
-const POLOGRAPH_DEFAULT_TITLE = "პოლოგრაფი იგავისგან";
-const POLOGRAPH_DEFAULT_DESCRIPTION =
-  "სიმწვანეში ჩაფლული ეკო-მეგობრული, უნიკალური საცხოვრებელი გარემო, სადაც მობინადრეები კომფორტულად და ჰარმონიულად გრძნობენ თავს.";
+// Polograph subset of services (PPTX slide 9)
+const POLOGRAPH_SERVICES = [
+  { icon: ConciergeBell, key: "serviceConcierge" },
+  { icon: ShieldCheck, key: "serviceSecurity" },
+  { icon: Car, key: "serviceParking" },
+  { icon: Wrench, key: "serviceMaintenance" },
+  { icon: Trees, key: "serviceLandscape" },
+  { icon: SprayCan, key: "serviceCleaning" },
+];
 
 const Polograph = () => {
   const { t } = useLanguage();
   const [statusFilter, setStatusFilter] = useState("all");
+  const [sizeFilter, setSizeFilter] = useState<[number, number] | null>(null);
   const [counts, setCounts] = useState({ all: 0, available: 0, reserved: 0, sold: 0 });
 
   const { data: content, isLoading } = useQuery({
@@ -60,13 +75,8 @@ const Polograph = () => {
   }
 
   const c = content || {};
-
-  const investStats = [
-    { value: t("polograph.stat1Value"), label: t("polograph.stat1Label") },
-    { value: t("polograph.stat2Value"), label: t("polograph.stat2Label") },
-    { value: t("polograph.stat3Value"), label: t("polograph.stat3Label") },
-    { value: t("polograph.stat4Value"), label: t("polograph.stat4Label") },
-  ];
+  const descriptionText = c.polograph_description || t("polograph.descriptionDefault");
+  const titleText = c.polograph_title || t("nav.polograph");
 
   const filterButtons = [
     { key: "all", label: t("sitePlan.all"), count: counts.all },
@@ -77,15 +87,15 @@ const Polograph = () => {
 
   return (
     <Layout>
-      <SEO title={`${c.polograph_title || t("nav.polograph")} — Igavi`} description={c.polograph_description?.slice(0, 160) || ""} />
+      <SEO title={`${titleText} — Igavi`} description={descriptionText.slice(0, 160)} />
 
-      {/* 1. Hero with glass card */}
+      {/* 1. Hero with glass card — no small "Polograph by Igavi" subtitle, only big Georgian title */}
       {c.polograph_hero_image && (
         <ProjectHero
           image={c.polograph_hero_image}
-          breadcrumb={c.polograph_title || POLOGRAPH_DEFAULT_TITLE}
-          title={c.polograph_title || POLOGRAPH_DEFAULT_TITLE}
-          subtitle={(c.polograph_description || POLOGRAPH_DEFAULT_DESCRIPTION).split("\n")[0]?.slice(0, 140) || ""}
+          breadcrumb={titleText}
+          title={titleText}
+          subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
           badge={t("nav.projects")}
           backLink={{ label: t("nav.home"), to: "/" }}
         />
@@ -95,22 +105,18 @@ const Polograph = () => {
       <AnimatedSection>
         <RenderGalleryWithDescription
           project="polograph"
-          title={c.polograph_title || POLOGRAPH_DEFAULT_TITLE}
-          description={c.polograph_description || POLOGRAPH_DEFAULT_DESCRIPTION}
+          title={titleText}
+          description={descriptionText}
           visionTitle={c.polograph_vision_title}
           visionText={c.polograph_vision_text}
         />
       </AnimatedSection>
 
-      {/* 3. Investment Stats */}
-      <StatsGlassPanel
-        stats={investStats}
-        title={t("polograph.investTitle")}
-        subtitle={t("projects.investment") !== "projects.investment" ? t("projects.investment") : "Investment"}
-      />
+      {/* 3. Helicopter Aerodrome banner (replaces Investment Stats per slide 6) */}
+      <HelicopterBanner />
 
       {/* 4. Interactive Site Plan */}
-      <div className="container mx-auto px-6 py-16 max-w-6xl">
+      <div className="container mx-auto px-6 py-12 max-w-6xl">
         <AnimatedSection>
           <p className="font-sans text-base md:text-lg text-foreground/80 mb-10 max-w-3xl leading-relaxed">
             {t("sitePlan.instruction")}
@@ -133,18 +139,18 @@ const Polograph = () => {
             ))}
           </div>
 
-          <PlotMapPublic statusFilter={statusFilter} onCounts={setCounts} />
+          <PlotMapPublic statusFilter={statusFilter} sizeFilter={sizeFilter} onCounts={setCounts} />
         </AnimatedSection>
       </div>
 
-      {/* 5. Villa Grouping by sqm */}
-      <div className="container mx-auto px-6 pb-16 max-w-6xl">
-        <VillaGrouping />
+      {/* 5. Villa Grouping by sqm — filter buttons that drive the plot map */}
+      <div className="container mx-auto px-6 pb-12 max-w-6xl">
+        <VillaGrouping onSizeFilterChange={setSizeFilter} activeFilter={sizeFilter} />
       </div>
 
       {/* 6. Video */}
       {c.polograph_video_url && (
-        <div className="container mx-auto px-6 pb-16 md:pb-24 max-w-5xl">
+        <div className="container mx-auto px-6 pb-12 md:pb-16 max-w-5xl">
           <AnimatedSection>
             <GlassVideoFrame url={c.polograph_video_url} label={t("nav.polograph")} />
           </AnimatedSection>
@@ -152,28 +158,35 @@ const Polograph = () => {
       )}
 
       {/* 7. Infrastructure Ticker */}
-      <div className="py-12">
+      <div className="py-10">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <div className="text-center mb-8">
-              <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
-                {t("amenities.title1")}
+            <div className="text-center mb-6">
+              <p className="text-xs md:text-sm font-sans font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)]">
+                {t("projects.multipleInfra")}
               </p>
-              <h2 className="font-sans text-2xl md:text-3xl font-light tracking-tight text-foreground">
-                World-class <span className="font-medium">infrastructure</span>
-              </h2>
             </div>
           </AnimatedSection>
         </div>
-        <div className="relative py-8 overflow-hidden">
+        <div className="relative py-6 overflow-hidden">
           <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[hsl(130_55%_40%/0.05)] via-[hsl(130_55%_50%/0.12)] to-[hsl(130_55%_40%/0.05)]" />
           <InfrastructureTicker />
         </div>
       </div>
 
-      {/* 8. Delivery Conditions */}
+      {/* 8. Green Frame Condition (new — slide 8) */}
+      <GreenFrameSection />
+
+      {/* 9. Polograph services (subset, slide 9) */}
+      <ServicesGlassGrid
+        items={POLOGRAPH_SERVICES}
+        namespace="polograph"
+        title={t("polograph.servicesTitle")}
+      />
+
+      {/* 10. Delivery Conditions (admin-editable) */}
       {(c.polograph_delivery_title || c.polograph_delivery_text) && (
-        <div className="container mx-auto px-6 py-16 lg:py-20 max-w-5xl">
+        <div className="container mx-auto px-6 py-12 lg:py-16 max-w-5xl">
           <AnimatedSection>
             <GlassInfoCard
               title={c.polograph_delivery_title || ""}
@@ -184,10 +197,10 @@ const Polograph = () => {
         </div>
       )}
 
-      {/* 9. Catalog */}
+      {/* 11. Catalog */}
       <CatalogSection />
 
-      {/* 10. Contact */}
+      {/* 12. Contact */}
       <ContactSection />
     </Layout>
   );

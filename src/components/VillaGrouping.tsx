@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
@@ -12,9 +12,39 @@ const RANGES = [
   { label: "900–1100", min: 900, max: 1100 },
 ];
 
-export const VillaGrouping = () => {
+interface VillaGroupingProps {
+  /**
+   * When provided, clicking a range button ALSO notifies the parent with
+   * the [min, max] range so the plot map can filter by villa size.
+   * (Client feedback PPTX slide 7.)
+   */
+  onSizeFilterChange?: (range: [number, number] | null) => void;
+  activeFilter?: [number, number] | null;
+}
+
+export const VillaGrouping = ({ onSizeFilterChange, activeFilter }: VillaGroupingProps = {}) => {
   const { t } = useLanguage();
   const [activeRange, setActiveRange] = useState(0);
+
+  // Sync active button when parent clears filter
+  useEffect(() => {
+    if (!activeFilter) return;
+    const idx = RANGES.findIndex((r) => r.min === activeFilter[0] && r.max === activeFilter[1]);
+    if (idx >= 0) setActiveRange(idx);
+  }, [activeFilter]);
+
+  const handleRangeClick = (i: number) => {
+    setActiveRange(i);
+    if (onSizeFilterChange) {
+      const r = RANGES[i];
+      // Toggle: if same range clicked twice, clear filter
+      if (activeFilter && activeFilter[0] === r.min && activeFilter[1] === r.max) {
+        onSizeFilterChange(null);
+      } else {
+        onSizeFilterChange([r.min, r.max]);
+      }
+    }
+  };
 
   const { data: villas = [] } = useQuery({
     queryKey: ["villas-with-images"],
@@ -36,21 +66,24 @@ export const VillaGrouping = () => {
     <AnimatedSection>
       <h2 className="text-2xl md:text-3xl mb-6">{t("projects.villasBySize")}</h2>
 
-      {/* Range buttons */}
-      <div className="flex flex-wrap gap-3 mb-8">
-        {RANGES.map((r, i) => (
-          <button
-            key={r.label}
-            onClick={() => setActiveRange(i)}
-            className={`px-5 py-2.5 rounded-full font-sans text-sm transition-colors ${
-              i === activeRange
-                ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white shadow-md"
-                : "bg-secondary text-foreground hover:bg-secondary/80"
-            }`}
-          >
-            {r.label} m²
-          </button>
-        ))}
+      {/* Range buttons — glass pill style */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        {RANGES.map((r, i) => {
+          const isActive = i === activeRange && (!onSizeFilterChange || (activeFilter && activeFilter[0] === r.min && activeFilter[1] === r.max));
+          return (
+            <button
+              key={r.label}
+              onClick={() => handleRangeClick(i)}
+              className={`px-5 py-2.5 rounded-full font-sans text-sm transition-all duration-300 ${
+                isActive
+                  ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white shadow-[0_4px_16px_rgba(45,143,67,0.3)]"
+                  : "bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-foreground"
+              }`}
+            >
+              {r.label} m²
+            </button>
+          );
+        })}
       </div>
 
       {/* Villa grid */}

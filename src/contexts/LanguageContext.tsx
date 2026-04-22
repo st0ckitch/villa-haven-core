@@ -8,9 +8,9 @@ export type Language = "en" | "ka" | "ru";
 const dictionaries: Record<Language, Record<string, any>> = { en, ka, ru };
 
 export const languageNames: Record<Language, string> = {
-  en: "EN",
-  ka: "KA",
-  ru: "RU",
+  en: "Eng",
+  ka: "ქარ",
+  ru: "Рус",
 };
 
 interface LanguageContextType {

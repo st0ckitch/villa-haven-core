@@ -20,7 +20,7 @@ export const Navbar = () => {
   const projectSubLinks = [
     { label: t("footer.polograph"), to: "/polograph" },
     { label: t("footer.olimpo"), to: "/olimpo" },
-    { label: t("footer.equestrian"), to: "/equestrian" },
+    { label: t("footer.equestrian"), to: "/ipodromi" },
   ];
 
   const villaSubLinks = [
@@ -33,6 +33,7 @@ export const Navbar = () => {
     { label: t("nav.projects"), to: "#", hasDropdown: "projects" },
     { label: t("nav.aboutUs"), to: "/about" },
     { label: t("nav.news"), to: "/blog" },
+    { label: t("nav.gallery"), to: "/gallery" },
     { label: t("nav.contact"), to: "/contact" },
   ];
 
@@ -86,7 +87,7 @@ export const Navbar = () => {
                 >
                   <button
                     className={`text-sm font-semibold tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
-                      ["/polograph", "/olimpo", "/equestrian"].some((p) => location.pathname.startsWith(p)) ? "text-primary" : "text-muted-foreground"
+                      ["/polograph", "/olimpo", "/equestrian", "/ipodromi"].some((p) => location.pathname.startsWith(p)) ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
                     {link.label}
@@ -205,6 +206,9 @@ export const Navbar = () => {
             </Link>
             <Link to="/blog" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
               {t("nav.news")}
+            </Link>
+            <Link to="/gallery" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
+              {t("nav.gallery")}
             </Link>
             <Link to="/contact" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
               {t("nav.contact")}

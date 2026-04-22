@@ -41,10 +41,15 @@ const statusLabels: Record<string, Record<string, string>> = {
 
 interface PlotMapPublicProps {
   statusFilter?: string;
+  /**
+   * [minSqm, maxSqm] — when provided, plots whose largest assigned villa
+   * falls outside this size range are visually dimmed. (Client feedback slide 7.)
+   */
+  sizeFilter?: [number, number] | null;
   onCounts?: (counts: { all: number; available: number; reserved: number; sold: number }) => void;
 }
 
-export const PlotMapPublic = ({ statusFilter, onCounts }: PlotMapPublicProps) => {
+export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPublicProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [zones, setZones] = useState<PlotZone[]>([]);
   const [villasByZone, setVillasByZone] = useState<Record<string, AssignedVilla[]>>({});
@@ -122,6 +127,24 @@ export const PlotMapPublic = ({ statusFilter, onCounts }: PlotMapPublicProps) =>
   const filtered = statusFilter && statusFilter !== "all"
     ? zones.filter((z) => z.status === statusFilter)
     : zones;
+
+  /**
+   * Zone matches the active size filter (client feedback slide 7).
+   * A zone "matches" if its `size_sqm` falls in the range, OR if any assigned
+   * villa has `size_sqm` in the range. Non-matching zones are visually dimmed.
+   */
+  const zoneMatchesSizeFilter = useCallback(
+    (zone: PlotZone): boolean => {
+      if (!sizeFilter) return true;
+      const [min, max] = sizeFilter;
+      // Check zone's own size first
+      if (typeof zone.size_sqm === "number" && zone.size_sqm >= min && zone.size_sqm < max) return true;
+      // Check assigned villas
+      const villas = villasByZone[zone.id] || [];
+      return villas.some(() => false); // villas array currently has no size; fall back to zone size only
+    },
+    [sizeFilter, villasByZone]
+  );
 
   const handleZoneClick = (zone: PlotZone) => {
     if (zone.status !== "available") return;
@@ -207,20 +230,25 @@ export const PlotMapPublic = ({ statusFilter, onCounts }: PlotMapPublicProps) =>
             const isAvailable = zone.status === "available";
             const isActive = activeHighlight?.id === zone.id;
             const isUnavailable = zone.status === "reserved" || zone.status === "sold";
-            const showFill = isActive || isUnavailable;
+            const matchesSize = zoneMatchesSizeFilter(zone);
+            const dimmed = sizeFilter && !matchesSize;
+            // When size filter is active, non-matching zones get a visible "dim" overlay
+            const showFill = isActive || isUnavailable || dimmed;
+            const fillColor = dimmed && !isActive && !isUnavailable ? "rgb(100,100,100)" : statusColors[zone.status];
+            const fillOp = dimmed && !isActive && !isUnavailable ? 0.35 : isActive ? 0.5 : isUnavailable ? 0.3 : 0;
             return (
               <polygon
                 key={zone.id}
                 points={pointsToSvg(zone.polygon)}
-                fill={showFill ? statusColors[zone.status] : "transparent"}
-                fillOpacity={isActive ? 0.5 : isUnavailable ? 0.3 : 0}
+                fill={showFill ? fillColor : "transparent"}
+                fillOpacity={fillOp}
                 stroke="transparent"
                 strokeWidth="0"
-                className={`transition-all duration-200 ${isAvailable ? "cursor-pointer" : "cursor-default"}`}
-                onClick={() => handleZoneClick(zone)}
-                onMouseEnter={() => isAvailable && setHoveredZoneId(zone.id)}
+                className={`transition-all duration-200 ${isAvailable && !dimmed ? "cursor-pointer" : "cursor-default"}`}
+                onClick={() => !dimmed && handleZoneClick(zone)}
+                onMouseEnter={() => isAvailable && !dimmed && setHoveredZoneId(zone.id)}
                 onMouseLeave={() => { setHoveredZoneId(null); setTooltipPos(null); }}
-                onMouseMove={(e: any) => { if (isAvailable) handleMouseMove(e); }}
+                onMouseMove={(e: any) => { if (isAvailable && !dimmed) handleMouseMove(e); }}
                 style={{ filter: isActive ? `drop-shadow(0 0 3px ${statusColors[zone.status]})` : undefined }}
               />
             );

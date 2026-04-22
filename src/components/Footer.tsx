@@ -40,7 +40,8 @@ export const Footer = () => {
     { label: t("nav.home"), to: "/" },
     { label: t("footer.polograph"), to: "/polograph" },
     { label: t("footer.olimpo"), to: "/olimpo" },
-    { label: t("footer.equestrian"), to: "/equestrian" },
+    { label: t("footer.equestrian"), to: "/ipodromi" },
+    { label: t("footer.gallery"), to: "/gallery" },
     { label: t("footer.news"), to: "/blog" },
   ];
 

@@ -26,7 +26,9 @@
       "Bash(python3 -m markitdown \"/Users/user/Downloads/Site Igavi Development Comments.pptx\")",
       "Bash(pip3 install *)",
       "Read(//Users/user/Library/Application Support/Claude/local-agent-mode-sessions/skills-plugin/4a2c5a25-61f6-4f95-81c3-36260ef77b7e/de4e7ca1-8875-4d91-9ceb-9ff4504aefa4/skills/pptx/**)",
-      "Bash(python3 scripts/thumbnail.py \"/Users/user/Downloads/Site Igavi Development Comments.pptx\")"
+      "Bash(python3 scripts/thumbnail.py \"/Users/user/Downloads/Site Igavi Development Comments.pptx\")",
+      "Bash(python3 -m markitdown \"/Users/user/Downloads/Site Igavi Dev  21.04.pptx\")",
+      "Bash(python3 -m markitdown \"/Users/user/Downloads/Site Igavi Dev Siaxleebi  21.04.pptx\")"
     ]
   }
 }

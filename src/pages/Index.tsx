@@ -4,6 +4,7 @@ import { LeaveRequestSection } from "@/components/home/LeaveRequestSection";
 import { ServicesSection } from "@/components/home/ServicesSection";
 import { AmenitiesSection } from "@/components/home/AmenitiesSection";
 import { BlogSection } from "@/components/home/BlogSection";
+import { GallerySection } from "@/components/home/GallerySection";
 import { ContactSection } from "@/components/home/ContactSection";
 import { SEO } from "@/components/SEO";
 import { OrganizationLd } from "@/components/JsonLd";
@@ -18,6 +19,7 @@ const Index = () => {
       <ServicesSection />
       <AmenitiesSection />
       <BlogSection />
+      <GallerySection />
       <ContactSection />
     </Layout>
   );

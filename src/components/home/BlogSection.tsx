@@ -28,12 +28,12 @@ export const BlogSection = () => {
   if (loading || posts.length === 0) return null;
 
   return (
-    <section className="py-12 lg:py-16 bg-card text-card-foreground">
+    <section className="py-8 lg:py-12 bg-card text-card-foreground">
       <div className="container mx-auto px-6">
         <AnimatedSection>
-          <div className="flex items-end justify-between mb-12">
+          <div className="flex items-end justify-between mb-8">
             <h2 className="text-2xl md:text-3xl lg:text-4xl">
-              {t("blog.latestTitle")}
+              {t("blog.title")}
             </h2>
             <Link
               to="/blog"

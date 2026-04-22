@@ -51,10 +51,7 @@ export const CatalogSection = () => {
                   <BookOpen className="w-6 h-6 text-[hsl(130_55%_35%)]" strokeWidth={1.8} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_35%)] mb-1">
-                    {t("footer.catalogsTitle")}
-                  </p>
-                  <h3 className="font-sans text-lg font-medium text-foreground mb-1.5">
+                  <h3 className="font-sans text-lg md:text-xl font-medium text-foreground mb-1.5">
                     {t("footer.catalogsTitle")}
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed">

@@ -84,6 +84,8 @@ const App = () => (
                     <Route path="/polograph" element={<Polograph />} />
                     <Route path="/olimpo" element={<Olimpo />} />
                     <Route path="/equestrian" element={<Equestrian />} />
+                    {/* New route per client rename Equestrian → Ipodromi */}
+                    <Route path="/ipodromi" element={<Equestrian />} />
                     <Route path="/privacy-policy" element={<PrivacyPolicy />} />
                     <Route path="/terms" element={<Terms />} />
                     <Route path="/admin/login" element={<AdminLogin />} />

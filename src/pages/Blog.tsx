@@ -46,13 +46,10 @@ const Blog = () => {
       <section className="pt-28 lg:pt-32 pb-16 lg:pb-24">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
-              {t("blog.title")}
-            </p>
             <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-4">
-              {t("blog.latestTitle")}
+              {t("blog.title")}
             </h1>
-            <p className="text-muted-foreground font-sans mb-8 max-w-lg">{t("blog.subtitle")}</p>
+            <p className="text-muted-foreground font-sans mb-8 max-w-lg">{t("blog.intro")}</p>
           </AnimatedSection>
 
           {/* Glass category filters */}

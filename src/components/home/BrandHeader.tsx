@@ -6,19 +6,34 @@ export const BrandHeader = () => {
   const { t } = useLanguage();
 
   return (
-    <section className="bg-background py-14 md:py-20 lg:py-24 text-center">
+    <section className="bg-background py-8 md:py-10 lg:py-12 text-center">
       <div className="container mx-auto px-6">
-        <h1
-          className="font-serif font-bold tracking-tight leading-none"
-          style={{ fontSize: "clamp(2rem, 5vw, 4.5rem)" }}
-        >
-          {t("brandHeader.title")}
-        </h1>
-        <p className="text-muted-foreground text-base md:text-lg max-w-2xl mx-auto mt-6 mb-10 font-sans">
+        {/* Logo placeholder — replace /brand-logo.svg with client's logo file */}
+        <div className="flex justify-center mb-4">
+          <img
+            src="/brand-logo.svg"
+            alt="Igavi"
+            className="h-10 md:h-12 lg:h-14 w-auto"
+            onError={(e) => {
+              // Fallback to text when logo file is missing
+              (e.currentTarget as HTMLImageElement).style.display = "none";
+              const fallback = document.getElementById("brand-text-fallback");
+              if (fallback) fallback.style.display = "block";
+            }}
+          />
+          <h1
+            id="brand-text-fallback"
+            className="font-serif font-bold tracking-tight leading-none hidden"
+            style={{ fontSize: "clamp(1.5rem, 3.5vw, 2.75rem)" }}
+          >
+            {t("brandHeader.title")}
+          </h1>
+        </div>
+        <p className="text-muted-foreground text-sm md:text-base max-w-2xl mx-auto mt-2 mb-6 font-sans">
           {t("brandHeader.subtitle")}
         </p>
         <a href="#contact">
-          <Button size="lg" className="rounded-full font-sans font-medium px-8 h-12 gap-2">
+          <Button size="default" className="rounded-full font-sans font-medium px-6 h-11 gap-2">
             {t("nav.leaveRequest")}
             <ArrowRight className="w-4 h-4" />
           </Button>

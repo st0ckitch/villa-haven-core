@@ -3,15 +3,20 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 export const SloganSection = () => {
   const { t } = useLanguage();
+  const line2 = t("slogan.line2");
 
   return (
-    <section className="py-14 lg:py-20 bg-secondary">
+    <section className="py-8 lg:py-12 bg-secondary">
       <div className="container mx-auto px-6">
         <AnimatedSection>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl text-center leading-tight tracking-tight text-foreground">
-            {t("slogan.line1")}
-            <br />
-            <em className="italic text-primary">{t("slogan.line2")}</em>
+          <h2 className="text-xl md:text-2xl lg:text-3xl text-center leading-snug tracking-tight text-foreground font-light">
+            <span className="italic text-primary">{t("slogan.line1")}</span>
+            {line2 && (
+              <>
+                <br />
+                <em className="italic text-primary">{line2}</em>
+              </>
+            )}
           </h2>
         </AnimatedSection>
       </div>
