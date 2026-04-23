@@ -29,9 +29,14 @@ const Blog = () => {
     });
   }, []);
 
+  // Match posts whose `categories[]` contains the active slug; fall back to the
+  // legacy single `category` for rows not yet migrated.
   const filtered = activeCategory === "all"
     ? posts
-    : posts.filter((p) => p.category === activeCategory);
+    : posts.filter((p) => {
+        const cats: string[] = (p as any).categories || [];
+        return cats.includes(activeCategory) || p.category === activeCategory;
+      });
 
   return (
     <Layout>
@@ -109,11 +114,16 @@ const Blog = () => {
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                           />
-                          {post.category && (
-                            <div className="absolute top-3 left-3">
-                              <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-[10px] font-sans font-bold uppercase tracking-[0.15em] text-[hsl(130_55%_30%)] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
-                                {post.category}
-                              </span>
+                          {((((post as any).categories as string[]) || (post.category ? [post.category] : [])).length > 0) && (
+                            <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[75%]">
+                              {((((post as any).categories as string[]) || [post.category]).slice(0, 2)).map((slug: string) => {
+                                const cat = categories.find((c) => c.slug === slug);
+                                return (
+                                  <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-[10px] font-sans font-bold uppercase tracking-[0.15em] text-[hsl(130_55%_30%)] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+                                    {cat?.name || slug}
+                                  </span>
+                                );
+                              })}
                             </div>
                           )}
                         </div>

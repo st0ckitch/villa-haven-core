@@ -14,13 +14,27 @@ export const GallerySection = () => {
   const [renders, setRenders] = useState<Render[]>([]);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
+  // Primary source: the `renders` table (admin-curated homepage gallery).
+  // Fallback: aggregate the per-project galleries (`project_renders`) so the
+  // section still renders after Latest News even when `renders` is empty.
   useEffect(() => {
-    supabase
-      .from("renders")
-      .select("*")
-      .order("sort_order")
-      .limit(6)
-      .then(({ data }) => setRenders(data || []));
+    (async () => {
+      const { data } = await supabase
+        .from("renders")
+        .select("*")
+        .order("sort_order")
+        .limit(6);
+      if (data && data.length > 0) {
+        setRenders(data);
+        return;
+      }
+      const { data: pr } = await supabase
+        .from("project_renders")
+        .select("*")
+        .order("sort_order")
+        .limit(6);
+      setRenders((pr as Render[]) || []);
+    })();
   }, []);
 
   if (renders.length === 0) return null;

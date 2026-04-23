@@ -11,7 +11,6 @@ import { InfrastructureTicker } from "@/components/InfrastructureTicker";
 import { ClubMembershipCTA } from "@/components/ClubMembershipCTA";
 import { ProjectHero } from "@/components/ProjectHero";
 import { GlassVideoFrame } from "@/components/GlassVideoFrame";
-import { ServicesGlassGrid } from "@/components/ServicesGlassGrid";
 import { TiltCard } from "@/components/TiltCard";
 import {
   Loader2,
@@ -28,12 +27,6 @@ import {
   PartyPopper,
   Waves,
   Car,
-  ConciergeBell,
-  ShieldCheck,
-  Trees,
-  Wrench,
-  SprayCan,
-  Heart,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -47,13 +40,8 @@ const KEYS = [
   "olimpo_join_title",
   "olimpo_join_description",
   "olimpo_member_services",
-];
-
-const APARTMENT_TYPES = [
-  { key: "aptStudio", icon: "🏠" },
-  { key: "aptSemiStandard", icon: "🏡" },
-  { key: "aptNonStandard", icon: "🏗️" },
-  { key: "aptPenthouse", icon: "🌆" },
+  "olimpo_club_benefits_title_ka", "olimpo_club_benefits_title_en", "olimpo_club_benefits_title_ru",
+  "olimpo_club_benefits_text_ka", "olimpo_club_benefits_text_en", "olimpo_club_benefits_text_ru",
 ];
 
 /**
@@ -76,19 +64,8 @@ const ADVANTAGES = [
   { icon: Car, key: "adv_parking" },
 ];
 
-const SERVICES = [
-  { icon: ConciergeBell, key: "serviceConcierge" },
-  { icon: ShieldCheck, key: "serviceSecurity" },
-  { icon: Trees, key: "serviceLandscape" },
-  { icon: Car, key: "serviceParking" },
-  { icon: Wrench, key: "serviceMaintenance" },
-  { icon: SprayCan, key: "serviceCleaning" },
-  { icon: Waves, key: "servicePool" },
-  { icon: Heart, key: "serviceSpa" },
-];
-
 const Olimpo = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { data: content, isLoading } = useQuery({
     queryKey: ["olimpo-page"],
     queryFn: async () => {
@@ -111,8 +88,21 @@ const Olimpo = () => {
 
   const c = content || {};
   const memberServices = c.olimpo_member_services ? c.olimpo_member_services.split("\n").filter(Boolean) : [];
-  const descriptionText = c.olimpo_description || t("olimpo.descriptionDefault");
-  const titleText = c.olimpo_title || "Olimpo";
+  // Per-language admin override → i18n default. We skip the language-neutral
+  // `olimpo_*` row on purpose: it still holds English-only copy from before
+  // per-language fields existed, so using it would leak English onto KA/RU.
+  const pick = (key: string, fallback: string) => {
+    const v = c[`${key}_${language}`];
+    return v && v.trim().length > 0 ? v : fallback;
+  };
+  const titleText = pick("olimpo_title", t("olimpo.titleDefault"));
+  const descriptionText = pick("olimpo_description", t("olimpo.descriptionDefault"));
+  const visionTitle = pick("olimpo_vision_title", "");
+  const visionText = pick("olimpo_vision_text", "");
+  const joinTitle = pick("olimpo_join_title", "");
+  const joinDescription = pick("olimpo_join_description", "");
+  const clubBenefitsTitle = pick("olimpo_club_benefits_title", t("olimpo.clubBenefitsTitle"));
+  const clubBenefitsText = pick("olimpo_club_benefits_text", t("olimpo.clubBenefitsText"));
 
   return (
     <Layout>
@@ -130,34 +120,31 @@ const Olimpo = () => {
         />
       )}
 
-      {/* 2. Gallery + Description (2-col layout) */}
+      {/* 2. Club Member Benefits — moved to top of page (client feedback Apr 23, 2026).
+          Admin overrides via `olimpo_club_benefits_title_<lang>` / `..._text_<lang>`. */}
+      <div className="container mx-auto px-6 pt-12 pb-6 lg:pt-16 lg:pb-8 max-w-5xl">
+        <AnimatedSection>
+          <div className="bg-white/60 backdrop-blur-md border border-white/50 rounded-3xl p-8 md:p-10 shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
+            <h2 className="font-sans text-2xl md:text-3xl font-light tracking-tight text-foreground mb-4">
+              {clubBenefitsTitle}
+            </h2>
+            <p className="font-sans text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
+              {clubBenefitsText}
+            </p>
+          </div>
+        </AnimatedSection>
+      </div>
+
+      {/* 3. Gallery + Description (2-col layout).
+          Apartment Types grid removed per client feedback (Apr 23, 2026):
+          Olimpo is a sports/wellness complex, not a residential project. */}
       <AnimatedSection>
         <RenderGalleryWithDescription
           project="olimpo"
           title={titleText}
           description={descriptionText}
-          visionTitle={c.olimpo_vision_title}
-          visionText={c.olimpo_vision_text}
-          extraContent={
-            <div>
-              <p className="text-[11px] font-sans font-bold uppercase tracking-[0.25em] text-primary/50 mb-3">
-                {t("olimpo.apartmentTypesTitle")}
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {APARTMENT_TYPES.map((apt) => (
-                  <div
-                    key={apt.key}
-                    className="group relative rounded-xl bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] p-3 flex items-center gap-2.5 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:shadow-[0_4px_16px_rgba(45,143,67,0.1)] transition-all duration-300"
-                  >
-                    <span className="text-xl shrink-0">{apt.icon}</span>
-                    <h3 className="font-sans text-xs font-semibold leading-tight">
-                      {t(`olimpo.${apt.key}`)}
-                    </h3>
-                  </div>
-                ))}
-              </div>
-            </div>
-          }
+          visionTitle={visionTitle}
+          visionText={visionText}
         />
       </AnimatedSection>
 
@@ -230,16 +217,9 @@ const Olimpo = () => {
       {/* 6. Club Membership CTA */}
       <ClubMembershipCTA
         project="olimpo"
-        joinTitle={c.olimpo_join_title}
-        joinDescription={c.olimpo_join_description}
+        joinTitle={joinTitle}
+        joinDescription={joinDescription}
         services={memberServices}
-      />
-
-      {/* 7. Services Grid (subset — concierge, security, landscape, parking, maintenance, cleaning, pool, spa) */}
-      <ServicesGlassGrid
-        items={SERVICES}
-        namespace="olimpo"
-        title={t("olimpo.servicesTitle")}
       />
 
       {/* 8. Catalog Downloads */}

@@ -106,7 +106,7 @@ const VillaDetail = () => {
       </div>
 
       <div className="container mx-auto px-6 pt-28 lg:pt-32 pb-10 lg:pb-16">
-        <Link to={section ? `/projects/${section}` : "/site-plan"} className="inline-flex items-center gap-2 text-muted-foreground hover:text-[hsl(130_55%_30%)] transition-colors font-sans text-sm mb-8">
+        <Link to="/polograph" className="inline-flex items-center gap-2 text-muted-foreground hover:text-[hsl(130_55%_30%)] transition-colors font-sans text-sm mb-8">
           <ArrowLeft className="w-4 h-4" /> {t("villa.backToProperties")}
         </Link>
 

@@ -36,7 +36,6 @@ const SitePlan = lazy(() => import("./pages/SitePlan"));
 const Blog = lazy(() => import("./pages/Blog"));
 const BlogPostPage = lazy(() => import("./pages/BlogPost"));
 const VillaDetail = lazy(() => import("./pages/VillaDetail"));
-const ProjectSection = lazy(() => import("./pages/ProjectSection"));
 const ResetPassword = lazy(() => import("./pages/ResetPassword"));
 const Contact = lazy(() => import("./pages/Contact"));
 const About = lazy(() => import("./pages/About"));
@@ -77,7 +76,6 @@ const App = () => (
                     <Route path="/blog" element={<Blog />} />
                     <Route path="/blog/:slug" element={<BlogPostPage />} />
                     <Route path="/villas/:slug" element={<VillaDetail />} />
-                    <Route path="/projects/:section" element={<ProjectSection />} />
                     <Route path="/projects/:section/:slug" element={<VillaDetail />} />
                     <Route path="/contact" element={<Contact />} />
                     <Route path="/about" element={<About />} />

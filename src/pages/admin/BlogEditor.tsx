@@ -25,7 +25,7 @@ const BlogEditor = () => {
     title: "", title_ka: "", title_ru: "",
     slug: "", excerpt: "", excerpt_ka: "", excerpt_ru: "",
     content: "", content_ka: "", content_ru: "",
-    category: "general", author: "Admin",
+    category: "general", categories: [] as string[], author: "Admin",
     featured_image_url: "", is_published: false, read_time_minutes: 5,
     meta_title: "", meta_title_ka: "", meta_title_ru: "",
     meta_description: "", meta_description_ka: "", meta_description_ru: "",
@@ -46,7 +46,7 @@ const BlogEditor = () => {
             title: data.title, title_ka: data.title_ka || "", title_ru: data.title_ru || "",
             slug: data.slug, excerpt: data.excerpt, excerpt_ka: data.excerpt_ka || "", excerpt_ru: data.excerpt_ru || "",
             content: data.content, content_ka: data.content_ka || "", content_ru: data.content_ru || "",
-            category: data.category, author: data.author,
+            category: data.category, categories: (data as any).categories || [], author: data.author,
             featured_image_url: data.featured_image_url || "",
             is_published: data.is_published, read_time_minutes: data.read_time_minutes,
             meta_title: data.meta_title || "", meta_title_ka: data.meta_title_ka || "", meta_title_ru: data.meta_title_ru || "",
@@ -84,7 +84,7 @@ const BlogEditor = () => {
       title: form.title, title_ka: form.title_ka || null, title_ru: form.title_ru || null,
       slug: form.slug, excerpt: form.excerpt, excerpt_ka: form.excerpt_ka || null, excerpt_ru: form.excerpt_ru || null,
       content: form.content, content_ka: form.content_ka || null, content_ru: form.content_ru || null,
-      category: form.category, author: form.author,
+      category: form.categories[0] || form.category, categories: form.categories, author: form.author,
       featured_image_url: form.featured_image_url || null,
       is_published: form.is_published, read_time_minutes: form.read_time_minutes,
       meta_title: form.meta_title || null, meta_title_ka: form.meta_title_ka || null, meta_title_ru: form.meta_title_ru || null,
@@ -157,18 +157,36 @@ const BlogEditor = () => {
             <RichTextEditor content={form.content} onChange={(html) => setForm((f) => ({ ...f, content: html }))} />
           </div>
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="text-sm text-muted-foreground mb-1.5 block font-sans">Category</label>
-              <Select value={form.category} onValueChange={(v) => setForm((f) => ({ ...f, category: v }))}>
-                <SelectTrigger className="font-sans"><SelectValue /></SelectTrigger>
-                <SelectContent>
-                  {categories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.slug}>{cat.name}</SelectItem>
-                  ))}
-                  {categories.length === 0 && <SelectItem value="general">General</SelectItem>}
-                </SelectContent>
-              </Select>
+              <label className="text-sm text-muted-foreground mb-1.5 block font-sans">Categories (pick one or more)</label>
+              <div className="flex flex-wrap gap-2">
+                {categories.map((cat) => {
+                  const active = form.categories.includes(cat.slug);
+                  return (
+                    <button
+                      type="button"
+                      key={cat.id}
+                      onClick={() => setForm((f) => ({
+                        ...f,
+                        categories: active
+                          ? f.categories.filter((s) => s !== cat.slug)
+                          : [...f.categories, cat.slug],
+                      }))}
+                      className={`px-3 py-1.5 rounded-full text-sm font-sans transition-all ${
+                        active
+                          ? "bg-[hsl(130_55%_40%)] text-white border border-[hsl(130_55%_40%)]"
+                          : "bg-white border border-muted text-foreground/80 hover:border-[hsl(130_55%_40%)]"
+                      }`}
+                    >
+                      {cat.name}
+                    </button>
+                  );
+                })}
+                {categories.length === 0 && (
+                  <span className="text-sm text-muted-foreground font-sans">No categories configured.</span>
+                )}
+              </div>
             </div>
             <div>
               <label className="text-sm text-muted-foreground mb-1.5 block font-sans">Read Time (min)</label>

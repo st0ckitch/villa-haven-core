@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 import { BlogPostingLd, BreadcrumbLd } from "@/components/JsonLd";
 import { supabase } from "@/integrations/supabase/client";
 import DOMPurify from "dompurify";
-import { ArrowLeft, Calendar, Clock, User, Facebook, Instagram } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Facebook, Instagram } from "lucide-react";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 
 type BlogPost = Record<string, any>;
@@ -31,11 +31,17 @@ const BlogPostPage = () => {
         setPost(data);
         setLoading(false);
         if (data) {
+          // Related posts: any that share at least one category with this post.
+          // Fall back to the legacy single `category` column if `categories[]` is empty.
+          const slugs: string[] = (data as any).categories?.length
+            ? (data as any).categories
+            : data.category ? [data.category] : [];
+          if (slugs.length === 0) { setRelated([]); return; }
           supabase
             .from("blog_posts")
             .select("*")
             .eq("is_published", true)
-            .eq("category", data.category)
+            .or(`categories.ov.{${slugs.join(",")}},category.in.(${slugs.map((s) => `"${s}"`).join(",")})`)
             .neq("id", data.id)
             .limit(3)
             .then(({ data: relatedData }) => setRelated(relatedData || []));
@@ -113,17 +119,18 @@ const BlogPostPage = () => {
             <ArrowLeft className="w-4 h-4" /> {t("blog.backToBlog")}
           </Link>
 
-          {/* Category pill */}
-          <span className="inline-flex items-center px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_30%)] mb-4">
-            {post.category}
-          </span>
+          {/* Category pills — multi-category support */}
+          <div className="flex flex-wrap gap-2 mb-4">
+            {((post.categories && post.categories.length) ? post.categories : (post.category ? [post.category] : [])).map((slug: string) => (
+              <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_30%)]">
+                {slug}
+              </span>
+            ))}
+          </div>
           <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mt-2 mb-6 leading-[1.1]">{localTitle}</h1>
 
           {/* Metadata glass chips */}
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-sans mb-10">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)]">
-              <User className="w-3 h-3 text-[hsl(130_55%_35%)]" />{post.author}
-            </span>
             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)]">
               <Calendar className="w-3 h-3 text-[hsl(130_55%_35%)]" />{new Date(post.created_at).toLocaleDateString()}
             </span>

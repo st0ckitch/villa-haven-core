@@ -7,16 +7,36 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
 
+// Per-language keys are resolved by the Olimpo page's `pick(key, fallback)` helper:
+// `<key>_<lang>` → i18n default. Generic language-neutral rows are ignored.
 const FIELDS = [
   { key: "olimpo_hero_image", label: "Hero Image", type: "image" },
-  { key: "olimpo_title", label: "Page Title", type: "text" },
-  { key: "olimpo_description", label: "Description", type: "textarea" },
-  { key: "olimpo_vision_title", label: "Vision / Directions Title", type: "text" },
-  { key: "olimpo_vision_text", label: "Vision / Directions Text", type: "textarea" },
+  { key: "olimpo_title_ka", label: "Page Title (KA)", type: "text" },
+  { key: "olimpo_title_en", label: "Page Title (EN)", type: "text" },
+  { key: "olimpo_title_ru", label: "Page Title (RU)", type: "text" },
+  { key: "olimpo_description_ka", label: "Description (KA)", type: "textarea" },
+  { key: "olimpo_description_en", label: "Description (EN)", type: "textarea" },
+  { key: "olimpo_description_ru", label: "Description (RU)", type: "textarea" },
+  { key: "olimpo_vision_title_ka", label: "Vision / Directions Title (KA)", type: "text" },
+  { key: "olimpo_vision_title_en", label: "Vision / Directions Title (EN)", type: "text" },
+  { key: "olimpo_vision_title_ru", label: "Vision / Directions Title (RU)", type: "text" },
+  { key: "olimpo_vision_text_ka", label: "Vision / Directions Text (KA)", type: "textarea" },
+  { key: "olimpo_vision_text_en", label: "Vision / Directions Text (EN)", type: "textarea" },
+  { key: "olimpo_vision_text_ru", label: "Vision / Directions Text (RU)", type: "textarea" },
   { key: "olimpo_video_url", label: "Video URL (YouTube/Vimeo/MP4)", type: "text" },
-  { key: "olimpo_join_title", label: "Club Membership Title", type: "text" },
-  { key: "olimpo_join_description", label: "Club Membership Description", type: "textarea" },
+  { key: "olimpo_join_title_ka", label: "Club Membership Title (KA)", type: "text" },
+  { key: "olimpo_join_title_en", label: "Club Membership Title (EN)", type: "text" },
+  { key: "olimpo_join_title_ru", label: "Club Membership Title (RU)", type: "text" },
+  { key: "olimpo_join_description_ka", label: "Club Membership Description (KA)", type: "textarea" },
+  { key: "olimpo_join_description_en", label: "Club Membership Description (EN)", type: "textarea" },
+  { key: "olimpo_join_description_ru", label: "Club Membership Description (RU)", type: "textarea" },
   { key: "olimpo_member_services", label: "Member Services (one per line)", type: "textarea" },
+  { key: "olimpo_club_benefits_title_ka", label: "Club Benefits Title (KA)", type: "text" },
+  { key: "olimpo_club_benefits_title_en", label: "Club Benefits Title (EN)", type: "text" },
+  { key: "olimpo_club_benefits_title_ru", label: "Club Benefits Title (RU)", type: "text" },
+  { key: "olimpo_club_benefits_text_ka", label: "Club Benefits Text (KA)", type: "textarea" },
+  { key: "olimpo_club_benefits_text_en", label: "Club Benefits Text (EN)", type: "textarea" },
+  { key: "olimpo_club_benefits_text_ru", label: "Club Benefits Text (RU)", type: "textarea" },
 ] as const;
 
 interface ProjectRender {

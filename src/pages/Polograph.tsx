@@ -8,7 +8,6 @@ import { CatalogSection } from "@/components/CatalogSection";
 import { ContactSection } from "@/components/home/ContactSection";
 import { RenderGalleryWithDescription } from "@/components/RenderGalleryWithDescription";
 import { InfrastructureTicker } from "@/components/InfrastructureTicker";
-import { VillaGrouping } from "@/components/VillaGrouping";
 import { PlotMapPublic } from "@/components/PlotMapPublic";
 import { ProjectHero } from "@/components/ProjectHero";
 import { GlassVideoFrame } from "@/components/GlassVideoFrame";
@@ -27,15 +26,26 @@ import {
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
+/**
+ * All `site_settings` keys we read for this page, including per-language variants.
+ * Admin can populate any of these; `getLocalizedContent` resolves the best match:
+ *   polograph_title_<lang> → polograph_title → i18n default
+ */
 const KEYS = [
   "polograph_hero_image",
   "polograph_title",
+  "polograph_title_ka", "polograph_title_en", "polograph_title_ru",
   "polograph_description",
+  "polograph_description_ka", "polograph_description_en", "polograph_description_ru",
   "polograph_vision_title",
+  "polograph_vision_title_ka", "polograph_vision_title_en", "polograph_vision_title_ru",
   "polograph_vision_text",
+  "polograph_vision_text_ka", "polograph_vision_text_en", "polograph_vision_text_ru",
   "polograph_video_url",
   "polograph_delivery_title",
+  "polograph_delivery_title_ka", "polograph_delivery_title_en", "polograph_delivery_title_ru",
   "polograph_delivery_text",
+  "polograph_delivery_text_ka", "polograph_delivery_text_en", "polograph_delivery_text_ru",
 ];
 
 // Polograph subset of services (PPTX slide 9)
@@ -49,7 +59,7 @@ const POLOGRAPH_SERVICES = [
 ];
 
 const Polograph = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [statusFilter, setStatusFilter] = useState("all");
   const [sizeFilter, setSizeFilter] = useState<[number, number] | null>(null);
   const [counts, setCounts] = useState({ all: 0, available: 0, reserved: 0, sold: 0 });
@@ -75,8 +85,20 @@ const Polograph = () => {
   }
 
   const c = content || {};
-  const descriptionText = c.polograph_description || t("polograph.descriptionDefault");
-  const titleText = c.polograph_title || t("nav.polograph");
+  // Resolver priority: per-language key (admin override) → i18n default.
+  // The old language-neutral `polograph_*` rows were populated with English-only
+  // copy before per-language fields existed, so we bypass that tier to avoid
+  // showing the legacy English on KA/RU. Admin edits always win via `_<lang>`.
+  const pick = (key: string, fallback: string) => {
+    const v = c[`${key}_${language}`];
+    return v && v.trim().length > 0 ? v : fallback;
+  };
+  const titleText = pick("polograph_title", t("polograph.titleDefault"));
+  const descriptionText = pick("polograph_description", t("polograph.descriptionDefault"));
+  const visionTitle = pick("polograph_vision_title", "");
+  const visionText = pick("polograph_vision_text", "");
+  const deliveryTitle = pick("polograph_delivery_title", "");
+  const deliveryText = pick("polograph_delivery_text", "");
 
   const filterButtons = [
     { key: "all", label: t("sitePlan.all"), count: counts.all },
@@ -107,8 +129,8 @@ const Polograph = () => {
           project="polograph"
           title={titleText}
           description={descriptionText}
-          visionTitle={c.polograph_vision_title}
-          visionText={c.polograph_vision_text}
+          visionTitle={visionTitle}
+          visionText={visionText}
         />
       </AnimatedSection>
 
@@ -141,11 +163,6 @@ const Polograph = () => {
 
           <PlotMapPublic statusFilter={statusFilter} sizeFilter={sizeFilter} onCounts={setCounts} />
         </AnimatedSection>
-      </div>
-
-      {/* 5. Villa Grouping by sqm — filter buttons that drive the plot map */}
-      <div className="container mx-auto px-6 pb-12 max-w-6xl">
-        <VillaGrouping onSizeFilterChange={setSizeFilter} activeFilter={sizeFilter} />
       </div>
 
       {/* 6. Video */}
@@ -185,12 +202,12 @@ const Polograph = () => {
       />
 
       {/* 10. Delivery Conditions (admin-editable) */}
-      {(c.polograph_delivery_title || c.polograph_delivery_text) && (
+      {(deliveryTitle || deliveryText) && (
         <div className="container mx-auto px-6 py-12 lg:py-16 max-w-5xl">
           <AnimatedSection>
             <GlassInfoCard
-              title={c.polograph_delivery_title || ""}
-              text={c.polograph_delivery_text || ""}
+              title={deliveryTitle}
+              text={deliveryText}
               variant="delivery"
             />
           </AnimatedSection>

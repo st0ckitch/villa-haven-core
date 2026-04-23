@@ -7,15 +7,30 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
 
+// Per-language keys are resolved by `getLocalizedContent` (src/lib/localizedContent.ts)
+// with priority: `<key>_<lang>` → `<key>` → i18n default. Filling the per-language
+// rows lets the admin show different copy per language without touching code.
 const FIELDS = [
   { key: "polograph_hero_image", label: "Hero Image", type: "image" },
-  { key: "polograph_title", label: "Page Title", type: "text" },
-  { key: "polograph_description", label: "Description", type: "textarea" },
-  { key: "polograph_vision_title", label: "Vision Title", type: "text" },
-  { key: "polograph_vision_text", label: "Vision Text", type: "textarea" },
+  { key: "polograph_title_ka", label: "Page Title (KA)", type: "text" },
+  { key: "polograph_title_en", label: "Page Title (EN)", type: "text" },
+  { key: "polograph_title_ru", label: "Page Title (RU)", type: "text" },
+  { key: "polograph_description_ka", label: "Description (KA)", type: "textarea" },
+  { key: "polograph_description_en", label: "Description (EN)", type: "textarea" },
+  { key: "polograph_description_ru", label: "Description (RU)", type: "textarea" },
+  { key: "polograph_vision_title_ka", label: "Vision Title (KA)", type: "text" },
+  { key: "polograph_vision_title_en", label: "Vision Title (EN)", type: "text" },
+  { key: "polograph_vision_title_ru", label: "Vision Title (RU)", type: "text" },
+  { key: "polograph_vision_text_ka", label: "Vision Text (KA)", type: "textarea" },
+  { key: "polograph_vision_text_en", label: "Vision Text (EN)", type: "textarea" },
+  { key: "polograph_vision_text_ru", label: "Vision Text (RU)", type: "textarea" },
   { key: "polograph_video_url", label: "Video URL (YouTube/Vimeo/MP4)", type: "text" },
-  { key: "polograph_delivery_title", label: "Delivery Conditions Title", type: "text" },
-  { key: "polograph_delivery_text", label: "Delivery Conditions Text", type: "textarea" },
+  { key: "polograph_delivery_title_ka", label: "Delivery Conditions Title (KA)", type: "text" },
+  { key: "polograph_delivery_title_en", label: "Delivery Conditions Title (EN)", type: "text" },
+  { key: "polograph_delivery_title_ru", label: "Delivery Conditions Title (RU)", type: "text" },
+  { key: "polograph_delivery_text_ka", label: "Delivery Conditions Text (KA)", type: "textarea" },
+  { key: "polograph_delivery_text_en", label: "Delivery Conditions Text (EN)", type: "textarea" },
+  { key: "polograph_delivery_text_ru", label: "Delivery Conditions Text (RU)", type: "textarea" },
 ] as const;
 
 interface ProjectRender {

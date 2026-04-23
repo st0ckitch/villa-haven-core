@@ -73,7 +73,7 @@ export const AmenitiesSection = () => {
     { value: Number(settings.stat_1_value) || 279, suffix: settings.stat_1_suffix || "", label: settings.stat_1_label || t("about.statVillas") },
     { value: Number(settings.stat_2_value) || 50, suffix: settings.stat_2_suffix || "", label: settings.stat_2_label || "ჰექტარი" },
     { value: Number(settings.stat_3_value) || 100, suffix: settings.stat_3_suffix || "%", label: settings.stat_3_label || "გამწვანება" },
-    { value: Number(settings.stat_4_value) || 15, suffix: settings.stat_4_suffix || "წუთი", label: settings.stat_4_label || "თბილისიდან" },
+    { value: Number(settings.stat_4_value) || 15, suffix: settings.stat_4_suffix || "წთ", label: settings.stat_4_label || "თბილისიდან" },
     { value: Number(settings.stat_5_value) || 0, suffix: settings.stat_5_suffix || "", label: settings.stat_5_label || "" },
   ].filter(s => s.value > 0 && s.label);
 
@@ -110,21 +110,19 @@ export const AmenitiesSection = () => {
 
       <div className="container mx-auto px-6">
 
-        {/* Slogan */}
+        {/* Slogan — single-line, tight spacing (client feedback Apr 23, 2026) */}
         {slogan && (
-          <AnimatedSection className="mt-16">
-            <div className="max-w-xl mx-auto text-center">
-              <div className="inline-block bg-white/30 backdrop-blur-md border border-white/20 rounded-2xl px-8 py-5">
-                <p className="text-base md:text-lg italic text-muted-foreground leading-relaxed">
-                  "{slogan}"
-                </p>
-              </div>
+          <AnimatedSection className="mt-4">
+            <div className="max-w-4xl mx-auto text-center">
+              <p className="text-sm md:text-base italic text-muted-foreground leading-snug whitespace-nowrap overflow-hidden text-ellipsis">
+                "{slogan}"
+              </p>
             </div>
           </AnimatedSection>
         )}
 
         {/* Stats row */}
-        <AnimatedSection delay={200} className="mt-16">
+        <AnimatedSection delay={200} className="mt-6">
           <div className="bg-white/35 backdrop-blur-xl border border-white/20 rounded-3xl p-8 lg:p-10 shadow-[0_8px_40px_rgba(0,0,0,0.04)]">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
               {stats.map((stat, i) => (

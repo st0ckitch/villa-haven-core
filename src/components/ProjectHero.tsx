@@ -1,17 +1,22 @@
-import { ChevronRight } from "lucide-react";
-import { Link } from "react-router-dom";
 import { SplitText } from "@/components/SplitText";
 
 interface ProjectHeroProps {
   image: string;
-  breadcrumb: string;
+  /**
+   * Kept for backward compatibility with existing callers — no longer rendered.
+   * Client feedback (PPTX slide 6 / April 22 review) asked to remove the small
+   * breadcrumb line above the big title because it was a visual duplicate.
+   * The global Navbar (fixed, top) already provides site navigation.
+   */
+  breadcrumb?: string;
   title: string;
   subtitle?: string;
   badge?: string;
+  /** Kept for backward compatibility. No longer rendered (breadcrumb removed). */
   backLink?: { label: string; to: string };
 }
 
-export const ProjectHero = ({ image, breadcrumb, title, subtitle, badge, backLink }: ProjectHeroProps) => {
+export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps) => {
   return (
     <section className="relative w-full h-[55vh] md:h-[75vh] min-h-[420px] overflow-hidden">
       {/* Background image */}
@@ -36,25 +41,12 @@ export const ProjectHero = ({ image, breadcrumb, title, subtitle, badge, backLin
         </div>
       )}
 
-      {/* Bottom-left floating glass card */}
+      {/* Bottom-left floating glass card — title + subtitle only */}
       <div className="absolute bottom-0 left-0 right-0 md:bottom-10 md:left-10 md:right-auto md:max-w-2xl">
         <div className="m-4 md:m-0 bg-white/65 backdrop-blur-2xl border border-white/50 rounded-3xl p-6 md:p-10
           shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-1.5 text-[11px] font-sans font-semibold uppercase tracking-[0.2em] text-[hsl(130_55%_35%)] mb-4">
-            {backLink && (
-              <>
-                <Link to={backLink.to} className="hover:text-[hsl(130_55%_30%)] transition-colors">
-                  {backLink.label}
-                </Link>
-                <ChevronRight className="w-3 h-3" />
-              </>
-            )}
-            <span className="text-foreground/50">{breadcrumb}</span>
-          </div>
-
-          {/* Title with character reveal */}
-          <h1 className="font-sans text-3xl md:text-5xl lg:text-6xl font-light tracking-tight text-foreground leading-[1.05] mb-3">
+          {/* Title with character reveal — single heading, no kicker (client feedback) */}
+          <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.05] mb-3 whitespace-nowrap">
             <SplitText text={title} split="char" stagger={0.03} as="span" />
           </h1>
 
