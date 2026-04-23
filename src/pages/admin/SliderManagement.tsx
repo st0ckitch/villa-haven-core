@@ -7,13 +7,23 @@ import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { Plus, Trash2, GripVertical, Upload, Video, Image } from "lucide-react";
 
+// Per-language columns live alongside the legacy single-language `title` /
+// `description` (kept for back-compat). The public HeroSection reads
+// `<field>_<lang>` first via getLocalizedField().
 interface SlideForm {
   image_url: string;
   title: string;
+  title_ka: string;
+  title_en: string;
+  title_ru: string;
   description: string;
+  description_ka: string;
+  description_en: string;
+  description_ru: string;
   sort_order: number;
   is_active: boolean;
 }
@@ -21,7 +31,13 @@ interface SlideForm {
 const emptyForm: SlideForm = {
   image_url: "",
   title: "",
+  title_ka: "",
+  title_en: "",
+  title_ru: "",
   description: "",
+  description_ka: "",
+  description_en: "",
+  description_ru: "",
   sort_order: 0,
   is_active: true,
 };
@@ -97,28 +113,24 @@ const SliderManagement = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (slide: SlideForm & { id?: string }) => {
+      const payload = {
+        image_url: slide.image_url,
+        title: slide.title || slide.title_ka || slide.title_en || null,
+        title_ka: slide.title_ka || null,
+        title_en: slide.title_en || null,
+        title_ru: slide.title_ru || null,
+        description: slide.description || slide.description_ka || slide.description_en || null,
+        description_ka: slide.description_ka || null,
+        description_en: slide.description_en || null,
+        description_ru: slide.description_ru || null,
+        sort_order: slide.sort_order,
+        is_active: slide.is_active,
+      };
       if (slide.id) {
-        const { error } = await supabase
-          .from("hero_slides")
-          .update({
-            image_url: slide.image_url,
-            title: slide.title || null,
-            description: slide.description || null,
-            sort_order: slide.sort_order,
-            is_active: slide.is_active,
-          })
-          .eq("id", slide.id);
+        const { error } = await supabase.from("hero_slides").update(payload).eq("id", slide.id);
         if (error) throw error;
       } else {
-        const { error } = await supabase
-          .from("hero_slides")
-          .insert({
-            image_url: slide.image_url,
-            title: slide.title || null,
-            description: slide.description || null,
-            sort_order: slide.sort_order,
-            is_active: slide.is_active,
-          });
+        const { error } = await supabase.from("hero_slides").insert(payload);
         if (error) throw error;
       }
     },
@@ -168,7 +180,13 @@ const SliderManagement = () => {
     setForm({
       image_url: slide.image_url,
       title: slide.title || "",
+      title_ka: (slide as any).title_ka || "",
+      title_en: (slide as any).title_en || "",
+      title_ru: (slide as any).title_ru || "",
       description: slide.description || "",
+      description_ka: (slide as any).description_ka || "",
+      description_en: (slide as any).description_en || "",
+      description_ru: (slide as any).description_ru || "",
       sort_order: slide.sort_order,
       is_active: slide.is_active,
     });
@@ -259,26 +277,36 @@ const SliderManagement = () => {
                 </label>
               </div>
 
-              <div className="space-y-2">
-                <Label className="font-sans text-sm">Title (optional)</Label>
-                <Input
-                  value={form.title}
-                  onChange={(e) => setForm({ ...form, title: e.target.value })}
-                  placeholder="Slide title"
-                  className="font-sans"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label className="font-sans text-sm">Description (optional)</Label>
-                <Textarea
-                  value={form.description}
-                  onChange={(e) => setForm({ ...form, description: e.target.value })}
-                  placeholder="Slide description"
-                  className="font-sans"
-                  rows={2}
-                />
-              </div>
+              <Tabs defaultValue="ka" className="space-y-3">
+                <TabsList>
+                  <TabsTrigger value="ka" className="font-sans">KA</TabsTrigger>
+                  <TabsTrigger value="en" className="font-sans">EN</TabsTrigger>
+                  <TabsTrigger value="ru" className="font-sans">RU</TabsTrigger>
+                </TabsList>
+                {(["ka", "en", "ru"] as const).map((lang) => (
+                  <TabsContent key={lang} value={lang} className="space-y-3">
+                    <div className="space-y-2">
+                      <Label className="font-sans text-sm">Title ({lang.toUpperCase()})</Label>
+                      <Input
+                        value={form[`title_${lang}`]}
+                        onChange={(e) => setForm({ ...form, [`title_${lang}`]: e.target.value })}
+                        placeholder={`Slide title (${lang.toUpperCase()})`}
+                        className="font-sans"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="font-sans text-sm">Description ({lang.toUpperCase()})</Label>
+                      <Textarea
+                        value={form[`description_${lang}`]}
+                        onChange={(e) => setForm({ ...form, [`description_${lang}`]: e.target.value })}
+                        placeholder={`Slide description (${lang.toUpperCase()})`}
+                        className="font-sans"
+                        rows={3}
+                      />
+                    </div>
+                  </TabsContent>
+                ))}
+              </Tabs>
 
               <div className="flex items-center gap-6">
                 <div className="space-y-1">

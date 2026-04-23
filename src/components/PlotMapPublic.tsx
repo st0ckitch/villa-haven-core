@@ -181,7 +181,11 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   const buildVillaHref = (villa: AssignedVilla, zoneId: string) => {
     const section = villa.section || "a-section";
     const slug = villa.slug || villa.id;
-    return `/projects/${section}/${slug}?plot=${zoneId}`;
+    // Prepend Vite's BASE_URL so GitHub Pages deploy (served under
+    // /villa-haven-core/) resolves correctly. Plain `<a href="/...">` bypasses
+    // React Router's basename, which caused a 404 at stOckitch.github.io/projects/...
+    const base = import.meta.env.BASE_URL.replace(/\/$/, "");
+    return `${base}/projects/${section}/${slug}?plot=${zoneId}`;
   };
 
   if (loading) {
