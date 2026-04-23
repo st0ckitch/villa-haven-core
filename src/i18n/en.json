@@ -187,7 +187,8 @@
     "available": "Free",
     "reserved": "Reserved",
     "sold": "Sold",
-    "loading": "Loading..."
+    "loading": "Loading...",
+    "pinchHint": "Pinch to zoom"
   },
   "villa": {
     "notFound": "Villa not found",

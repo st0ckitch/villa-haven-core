@@ -3,7 +3,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
-import { Calculator, X } from "lucide-react";
+import { Calculator, X, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { PlotPriceDialog } from "@/components/PlotPriceDialog";
 import { getZoneCategory } from "@/lib/zoneCategory";
 
@@ -212,69 +213,127 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
     <>
       <div
         ref={containerRef}
-        className="relative w-full rounded-xl overflow-hidden border border-border bg-muted select-none"
+        className="relative w-full rounded-xl overflow-hidden border border-border bg-muted select-none touch-none"
       >
-        <img src={imageUrl} alt="Site plan" className="w-full h-auto block pointer-events-none" draggable={false} />
+        <TransformWrapper
+          // On mobile the map frame is ~320px wide; starting at 1.4x makes
+          // small zones tappable without forcing the user to pinch first.
+          initialScale={typeof window !== "undefined" && window.innerWidth < 640 ? 1.4 : 1}
+          minScale={1}
+          maxScale={5}
+          doubleClick={{ mode: "toggle", step: 1.2 }}
+          wheel={{ step: 0.15 }}
+          pinch={{ step: 5 }}
+          panning={{ velocityDisabled: true }}
+          centerOnInit
+        >
+          {({ zoomIn, zoomOut, resetTransform }) => (
+            <>
+              <TransformComponent
+                wrapperStyle={{ width: "100%", height: "auto" }}
+                contentStyle={{ width: "100%", height: "auto" }}
+              >
+                <div className="relative w-full">
+                  <img src={imageUrl} alt="Site plan" className="w-full h-auto block pointer-events-none" draggable={false} />
 
-        {/* Dark overlay with cutout for active zone */}
-        <div
-          className="absolute inset-0 transition-opacity duration-200 pointer-events-none"
-          style={{
-            backgroundColor: activeHighlight ? "rgba(0,0,0,0.55)" : "transparent",
-            clipPath: activeHighlight
-              ? `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, ${activeHighlight.polygon.map((p) => `${p.x}% ${p.y}%`).join(", ")})`
-              : undefined,
-            clipRule: "evenodd",
-          }}
-        />
+                  {/* Dark overlay with cutout for active zone */}
+                  <div
+                    className="absolute inset-0 transition-opacity duration-200 pointer-events-none"
+                    style={{
+                      backgroundColor: activeHighlight ? "rgba(0,0,0,0.55)" : "transparent",
+                      clipPath: activeHighlight
+                        ? `polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%, 0% 0%, ${activeHighlight.polygon.map((p) => `${p.x}% ${p.y}%`).join(", ")})`
+                        : undefined,
+                      clipRule: "evenodd",
+                    }}
+                  />
 
-        {/* SVG zone overlays */}
-        <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-          {filtered.map((zone) => {
-            const isAvailable = zone.status === "available";
-            const isActive = activeHighlight?.id === zone.id;
-            const isUnavailable = zone.status === "reserved" || zone.status === "sold";
-            const matchesSize = zoneMatchesSizeFilter(zone);
-            const dimmed = sizeFilter && !matchesSize;
-            // When size filter is active, non-matching zones get a visible "dim" overlay
-            const showFill = isActive || isUnavailable || dimmed;
-            const fillColor = dimmed && !isActive && !isUnavailable ? "rgb(100,100,100)" : statusColors[zone.status];
-            const fillOp = dimmed && !isActive && !isUnavailable ? 0.35 : isActive ? 0.5 : isUnavailable ? 0.3 : 0;
-            return (
-              <polygon
-                key={zone.id}
-                points={pointsToSvg(zone.polygon)}
-                fill={showFill ? fillColor : "transparent"}
-                fillOpacity={fillOp}
-                stroke="transparent"
-                strokeWidth="0"
-                className={`transition-all duration-200 ${isAvailable && !dimmed ? "cursor-pointer" : "cursor-default"}`}
-                onClick={() => !dimmed && handleZoneClick(zone)}
-                onMouseEnter={() => isAvailable && !dimmed && setHoveredZoneId(zone.id)}
-                onMouseLeave={() => { setHoveredZoneId(null); setTooltipPos(null); }}
-                onMouseMove={(e: any) => { if (isAvailable && !dimmed) handleMouseMove(e); }}
-                style={{ filter: isActive ? `drop-shadow(0 0 3px ${statusColors[zone.status]})` : undefined }}
-              />
-            );
-          })}
-        </svg>
+                  {/* SVG zone overlays */}
+                  <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                    {filtered.map((zone) => {
+                      const isAvailable = zone.status === "available";
+                      const isActive = activeHighlight?.id === zone.id;
+                      const isUnavailable = zone.status === "reserved" || zone.status === "sold";
+                      const matchesSize = zoneMatchesSizeFilter(zone);
+                      const dimmed = sizeFilter && !matchesSize;
+                      const showFill = isActive || isUnavailable || dimmed;
+                      const fillColor = dimmed && !isActive && !isUnavailable ? "rgb(100,100,100)" : statusColors[zone.status];
+                      const fillOp = dimmed && !isActive && !isUnavailable ? 0.35 : isActive ? 0.5 : isUnavailable ? 0.3 : 0;
+                      return (
+                        <polygon
+                          key={zone.id}
+                          points={pointsToSvg(zone.polygon)}
+                          fill={showFill ? fillColor : "transparent"}
+                          fillOpacity={fillOp}
+                          stroke="transparent"
+                          strokeWidth="0"
+                          className={`transition-all duration-200 ${isAvailable && !dimmed ? "cursor-pointer" : "cursor-default"}`}
+                          onClick={() => !dimmed && handleZoneClick(zone)}
+                          onMouseEnter={() => isAvailable && !dimmed && setHoveredZoneId(zone.id)}
+                          onMouseLeave={() => { setHoveredZoneId(null); setTooltipPos(null); }}
+                          onMouseMove={(e: any) => { if (isAvailable && !dimmed) handleMouseMove(e); }}
+                          style={{ filter: isActive ? `drop-shadow(0 0 3px ${statusColors[zone.status]})` : undefined }}
+                        />
+                      );
+                    })}
+                  </svg>
 
-        {/* Floating tooltip */}
-        {hoveredZoneId && tooltipPos && !selectedZone && (
-          <div
-            className="absolute z-30 bg-card border border-border rounded-lg px-3 py-1.5 shadow-lg pointer-events-none whitespace-nowrap"
-            style={{
-              left: tooltipPos.x,
-              top: tooltipPos.y - 40,
-              transform: "translateX(-50%)",
-            }}
-          >
-            <span className="text-xs font-sans text-foreground">{t("villa.moreDetails")}</span>
-          </div>
-        )}
+                  {/* Floating hover tooltip (desktop only — touch shows the sheet on tap) */}
+                  {hoveredZoneId && tooltipPos && !selectedZone && (
+                    <div
+                      className="absolute z-30 bg-card border border-border rounded-lg px-3 py-1.5 shadow-lg pointer-events-none whitespace-nowrap hidden sm:block"
+                      style={{ left: tooltipPos.x, top: tooltipPos.y - 40, transform: "translateX(-50%)" }}
+                    >
+                      <span className="text-xs font-sans text-foreground">{t("villa.moreDetails")}</span>
+                    </div>
+                  )}
+                </div>
+              </TransformComponent>
 
-        {/* Legend */}
-        <div className="absolute top-3 right-3 bg-card/90 backdrop-blur-sm border border-border rounded-lg p-2.5 flex gap-3">
+              {/* Zoom controls — always visible, touch-friendly (44x44). */}
+              <div className="absolute bottom-3 right-3 z-30 flex flex-col gap-2">
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  className="h-11 w-11 rounded-full bg-card/95 backdrop-blur-sm shadow-lg border border-border"
+                  onClick={() => zoomIn()}
+                  aria-label="Zoom in"
+                >
+                  <ZoomIn className="h-5 w-5" />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  className="h-11 w-11 rounded-full bg-card/95 backdrop-blur-sm shadow-lg border border-border"
+                  onClick={() => zoomOut()}
+                  aria-label="Zoom out"
+                >
+                  <ZoomOut className="h-5 w-5" />
+                </Button>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="secondary"
+                  className="h-11 w-11 rounded-full bg-card/95 backdrop-blur-sm shadow-lg border border-border"
+                  onClick={() => resetTransform()}
+                  aria-label="Reset zoom"
+                >
+                  <Maximize2 className="h-5 w-5" />
+                </Button>
+              </div>
+
+              {/* Pinch-to-zoom hint on mobile, first time only */}
+              <div className="absolute bottom-3 left-3 z-30 bg-card/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 sm:hidden pointer-events-none">
+                <span className="text-[10px] font-sans text-muted-foreground">{t("sitePlan.pinchHint") !== "sitePlan.pinchHint" ? t("sitePlan.pinchHint") : "Pinch to zoom"}</span>
+              </div>
+            </>
+          )}
+        </TransformWrapper>
+
+        {/* Legend — stays outside the pan/zoom layer so it doesn't move */}
+        <div className="absolute top-3 right-3 z-20 bg-card/90 backdrop-blur-sm border border-border rounded-lg p-2.5 flex gap-3">
           {(["available", "reserved", "sold"] as const).map((status) => (
             <div key={status} className="flex items-center gap-1.5">
               <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusColors[status] }} />

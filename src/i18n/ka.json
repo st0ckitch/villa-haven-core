@@ -187,7 +187,8 @@
     "available": "თავისუფალი",
     "reserved": "დაჯავშნილი",
     "sold": "გაყიდული",
-    "loading": "იტვირთება..."
+    "loading": "იტვირთება...",
+    "pinchHint": "Pinch-ით გაადიდე"
   },
   "villa": {
     "notFound": "ვილა ვერ მოიძებნა",
