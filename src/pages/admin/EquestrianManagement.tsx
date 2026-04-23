@@ -7,16 +7,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, X, Plus, Trash2 } from "lucide-react";
 
+// Per-language text fields (resolved via `pick()` on the Ipodromi page).
 const FIELDS = [
   { key: "equestrian_hero_image", label: "Hero Image", type: "image" },
-  { key: "equestrian_title", label: "Page Title", type: "text" },
-  { key: "equestrian_description", label: "Description", type: "textarea" },
-  { key: "equestrian_vision_title", label: "Vision Title", type: "text" },
-  { key: "equestrian_vision_text", label: "Vision Text", type: "textarea" },
+  { key: "equestrian_title_ka", label: "Page Title (KA)", type: "text" },
+  { key: "equestrian_title_en", label: "Page Title (EN)", type: "text" },
+  { key: "equestrian_title_ru", label: "Page Title (RU)", type: "text" },
+  { key: "equestrian_description_ka", label: "Description (KA)", type: "textarea" },
+  { key: "equestrian_description_en", label: "Description (EN)", type: "textarea" },
+  { key: "equestrian_description_ru", label: "Description (RU)", type: "textarea" },
+  { key: "equestrian_vision_title_ka", label: "Vision Title (KA)", type: "text" },
+  { key: "equestrian_vision_title_en", label: "Vision Title (EN)", type: "text" },
+  { key: "equestrian_vision_title_ru", label: "Vision Title (RU)", type: "text" },
+  { key: "equestrian_vision_text_ka", label: "Vision Text (KA)", type: "textarea" },
+  { key: "equestrian_vision_text_en", label: "Vision Text (EN)", type: "textarea" },
+  { key: "equestrian_vision_text_ru", label: "Vision Text (RU)", type: "textarea" },
   { key: "equestrian_video_url", label: "Video URL (YouTube/Vimeo/MP4)", type: "text" },
-  { key: "equestrian_details", label: "Service Details (one per line: e.g. ცხენის მოვლა, სპორტული სკოლა)", type: "textarea" },
-  { key: "equestrian_join_title", label: "Club Membership Title", type: "text" },
-  { key: "equestrian_join_description", label: "Club Membership Description", type: "textarea" },
+  { key: "equestrian_details", label: "Service Details (one per line)", type: "textarea" },
+  { key: "equestrian_join_title_ka", label: "Club Membership Title (KA)", type: "text" },
+  { key: "equestrian_join_title_en", label: "Club Membership Title (EN)", type: "text" },
+  { key: "equestrian_join_title_ru", label: "Club Membership Title (RU)", type: "text" },
+  { key: "equestrian_join_description_ka", label: "Club Membership Description (KA)", type: "textarea" },
+  { key: "equestrian_join_description_en", label: "Club Membership Description (EN)", type: "textarea" },
+  { key: "equestrian_join_description_ru", label: "Club Membership Description (RU)", type: "textarea" },
   { key: "equestrian_member_services", label: "Member Services (one per line)", type: "textarea" },
 ] as const;
 

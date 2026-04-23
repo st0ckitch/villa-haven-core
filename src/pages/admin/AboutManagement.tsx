@@ -8,14 +8,28 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { Loader2, Upload, X } from "lucide-react";
 
+// Text fields are per-language (resolved by `pick(key, fallback)` on the About
+// page). Images remain language-neutral since they don't need translation.
 const FIELDS = [
   { key: "about_hero_image", label: "Hero Image", type: "image" },
-  { key: "about_title", label: "Page Title", type: "text" },
-  { key: "about_description", label: "Description", type: "textarea" },
-  { key: "about_mission_title", label: "Mission Title", type: "text" },
-  { key: "about_mission_text", label: "Mission Text", type: "textarea" },
-  { key: "about_vision_title", label: "Vision Title", type: "text" },
-  { key: "about_vision_text", label: "Vision Text", type: "textarea" },
+  { key: "about_title_ka", label: "Page Title (KA)", type: "text" },
+  { key: "about_title_en", label: "Page Title (EN)", type: "text" },
+  { key: "about_title_ru", label: "Page Title (RU)", type: "text" },
+  { key: "about_description_ka", label: "Description (KA)", type: "textarea" },
+  { key: "about_description_en", label: "Description (EN)", type: "textarea" },
+  { key: "about_description_ru", label: "Description (RU)", type: "textarea" },
+  { key: "about_mission_title_ka", label: "Mission Title (KA)", type: "text" },
+  { key: "about_mission_title_en", label: "Mission Title (EN)", type: "text" },
+  { key: "about_mission_title_ru", label: "Mission Title (RU)", type: "text" },
+  { key: "about_mission_text_ka", label: "Mission Text (KA)", type: "textarea" },
+  { key: "about_mission_text_en", label: "Mission Text (EN)", type: "textarea" },
+  { key: "about_mission_text_ru", label: "Mission Text (RU)", type: "textarea" },
+  { key: "about_vision_title_ka", label: "Vision Title (KA)", type: "text" },
+  { key: "about_vision_title_en", label: "Vision Title (EN)", type: "text" },
+  { key: "about_vision_title_ru", label: "Vision Title (RU)", type: "text" },
+  { key: "about_vision_text_ka", label: "Vision Text (KA)", type: "textarea" },
+  { key: "about_vision_text_en", label: "Vision Text (EN)", type: "textarea" },
+  { key: "about_vision_text_ru", label: "Vision Text (RU)", type: "textarea" },
   { key: "about_team_image", label: "Team / Company Image", type: "image" },
 ] as const;
 

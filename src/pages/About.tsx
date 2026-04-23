@@ -10,17 +10,17 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const ABOUT_KEYS = [
   "about_hero_image",
-  "about_title",
-  "about_description",
-  "about_mission_title",
-  "about_mission_text",
-  "about_vision_title",
-  "about_vision_text",
+  "about_title_ka", "about_title_en", "about_title_ru",
+  "about_description_ka", "about_description_en", "about_description_ru",
+  "about_mission_title_ka", "about_mission_title_en", "about_mission_title_ru",
+  "about_mission_text_ka", "about_mission_text_en", "about_mission_text_ru",
+  "about_vision_title_ka", "about_vision_title_en", "about_vision_title_ru",
+  "about_vision_text_ka", "about_vision_text_en", "about_vision_text_ru",
   "about_team_image",
 ];
 
 const About = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { data: content, isLoading } = useQuery({
     queryKey: ["about-page"],
     queryFn: async () => {
@@ -45,11 +45,21 @@ const About = () => {
   }
 
   const c = content || {};
-  const pageTitle = c.about_title || t("about.title1") + t("about.titleEm");
+  // Per-language resolver — admin override via `<key>_<lang>` → i18n default.
+  const pick = (key: string, fallback: string) => {
+    const v = c[`${key}_${language}`];
+    return v && v.trim().length > 0 ? v : fallback;
+  };
+  const pageTitle = pick("about_title", t("about.title1") + t("about.titleEm"));
+  const description = pick("about_description", "");
+  const missionTitle = pick("about_mission_title", t("projects.mainDirections"));
+  const missionText = pick("about_mission_text", "");
+  const visionTitle = pick("about_vision_title", t("about.title1") + t("about.titleEm"));
+  const visionText = pick("about_vision_text", "");
 
   return (
     <Layout>
-      <SEO title={`${pageTitle} — Igavi`} description={c.about_description?.slice(0, 160) || ""} />
+      <SEO title={`${pageTitle} — Igavi`} description={description.slice(0, 160)} />
 
       {/* 1. Hero with glass card */}
       {c.about_hero_image ? (
@@ -57,7 +67,7 @@ const About = () => {
           image={c.about_hero_image}
           breadcrumb={pageTitle}
           title={pageTitle}
-          subtitle={c.about_description?.split("\n")[0]?.slice(0, 140) || ""}
+          subtitle={description.split("\n")[0]?.slice(0, 140) || ""}
           badge={t("nav.aboutUs")}
           backLink={{ label: t("nav.home"), to: "/" }}
         />
@@ -74,31 +84,23 @@ const About = () => {
             </h1>
           )}
           <p className="font-sans text-muted-foreground leading-relaxed text-base md:text-lg whitespace-pre-line">
-            {c.about_description || ""}
+            {description}
           </p>
         </AnimatedSection>
       </div>
 
       {/* 3. Mission & Vision glass cards */}
-      {(c.about_mission_text || c.about_vision_text) && (
+      {(missionText || visionText) && (
         <div className="container mx-auto px-6 pb-16 lg:pb-20 max-w-5xl">
           <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            {c.about_mission_text && (
+            {missionText && (
               <AnimatedSection delay={100}>
-                <GlassInfoCard
-                  title={c.about_mission_title || t("projects.mainDirections")}
-                  text={c.about_mission_text}
-                  variant="vision"
-                />
+                <GlassInfoCard title={missionTitle} text={missionText} variant="vision" />
               </AnimatedSection>
             )}
-            {c.about_vision_text && (
+            {visionText && (
               <AnimatedSection delay={200}>
-                <GlassInfoCard
-                  title={c.about_vision_title || t("about.title1") + t("about.titleEm")}
-                  text={c.about_vision_text}
-                  variant="quote"
-                />
+                <GlassInfoCard title={visionTitle} text={visionText} variant="quote" />
               </AnimatedSection>
             )}
           </div>

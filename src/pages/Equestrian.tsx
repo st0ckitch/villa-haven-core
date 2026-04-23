@@ -37,15 +37,15 @@ import { useLanguage } from "@/contexts/LanguageContext";
 
 const KEYS = [
   "equestrian_hero_image",
-  "equestrian_title",
-  "equestrian_description",
-  "equestrian_vision_title",
-  "equestrian_vision_text",
   "equestrian_video_url",
-  "equestrian_join_title",
-  "equestrian_join_description",
   "equestrian_member_services",
   "equestrian_details",
+  "equestrian_title_ka", "equestrian_title_en", "equestrian_title_ru",
+  "equestrian_description_ka", "equestrian_description_en", "equestrian_description_ru",
+  "equestrian_vision_title_ka", "equestrian_vision_title_en", "equestrian_vision_title_ru",
+  "equestrian_vision_text_ka", "equestrian_vision_text_en", "equestrian_vision_text_ru",
+  "equestrian_join_title_ka", "equestrian_join_title_en", "equestrian_join_title_ru",
+  "equestrian_join_description_ka", "equestrian_join_description_en", "equestrian_join_description_ru",
 ];
 
 /**
@@ -71,7 +71,7 @@ const SERVICES = [
 ];
 
 const Ipodromi = () => {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const { data: content, isLoading } = useQuery({
     queryKey: ["ipodromi-page"],
     queryFn: async () => {
@@ -94,8 +94,17 @@ const Ipodromi = () => {
 
   const c = content || {};
   const memberServices = c.equestrian_member_services ? c.equestrian_member_services.split("\n").filter(Boolean) : [];
-  const titleText = c.equestrian_title || t("ipodromi.title");
-  const descriptionText = c.equestrian_description || t("ipodromi.descriptionDefault");
+  // Per-language admin override → i18n default.
+  const pick = (key: string, fallback: string) => {
+    const v = c[`${key}_${language}`];
+    return v && v.trim().length > 0 ? v : fallback;
+  };
+  const titleText = pick("equestrian_title", t("ipodromi.title"));
+  const descriptionText = pick("equestrian_description", t("ipodromi.descriptionDefault"));
+  const visionTitle = pick("equestrian_vision_title", "");
+  const visionText = pick("equestrian_vision_text", "");
+  const joinTitle = pick("equestrian_join_title", "");
+  const joinDescription = pick("equestrian_join_description", "");
 
   return (
     <Layout>
@@ -119,8 +128,8 @@ const Ipodromi = () => {
           project="equestrian"
           title={titleText}
           description={descriptionText}
-          visionTitle={c.equestrian_vision_title}
-          visionText={c.equestrian_vision_text}
+          visionTitle={visionTitle}
+          visionText={visionText}
         />
       </AnimatedSection>
 
@@ -222,8 +231,8 @@ const Ipodromi = () => {
       {/* 7. Club Membership CTA */}
       <ClubMembershipCTA
         project="equestrian"
-        joinTitle={c.equestrian_join_title}
-        joinDescription={c.equestrian_join_description}
+        joinTitle={joinTitle}
+        joinDescription={joinDescription}
         services={memberServices}
       />
 
