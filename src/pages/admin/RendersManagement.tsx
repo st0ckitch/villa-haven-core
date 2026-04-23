@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Trash2, Search, Plus, Upload } from "lucide-react";
 
 type Render = Tables<"renders">;
@@ -20,6 +21,9 @@ const RendersManagement = () => {
   const [addOpen, setAddOpen] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [newTitleKa, setNewTitleKa] = useState("");
+  const [newTitleEn, setNewTitleEn] = useState("");
+  const [newTitleRu, setNewTitleRu] = useState("");
   const [newCategory, setNewCategory] = useState("exterior");
   const [newSortOrder, setNewSortOrder] = useState(0);
   const [newFile, setNewFile] = useState<File | null>(null);
@@ -58,15 +62,19 @@ const RendersManagement = () => {
 
       const { error: insertError } = await supabase.from("renders").insert({
         title: newTitle.trim(),
+        title_ka: newTitleKa.trim() || null,
+        title_en: newTitleEn.trim() || null,
+        title_ru: newTitleRu.trim() || null,
         image_url: publicUrl,
         category: newCategory,
         sort_order: newSortOrder,
-      });
+      } as any);
       if (insertError) throw insertError;
 
       toast({ title: "Image added" });
       setAddOpen(false);
       setNewTitle("");
+      setNewTitleKa(""); setNewTitleEn(""); setNewTitleRu("");
       setNewCategory("exterior");
       setNewSortOrder(0);
       setNewFile(null);
@@ -139,9 +147,25 @@ const RendersManagement = () => {
               </div>
             </div>
             <div>
-              <Label className="font-sans">Title</Label>
+              <Label className="font-sans">Title (default / fallback)</Label>
               <Input value={newTitle} onChange={(e) => setNewTitle(e.target.value)} placeholder="Image title" className="mt-1.5 font-sans" />
             </div>
+            <Tabs defaultValue="ka">
+              <TabsList>
+                <TabsTrigger value="ka" className="font-sans">KA</TabsTrigger>
+                <TabsTrigger value="en" className="font-sans">EN</TabsTrigger>
+                <TabsTrigger value="ru" className="font-sans">RU</TabsTrigger>
+              </TabsList>
+              <TabsContent value="ka">
+                <Input value={newTitleKa} onChange={(e) => setNewTitleKa(e.target.value)} placeholder="სათაური (KA)" className="mt-1.5 font-sans" />
+              </TabsContent>
+              <TabsContent value="en">
+                <Input value={newTitleEn} onChange={(e) => setNewTitleEn(e.target.value)} placeholder="Title (EN)" className="mt-1.5 font-sans" />
+              </TabsContent>
+              <TabsContent value="ru">
+                <Input value={newTitleRu} onChange={(e) => setNewTitleRu(e.target.value)} placeholder="Заголовок (RU)" className="mt-1.5 font-sans" />
+              </TabsContent>
+            </Tabs>
             <div>
               <Label className="font-sans">Category</Label>
               <Select value={newCategory} onValueChange={setNewCategory}>

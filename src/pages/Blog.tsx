@@ -9,7 +9,7 @@ import { Clock, Calendar } from "lucide-react";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 
 type BlogPost = Record<string, any>;
-type BlogCategory = { id: string; name: string; slug: string };
+type BlogCategory = { id: string; name: string; slug: string; name_ka?: string | null; name_en?: string | null; name_ru?: string | null };
 
 const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
@@ -81,7 +81,7 @@ const Blog = () => {
                         : "bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-foreground"
                     }`}
                   >
-                    {cat.name}
+                    {getLocalizedField(cat as any, "name", language)}
                   </button>
                 ))}
               </div>
@@ -120,7 +120,7 @@ const Blog = () => {
                                 const cat = categories.find((c) => c.slug === slug);
                                 return (
                                   <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-[10px] font-sans font-bold uppercase tracking-[0.15em] text-[hsl(130_55%_30%)] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
-                                    {cat?.name || slug}
+                                    {cat ? getLocalizedField(cat as any, "name", language) : slug}
                                   </span>
                                 );
                               })}

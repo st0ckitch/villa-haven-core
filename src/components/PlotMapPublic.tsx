@@ -2,7 +2,7 @@ import { useEffect, useState, useRef, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { useLanguage } from "@/contexts/LanguageContext";
+import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 import { Calculator, X } from "lucide-react";
 import { PlotPriceDialog } from "@/components/PlotPriceDialog";
 import { getZoneCategory } from "@/lib/zoneCategory";
@@ -307,7 +307,7 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
               <div className="flex items-center justify-between p-5 border-b border-border">
                 <div>
                   <h3 className="font-serif text-lg font-semibold text-foreground">
-                    {getZoneCategory(selectedZone.name)}
+                    {getZoneCategory(getLocalizedField(selectedZone as any, "name", language))}
                   </h3>
                   <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground font-sans">
                     {selectedZone.size_sqm && <span>{selectedZone.size_sqm} m²</span>}
@@ -328,11 +328,14 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
               </div>
 
               {/* Description */}
-              {selectedZone.description && (
-                <div className="px-5 pt-4">
-                  <p className="text-sm text-muted-foreground font-sans leading-relaxed">{selectedZone.description}</p>
-                </div>
-              )}
+              {(() => {
+                const desc = getLocalizedField(selectedZone as any, "description", language);
+                return desc ? (
+                  <div className="px-5 pt-4">
+                    <p className="text-sm text-muted-foreground font-sans leading-relaxed">{desc}</p>
+                  </div>
+                ) : null;
+              })()}
 
               {/* Villas */}
               <div className="p-5 space-y-4">

@@ -17,6 +17,10 @@ const BlogPostPage = () => {
   const [post, setPost] = useState<BlogPost | null>(null);
   const [related, setRelated] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [categories, setCategories] = useState<Record<string, any>[]>([]);
+  useEffect(() => {
+    supabase.from("blog_categories").select("*").then(({ data }) => setCategories(data || []));
+  }, []);
   const { language, t } = useLanguage();
 
   useEffect(() => {
@@ -119,13 +123,16 @@ const BlogPostPage = () => {
             <ArrowLeft className="w-4 h-4" /> {t("blog.backToBlog")}
           </Link>
 
-          {/* Category pills — multi-category support */}
+          {/* Category pills — multi-category support, per-language labels */}
           <div className="flex flex-wrap gap-2 mb-4">
-            {((post.categories && post.categories.length) ? post.categories : (post.category ? [post.category] : [])).map((slug: string) => (
-              <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_30%)]">
-                {slug}
-              </span>
-            ))}
+            {((post.categories && post.categories.length) ? post.categories : (post.category ? [post.category] : [])).map((slug: string) => {
+              const cat = categories.find((c) => c.slug === slug);
+              return (
+                <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_30%)]">
+                  {cat ? getLocalizedField(cat, "name", language) : slug}
+                </span>
+              );
+            })}
           </div>
           <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mt-2 mb-6 leading-[1.1]">{localTitle}</h1>
 

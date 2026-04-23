@@ -9,7 +9,13 @@ import { Checkbox } from "@/components/ui/checkbox";
 interface PlotZone {
   id: string;
   name: string;
+  name_ka?: string | null;
+  name_en?: string | null;
+  name_ru?: string | null;
   description: string;
+  description_ka?: string | null;
+  description_en?: string | null;
+  description_ru?: string | null;
   status: string;
   size_sqm: number | null;
   price: number | null;
@@ -172,7 +178,13 @@ const PlotManager = () => {
     if (!editingZone?.name || !editingZone.polygon?.length) return;
     const payload = {
       name: editingZone.name,
+      name_ka: editingZone.name_ka || null,
+      name_en: editingZone.name_en || null,
+      name_ru: editingZone.name_ru || null,
       description: editingZone.description || "",
+      description_ka: editingZone.description_ka || null,
+      description_en: editingZone.description_en || null,
+      description_ru: editingZone.description_ru || null,
       status: editingZone.status || "available",
       size_sqm: editingZone.size_sqm || null,
       price: editingZone.price || null,
@@ -300,8 +312,28 @@ const PlotManager = () => {
             {editingZone ? (
               <div className="border border-border rounded-lg p-4 space-y-3 bg-card">
                 <h3 className="font-sans font-semibold text-sm">{isNewZone ? "New Zone" : "Edit Zone"}</h3>
-                <Input placeholder="Name" value={editingZone.name || ""} onChange={(e) => setEditingZone((z) => ({ ...z, name: e.target.value }))} />
-                <Input placeholder="Description (max 90 chars)" maxLength={90} value={editingZone.description || ""} onChange={(e) => setEditingZone((z) => ({ ...z, description: e.target.value }))} />
+                {/* Legacy bare fields kept as the default / canonical value. */}
+                <Input placeholder="Name (default)" value={editingZone.name || ""} onChange={(e) => setEditingZone((z) => ({ ...z, name: e.target.value }))} />
+                <Input placeholder="Description (default, max 90 chars)" maxLength={90} value={editingZone.description || ""} onChange={(e) => setEditingZone((z) => ({ ...z, description: e.target.value }))} />
+
+                {/* Per-language overrides — the public plot map reads
+                    <field>_<lang> via getLocalizedField. */}
+                {(["ka", "en", "ru"] as const).map((lang) => (
+                  <div key={lang} className="space-y-2 border-t border-border pt-2">
+                    <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-muted-foreground">{lang.toUpperCase()}</p>
+                    <Input
+                      placeholder={`Name (${lang.toUpperCase()})`}
+                      value={(editingZone as any)[`name_${lang}`] || ""}
+                      onChange={(e) => setEditingZone((z) => ({ ...(z || {}), [`name_${lang}`]: e.target.value }))}
+                    />
+                    <Input
+                      placeholder={`Description (${lang.toUpperCase()})`}
+                      maxLength={90}
+                      value={(editingZone as any)[`description_${lang}`] || ""}
+                      onChange={(e) => setEditingZone((z) => ({ ...(z || {}), [`description_${lang}`]: e.target.value }))}
+                    />
+                  </div>
+                ))}
                 <Input placeholder="Size (m²)" type="number" value={editingZone.size_sqm ?? ""} onChange={(e) => setEditingZone((z) => ({ ...z, size_sqm: e.target.value ? Number(e.target.value) : null }))} />
                 <Input placeholder="Price ($)" type="number" value={editingZone.price ?? ""} onChange={(e) => setEditingZone((z) => ({ ...z, price: e.target.value ? Number(e.target.value) : null }))} />
                 <select
