@@ -3,6 +3,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { Lightbox } from "@/components/Lightbox";
 
+/**
+ * Local placeholder renders (in `public/renders/`) used when the
+ * `project_renders` table has no rows for a project. DB rows always win —
+ * uploading any render in admin auto-replaces these.
+ */
+const PLACEHOLDER_RENDERS: Record<string, { id: string; image_url: string; title: string | null }[]> = {
+  polograph: [
+    { id: "ph-pol-1", image_url: "/renders/polograph-aerial-1.jpg", title: "Polograph aerial" },
+    { id: "ph-pol-2", image_url: "/renders/polograph-aerial-2.jpg", title: "Polograph neighborhood" },
+    { id: "ph-pol-3", image_url: "/renders/polograph-villa.jpg", title: "Polograph villa exterior" },
+  ],
+  equestrian: [
+    { id: "ph-eq-1", image_url: "/renders/ipodromi-1.jpg", title: "Hippodrome arena" },
+    { id: "ph-eq-2", image_url: "/renders/ipodromi-2.jpg", title: "Hippodrome facility" },
+    { id: "ph-eq-3", image_url: "/renders/ipodromi-3.jpg", title: "Hippodrome aerial" },
+  ],
+};
+
 interface RenderGalleryWithDescriptionProps {
   project: string;
   title: string;
@@ -23,7 +41,7 @@ export const RenderGalleryWithDescription = ({
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
 
-  const { data: renders = [] } = useQuery({
+  const { data: dbRenders = [] } = useQuery({
     queryKey: ["project-renders", project],
     queryFn: async () => {
       const { data } = await supabase
@@ -35,8 +53,11 @@ export const RenderGalleryWithDescription = ({
     },
   });
 
+  // DB rows take precedence; otherwise fall back to bundled placeholder images.
+  const renders: { id: string; image_url: string; title: string | null }[] =
+    dbRenders.length > 0 ? dbRenders : (PLACEHOLDER_RENDERS[project] || []);
+
   if (renders.length === 0) {
-    // Fallback: no images, just show description
     return (
       <div className="container mx-auto px-6 py-12 max-w-4xl">
         <h1 className="text-2xl md:text-3xl lg:text-4xl mb-6">{title}</h1>
@@ -47,8 +68,10 @@ export const RenderGalleryWithDescription = ({
     );
   }
 
-  const main = renders[activeIndex];
-  const thumbnails = renders.filter((_, i) => i !== activeIndex).slice(0, 6);
+  // Clamp index when renders array length changes (e.g. DB rows arrive after fallback mounts).
+  const safeIndex = Math.min(activeIndex, renders.length - 1);
+  const main = renders[safeIndex];
+  const thumbnails = renders.filter((_, i) => i !== safeIndex).slice(0, 6);
 
   return (
     <>
@@ -123,7 +146,7 @@ export const RenderGalleryWithDescription = ({
       {lightboxOpen && (
         <Lightbox
           images={renders.map((r) => ({ url: r.image_url, title: r.title || "" }))}
-          currentIndex={activeIndex}
+          currentIndex={safeIndex}
           onClose={() => setLightboxOpen(false)}
         />
       )}
