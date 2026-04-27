@@ -179,37 +179,13 @@ const Ipodromi = () => {
         </div>
       )}
 
-      {/* 5. Equestrian Club sub-section (slide 16)
-           Banner = horizontal image + centered title ONLY (no button, no text).
-           Description follows BELOW the banner as plain text. */}
-      <div className="container mx-auto px-6 pb-12 lg:pb-16 max-w-6xl">
-        <AnimatedSection>
-          <div className="relative rounded-3xl overflow-hidden h-[200px] md:h-[280px] flex items-center justify-center
-            bg-gradient-to-r from-[hsl(130_55%_40%/0.15)] via-[hsl(130_55%_50%/0.25)] to-[hsl(130_55%_40%/0.15)]
-            backdrop-blur-md border border-[hsl(130_55%_40%/0.2)]
-            shadow-[0_12px_40px_rgba(45,143,67,0.15)]">
-            {/* Placeholder background image — replace /equestrian-club-banner.jpg when asset arrives */}
-            <img
-              src="/equestrian-club-banner.jpg"
-              alt=""
-              aria-hidden
-              onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-              className="absolute inset-0 w-full h-full object-cover"
-            />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/30 to-black/40" />
-
-            {/* Title-only, centered */}
-            <h3 className="relative font-sans text-3xl md:text-4xl lg:text-5xl font-medium tracking-tight text-white text-center px-6 drop-shadow-lg">
-              {t("ipodromi.equestrianClubBannerTitle")}
-            </h3>
-          </div>
-
-          {/* Description below the banner, as plain text */}
-          <p className="mt-6 font-sans text-base md:text-lg text-muted-foreground leading-relaxed max-w-3xl">
-            {t("ipodromi.equestrianClubDescription")}
-          </p>
-        </AnimatedSection>
-      </div>
+      {/* 5. Equestrian Club Membership CTA (replaces former banner — moved up per client request) */}
+      <ClubMembershipCTA
+        project="equestrian"
+        joinTitle={joinTitle}
+        joinDescription={joinDescription}
+        services={memberServices}
+      />
 
       {/* 6. Infrastructure Ticker */}
       <div className="py-10">
@@ -227,14 +203,6 @@ const Ipodromi = () => {
           <InfrastructureTicker />
         </div>
       </div>
-
-      {/* 7. Club Membership CTA */}
-      <ClubMembershipCTA
-        project="equestrian"
-        joinTitle={joinTitle}
-        joinDescription={joinDescription}
-        services={memberServices}
-      />
 
       {/* 8. Services Grid */}
       <ServicesGlassGrid

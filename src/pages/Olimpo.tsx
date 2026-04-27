@@ -29,6 +29,7 @@ import {
   Car,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickGridCols } from "@/lib/pickGridCols";
 
 const KEYS = [
   "olimpo_hero_image",
@@ -160,11 +161,21 @@ const Olimpo = () => {
             </p>
           </div>
         </AnimatedSection>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
+        <div
+          className="flex flex-wrap justify-center gap-3"
+          style={{
+            ["--mob-cols" as string]: ADVANTAGES.length === 1 ? 1 : 2,
+            ["--desk-cols" as string]: pickGridCols(ADVANTAGES.length, 5),
+          }}
+        >
           {ADVANTAGES.map((d, i) => {
             const Icon = d.icon;
             return (
-              <AnimatedSection key={d.key} delay={i * 40}>
+              <AnimatedSection
+                key={d.key}
+                delay={i * 40}
+                className="w-[calc((100%-(var(--mob-cols)-1)*0.75rem)/var(--mob-cols))] lg:w-[calc((100%-(var(--desk-cols)-1)*0.75rem)/var(--desk-cols))]"
+              >
                 <TiltCard maxTilt={6} scale={1.03} glare={false}>
                   <div className="group relative bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-4 md:p-5 flex flex-col items-center text-center gap-3
                     shadow-[0_2px_16px_rgba(0,0,0,0.04)]

@@ -25,9 +25,9 @@ const getNestedValue = (obj: any, path: string): string => {
 };
 
 const getStoredLanguage = (): Language => {
-  if (typeof window === "undefined") return "en";
+  if (typeof window === "undefined") return "ka";
   const stored = window.localStorage.getItem("preferred-language");
-  return stored === "ka" || stored === "ru" ? stored : "en";
+  return stored === "en" || stored === "ru" ? stored : "ka";
 };
 
 const fallbackLanguageContext: LanguageContextType = {

@@ -17,6 +17,11 @@ export const Navbar = () => {
   const projectsTimeout = useRef<ReturnType<typeof setTimeout>>();
   const villaTimeout = useRef<ReturnType<typeof setTimeout>>();
 
+  const compactNav = language === "ka" || language === "ru";
+  const navGap = compactNav ? "gap-5 xl:gap-6" : "gap-8";
+  const navText = compactNav ? "text-xs" : "text-sm";
+  const rightGap = compactNav ? "gap-3" : "gap-4";
+
   const projectSubLinks = [
     { label: t("footer.polograph"), to: "/polograph" },
     { label: t("footer.olimpo"), to: "/olimpo" },
@@ -74,7 +79,7 @@ export const Navbar = () => {
           Igavi<span className="text-primary">.</span>
         </Link>
 
-        <nav className="hidden lg:flex items-center gap-8">
+        <nav className={`hidden lg:flex items-center ${navGap}`}>
           {navLinks.map((link) => {
             if (link.hasDropdown === "projects") {
               return (
@@ -86,7 +91,7 @@ export const Navbar = () => {
                   onMouseLeave={() => { projectsTimeout.current = setTimeout(() => setProjectsOpen(false), 150); }}
                 >
                   <button
-                    className={`text-sm font-semibold tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
+                    className={`${navText} font-semibold tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
                       ["/polograph", "/olimpo", "/equestrian", "/ipodromi"].some((p) => location.pathname.startsWith(p)) ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
@@ -108,7 +113,7 @@ export const Navbar = () => {
                 >
                   <Link
                     to={link.to}
-                    className={`text-sm font-semibold tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
+                    className={`${navText} font-semibold tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
                       location.pathname === "/site-plan" ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
@@ -123,7 +128,7 @@ export const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`text-sm font-semibold tracking-wide transition-colors hover:text-primary ${
+                className={`${navText} font-semibold tracking-wide transition-colors hover:text-primary ${
                   location.pathname === link.to ? "text-primary" : "text-muted-foreground"
                 }`}
               >
@@ -133,7 +138,7 @@ export const Navbar = () => {
           })}
         </nav>
 
-        <div className="hidden lg:flex items-center gap-4">
+        <div className={`hidden lg:flex items-center ${rightGap}`}>
           <div className="relative">
             <button
               onClick={() => setLangOpen(!langOpen)}
@@ -144,7 +149,7 @@ export const Navbar = () => {
             </button>
             {langOpen && (
               <div className="absolute top-full right-0 mt-2 bg-white/70 backdrop-blur-2xl border border-white/30 rounded-xl shadow-[0_8px_32px_rgba(0,0,0,0.1)] py-1 min-w-[80px] z-50">
-                {(["en", "ka", "ru"] as Language[]).map((lang) => (
+                {(["ka", "en", "ru"] as Language[]).map((lang) => (
                   <button
                     key={lang}
                     onClick={() => handleLangSelect(lang)}
@@ -215,7 +220,7 @@ export const Navbar = () => {
             </Link>
 
             <div className="flex gap-2 pt-2 border-t border-border">
-              {(["en", "ka", "ru"] as Language[]).map((lang) => (
+              {(["ka", "en", "ru"] as Language[]).map((lang) => (
                 <button
                   key={lang}
                   onClick={() => { setLanguage(lang); setIsOpen(false); }}

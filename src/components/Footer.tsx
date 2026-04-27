@@ -29,12 +29,12 @@ export const Footer = () => {
   const phone = settings.contact_phone || "+995 (32) 200-00-00";
 
   const socials = [
-    { name: "Facebook", url: settings.social_facebook, icon: Facebook },
-    { name: "Instagram", url: settings.social_instagram, icon: Instagram },
-    { name: "LinkedIn", url: settings.social_linkedin, icon: Linkedin },
-    { name: "X", url: settings.social_x, icon: Twitter },
-    { name: "YouTube", url: settings.social_youtube, icon: Youtube },
-  ].filter((s) => s.url);
+    { name: "Facebook", url: settings.social_facebook || "#", icon: Facebook, alwaysShow: true },
+    { name: "Instagram", url: settings.social_instagram || "#", icon: Instagram, alwaysShow: true },
+    { name: "LinkedIn", url: settings.social_linkedin || "#", icon: Linkedin, alwaysShow: true },
+    { name: "YouTube", url: settings.social_youtube || "#", icon: Youtube, alwaysShow: true },
+    { name: "X", url: settings.social_x, icon: Twitter, alwaysShow: false },
+  ].filter((s) => s.alwaysShow || s.url);
 
   const quickLinks = [
     { label: t("nav.home"), to: "/" },

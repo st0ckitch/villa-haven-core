@@ -36,8 +36,8 @@ const CountUp = ({ target, suffix }: { target: number; suffix: string }) => {
   }, [target]);
 
   return (
-    <span ref={ref} className="font-sans text-3xl lg:text-4xl font-light text-foreground tracking-tight">
-      {count.toLocaleString()}{suffix && <span className="text-xl ml-0.5 text-foreground/60">{suffix}</span>}
+    <span ref={ref} className="font-sans text-2xl sm:text-3xl lg:text-4xl font-light text-foreground tracking-tight whitespace-nowrap">
+      {count.toLocaleString()}{suffix && <span className="text-base sm:text-lg lg:text-xl ml-0.5 text-foreground/60">{suffix}</span>}
     </span>
   );
 };
@@ -123,15 +123,18 @@ export const AmenitiesSection = () => {
 
         {/* Stats row */}
         <AnimatedSection delay={200} className="mt-6">
-          <div className="bg-white/35 backdrop-blur-xl border border-white/20 rounded-3xl p-8 lg:p-10 shadow-[0_8px_40px_rgba(0,0,0,0.04)]">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-4">
+          <div className="bg-white/35 backdrop-blur-xl border border-white/20 rounded-3xl p-6 sm:p-8 lg:p-10 shadow-[0_8px_40px_rgba(0,0,0,0.04)]">
+            <div
+              className="grid grid-cols-2 sm:grid-cols-3 gap-6 sm:gap-4 lg:gap-2 lg:[grid-template-columns:repeat(var(--stat-cols),minmax(0,1fr))]"
+              style={{ ["--stat-cols" as string]: stats.length }}
+            >
               {stats.map((stat, i) => (
-                <div key={stat.label} className="flex flex-col items-center text-center relative">
+                <div key={stat.label} className="flex flex-col items-center text-center relative min-w-0 px-1">
                   {i > 0 && (
                     <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-12 bg-foreground/[0.07]" />
                   )}
                   <CountUp target={stat.value} suffix={stat.suffix} />
-                  <p className="font-sans text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/70 mt-2">{stat.label}</p>
+                  <p className="font-sans text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/70 mt-2 break-words">{stat.label}</p>
                 </div>
               ))}
             </div>

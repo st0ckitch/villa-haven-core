@@ -20,6 +20,9 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
 
   const title = joinTitle || defaultTitle;
 
+  const isEquestrian = project === "equestrian";
+  const heroImage = "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=1600&q=80";
+
   return (
     <section className="relative py-16 lg:py-20 overflow-hidden">
       {/* Background decorative orbs */}
@@ -30,26 +33,56 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
 
       <div className="container mx-auto px-6 max-w-6xl">
         <AnimatedSection>
-          <div className="relative bg-white/55 backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)] rounded-3xl p-8 md:p-12 lg:p-16 overflow-hidden
-            shadow-[0_20px_60px_rgba(45,143,67,0.12)]">
-            {/* Inner decorative orb */}
-            <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[radial-gradient(circle,hsl(130_55%_40%/0.15)_0%,transparent_70%)] pointer-events-none" />
+          <div className={`relative rounded-3xl p-8 md:p-12 lg:p-16 overflow-hidden shadow-[0_20px_60px_rgba(45,143,67,0.12)] ${
+            isEquestrian
+              ? "border border-white/20"
+              : "bg-white/55 backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)]"
+          }`}>
+            {/* Equestrian: horse photo background with dark gradient overlay */}
+            {isEquestrian && (
+              <>
+                <img
+                  src={heroImage}
+                  alt=""
+                  aria-hidden="true"
+                  className="absolute inset-0 w-full h-full object-cover"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/30" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+              </>
+            )}
+
+            {/* Inner decorative orb (light variant only) */}
+            {!isEquestrian && (
+              <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[radial-gradient(circle,hsl(130_55%_40%/0.15)_0%,transparent_70%)] pointer-events-none" />
+            )}
 
             <div className="relative">
               {/* Header */}
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
                 <div className="max-w-2xl">
-                  <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] mb-4">
-                    <Crown className="w-3.5 h-3.5 text-[hsl(130_55%_35%)]" />
-                    <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_30%)]">
+                  <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 ${
+                    isEquestrian
+                      ? "bg-white/15 backdrop-blur-md border border-white/30"
+                      : "bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)]"
+                  }`}>
+                    <Crown className={`w-3.5 h-3.5 ${isEquestrian ? "text-white" : "text-[hsl(130_55%_35%)]"}`} />
+                    <span className={`font-sans text-[10px] font-bold uppercase tracking-[0.2em] ${
+                      isEquestrian ? "text-white" : "text-[hsl(130_55%_30%)]"
+                    }`}>
                       {t("projects.memberServices")}
                     </span>
                   </div>
-                  <h2 className="font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground mb-3 leading-tight">
+                  <h2 className={`font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight mb-3 leading-tight ${
+                    isEquestrian ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]" : "text-foreground"
+                  }`}>
                     {title}
                   </h2>
                   {joinDescription && (
-                    <p className="font-sans text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
+                    <p className={`font-sans text-sm md:text-base leading-relaxed whitespace-pre-line ${
+                      isEquestrian ? "text-white/85" : "text-muted-foreground"
+                    }`}>
                       {joinDescription}
                     </p>
                   )}
@@ -76,17 +109,26 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
                   {services.map((service, i) => (
                     <div
                       key={i}
-                      className="group flex items-start gap-3 p-4 rounded-2xl bg-white/70 backdrop-blur-sm border border-white/60
-                        hover:bg-white hover:border-[hsl(130_55%_40%/0.2)] hover:shadow-[0_4px_20px_rgba(45,143,67,0.1)]
-                        transition-all duration-300"
+                      className={`group flex items-start gap-3 p-4 rounded-2xl backdrop-blur-sm transition-all duration-300 ${
+                        isEquestrian
+                          ? "bg-white/10 border border-white/20 hover:bg-white/20 hover:border-white/40"
+                          : "bg-white/70 border border-white/60 hover:bg-white hover:border-[hsl(130_55%_40%/0.2)] hover:shadow-[0_4px_20px_rgba(45,143,67,0.1)]"
+                      }`}
                     >
-                      <div className="shrink-0 w-7 h-7 rounded-lg bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)]
-                        flex items-center justify-center">
-                        <span className="font-sans text-[11px] font-bold text-[hsl(130_55%_30%)]">
+                      <div className={`shrink-0 w-7 h-7 rounded-lg flex items-center justify-center ${
+                        isEquestrian
+                          ? "bg-white/20 border border-white/30"
+                          : "bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)]"
+                      }`}>
+                        <span className={`font-sans text-[11px] font-bold ${
+                          isEquestrian ? "text-white" : "text-[hsl(130_55%_30%)]"
+                        }`}>
                           {String(i + 1).padStart(2, "0")}
                         </span>
                       </div>
-                      <span className="font-sans text-xs md:text-sm font-medium text-foreground/80 leading-snug">
+                      <span className={`font-sans text-xs md:text-sm font-medium leading-snug ${
+                        isEquestrian ? "text-white/90" : "text-foreground/80"
+                      }`}>
                         {service}
                       </span>
                     </div>

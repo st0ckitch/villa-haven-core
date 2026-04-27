@@ -2,6 +2,7 @@ import type { LucideIcon } from "lucide-react";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { TiltCard } from "@/components/TiltCard";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { pickGridCols } from "@/lib/pickGridCols";
 
 interface ServiceItem {
   icon: LucideIcon;
@@ -17,6 +18,8 @@ interface ServicesGlassGridProps {
 
 export const ServicesGlassGrid = ({ items, namespace, title, subtitle }: ServicesGlassGridProps) => {
   const { t } = useLanguage();
+  const desktopCols = pickGridCols(items.length, 4);
+  const mobileCols = items.length === 1 ? 1 : 2;
 
   return (
     <section className="relative py-20 lg:py-24 overflow-hidden">
@@ -40,16 +43,26 @@ export const ServicesGlassGrid = ({ items, namespace, title, subtitle }: Service
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+        <div
+          className="flex flex-wrap justify-center gap-3 md:gap-4"
+          style={{
+            ["--mob-cols" as string]: mobileCols,
+            ["--desk-cols" as string]: desktopCols,
+          }}
+        >
           {items.map((svc, i) => {
             const Icon = svc.icon;
             return (
-              <AnimatedSection key={svc.key} delay={i * 50}>
+              <AnimatedSection
+                key={svc.key}
+                delay={i * 50}
+                className="w-[calc((100%-(var(--mob-cols)-1)*0.75rem)/var(--mob-cols))] md:w-[calc((100%-(var(--desk-cols)-1)*1rem)/var(--desk-cols))]"
+              >
                 <TiltCard maxTilt={6} scale={1.04} glare={false}>
                   <div className="group relative bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-5 md:p-6 flex flex-col items-center text-center gap-3 md:gap-4
                     shadow-[0_2px_16px_rgba(0,0,0,0.04)]
                     hover:bg-white hover:shadow-[0_8px_32px_rgba(45,143,67,0.15)] hover:border-[hsl(130_55%_40%/0.25)]
-                    transition-all duration-300 cursor-default">
+                    transition-all duration-300 cursor-default h-full">
                     <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-gradient-to-br from-[hsl(130_55%_40%/0.12)] to-[hsl(130_55%_40%/0.04)]
                       group-hover:from-[hsl(130_55%_40%/0.2)] group-hover:to-[hsl(130_55%_40%/0.08)]
                       flex items-center justify-center transition-all duration-300"
