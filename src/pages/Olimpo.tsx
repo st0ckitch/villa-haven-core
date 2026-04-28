@@ -121,22 +121,7 @@ const Olimpo = () => {
         />
       )}
 
-      {/* 2. Club Member Benefits — moved to top of page (client feedback Apr 23, 2026).
-          Admin overrides via `olimpo_club_benefits_title_<lang>` / `..._text_<lang>`. */}
-      <div className="container mx-auto px-6 pt-12 pb-6 lg:pt-16 lg:pb-8 max-w-5xl">
-        <AnimatedSection>
-          <div className="bg-white/60 backdrop-blur-md border border-white/50 rounded-3xl p-8 md:p-10 shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
-            <h2 className="font-sans text-2xl md:text-3xl font-light tracking-tight text-foreground mb-4">
-              {clubBenefitsTitle}
-            </h2>
-            <p className="font-sans text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
-              {clubBenefitsText}
-            </p>
-          </div>
-        </AnimatedSection>
-      </div>
-
-      {/* 3. Gallery + Description (2-col layout).
+      {/* 2. Gallery + Description (2-col layout).
           Apartment Types grid removed per client feedback (Apr 23, 2026):
           Olimpo is a sports/wellness complex, not a residential project. */}
       <AnimatedSection>
@@ -232,6 +217,22 @@ const Olimpo = () => {
         joinDescription={joinDescription}
         services={memberServices}
       />
+
+      {/* 7. Club Member Benefits — sits below the membership CTA, mirroring
+          Polograph's info card placement (marketer feedback, Apr 28, 2026).
+          Admin overrides via `olimpo_club_benefits_title_<lang>` / `..._text_<lang>`. */}
+      <div className="container mx-auto px-6 pt-6 pb-12 lg:pt-8 lg:pb-16 max-w-5xl">
+        <AnimatedSection>
+          <div className="bg-white/60 backdrop-blur-md border border-white/50 rounded-3xl p-8 md:p-10 shadow-[0_2px_20px_rgba(0,0,0,0.04)]">
+            <h2 className="font-sans text-2xl md:text-3xl font-light tracking-tight text-foreground mb-4">
+              {clubBenefitsTitle}
+            </h2>
+            <p className="font-sans text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
+              {clubBenefitsText}
+            </p>
+          </div>
+        </AnimatedSection>
+      </div>
 
       {/* 8. Catalog Downloads */}
       <CatalogSection />
