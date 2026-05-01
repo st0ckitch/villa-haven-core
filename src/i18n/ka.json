@@ -47,7 +47,10 @@
     "statCenter": "თბილისიდან",
     "partnersTitle": "ჩვენი პარტნიორები",
     "hectare": "ჰექტარი",
-    "minute": "წთ"
+    "minute": "წთ",
+    "missionLabel": "მისია",
+    "visionLabel": "ხედვა",
+    "tagline": "ევროპული სტანდარტის საცხოვრებელი გარემო საქართველოში."
   },
   "services": {
     "title1": "",

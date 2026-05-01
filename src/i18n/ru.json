@@ -47,7 +47,10 @@
     "statCenter": "От Тбилиси",
     "partnersTitle": "Наши партнёры",
     "hectare": "гектаров",
-    "minute": "мин"
+    "minute": "мин",
+    "missionLabel": "Миссия",
+    "visionLabel": "Видение",
+    "tagline": "Жилые комплексы европейского стандарта в Грузии."
   },
   "services": {
     "title1": "",

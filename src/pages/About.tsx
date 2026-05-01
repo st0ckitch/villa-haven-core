@@ -4,8 +4,8 @@ import { Layout } from "@/components/Layout";
 import { SEO } from "@/components/SEO";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { ProjectHero } from "@/components/ProjectHero";
-import { GlassInfoCard } from "@/components/GlassInfoCard";
-import { Loader2 } from "lucide-react";
+import { TiltCard } from "@/components/TiltCard";
+import { Loader2, Compass, Telescope } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const ABOUT_KEYS = [
@@ -75,37 +75,142 @@ const About = () => {
         <div className="pt-28 lg:pt-32" />
       )}
 
-      {/* 2. Full description */}
-      <div className="container mx-auto px-6 py-12 lg:py-16 max-w-4xl">
-        <AnimatedSection>
-          {!c.about_hero_image && (
-            <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-6">
-              {pageTitle}
-            </h1>
-          )}
-          <p className="font-sans text-muted-foreground leading-relaxed text-base md:text-lg whitespace-pre-line">
-            {description}
-          </p>
-        </AnimatedSection>
-      </div>
+      {/* 2 + 3. Editorial showcase — big bold typography on the left,
+          two floating tilted glass panels (mission / vision) offset on the right.
+          Replaces the previous two stacked sections (description + grid cards)
+          with a single 3D composition inspired by editorial product layouts. */}
+      <section className="relative overflow-hidden">
+        {/* Soft brand-green background orbs (re-uses existing animation tokens) */}
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -top-24 -left-24 w-[420px] h-[420px] rounded-full
+            bg-[radial-gradient(circle,hsl(130_55%_40%/0.10)_0%,transparent_70%)]
+            animate-orb-float -z-10"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute top-1/3 -right-32 w-[520px] h-[520px] rounded-full
+            bg-[radial-gradient(circle,hsl(130_55%_50%/0.08)_0%,transparent_70%)]
+            animate-orb-float-reverse -z-10"
+        />
 
-      {/* 3. Mission & Vision glass cards */}
-      {(missionText || visionText) && (
-        <div className="container mx-auto px-6 pb-16 lg:pb-20 max-w-5xl">
-          <div className="grid md:grid-cols-2 gap-6 lg:gap-8">
-            {missionText && (
-              <AnimatedSection delay={100}>
-                <GlassInfoCard title={missionTitle} text={missionText} variant="vision" />
+        <div className="container mx-auto px-6 py-16 lg:py-24 max-w-7xl">
+          <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+            {/* Left: editorial headline + description */}
+            <div className="lg:col-span-7 relative">
+              {/* Corner bracket accents (top-left) */}
+              <div aria-hidden className="absolute -top-2 -left-2 w-6 h-6 border-t border-l border-[hsl(130_55%_40%/0.4)]" />
+              <div aria-hidden className="absolute -top-2 right-4 w-6 h-6 border-t border-r border-[hsl(130_55%_40%/0.4)] hidden lg:block" />
+
+              <AnimatedSection>
+                {/* Floating label chip */}
+                <div className="inline-flex items-center gap-2 mb-6 px-4 py-2 rounded-full
+                  bg-white/70 backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)]
+                  shadow-[0_2px_12px_rgba(45,143,67,0.08)]">
+                  <span className="w-1.5 h-1.5 rounded-full bg-[hsl(130_55%_40%)]" />
+                  <span className="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_30%)]">
+                    {t("nav.aboutUs")}
+                  </span>
+                </div>
+
+                {!c.about_hero_image && (
+                  <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-foreground mb-8 leading-[0.95]">
+                    {pageTitle}
+                  </h1>
+                )}
+
+                {description && (
+                  <p className="font-sans text-foreground/70 leading-relaxed text-base md:text-lg max-w-2xl whitespace-pre-line">
+                    {description}
+                  </p>
+                )}
               </AnimatedSection>
-            )}
-            {visionText && (
-              <AnimatedSection delay={200}>
-                <GlassInfoCard title={visionTitle} text={visionText} variant="quote" />
+
+              {/* Edition-style metadata footer (bottom-left like the reference) */}
+              <AnimatedSection delay={400}>
+                <div className="mt-12 pt-6 border-t border-[hsl(130_55%_40%/0.15)] max-w-xs">
+                  <p className="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_30%)] mb-1">
+                    Igavi · Est.
+                  </p>
+                  <p className="font-sans text-xs md:text-sm text-muted-foreground leading-snug">
+                    {t("about.tagline")}
+                  </p>
+                </div>
               </AnimatedSection>
+            </div>
+
+            {/* Right: stacked, offset, tilted mission + vision cards */}
+            {(missionText || visionText) && (
+              <div className="lg:col-span-5 relative min-h-[420px] lg:min-h-[520px]">
+                {missionText && (
+                  <AnimatedSection delay={150}>
+                    <div className="relative lg:absolute lg:top-0 lg:left-0 lg:right-8 z-10">
+                      {/* Floating chip label above card */}
+                      <div className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-full
+                        bg-white/80 backdrop-blur-xl border border-[hsl(130_55%_40%/0.25)]
+                        shadow-[0_2px_10px_rgba(45,143,67,0.1)]">
+                        <Compass className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2} />
+                        <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.25em] text-[hsl(130_55%_30%)]">
+                          {t("about.missionLabel")}
+                        </span>
+                      </div>
+                      <TiltCard maxTilt={8} scale={1.02} glare>
+                        <div className="relative bg-white/65 backdrop-blur-xl border border-white/50 rounded-3xl p-7 md:p-8
+                          shadow-[0_16px_48px_rgba(45,143,67,0.12)]
+                          before:absolute before:inset-0 before:rounded-3xl before:pointer-events-none
+                          before:bg-gradient-to-br before:from-white/40 before:via-transparent before:to-[hsl(130_55%_40%/0.08)]">
+                          <div style={{ transform: "translateZ(30px)" }}>
+                            <h2 className="font-sans text-xl md:text-2xl font-medium tracking-tight text-foreground mb-3">
+                              {missionTitle}
+                            </h2>
+                            <p className="font-sans text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
+                              {missionText}
+                            </p>
+                          </div>
+                        </div>
+                      </TiltCard>
+                    </div>
+                  </AnimatedSection>
+                )}
+
+                {visionText && (
+                  <AnimatedSection delay={300}>
+                    <div className="relative mt-8 lg:mt-0 lg:absolute lg:top-56 lg:left-12 lg:right-0 z-20">
+                      <div className="inline-flex items-center gap-2 mb-3 px-3 py-1.5 rounded-full
+                        bg-white/80 backdrop-blur-xl border border-[hsl(130_55%_40%/0.25)]
+                        shadow-[0_2px_10px_rgba(45,143,67,0.1)]">
+                        <Telescope className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2} />
+                        <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.25em] text-[hsl(130_55%_30%)]">
+                          {t("about.visionLabel")}
+                        </span>
+                      </div>
+                      <TiltCard maxTilt={8} scale={1.02} glare>
+                        <div className="relative bg-white/75 backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)] rounded-3xl p-7 md:p-8
+                          shadow-[0_20px_56px_rgba(45,143,67,0.18)]
+                          before:absolute before:inset-0 before:rounded-3xl before:pointer-events-none
+                          before:bg-gradient-to-tl before:from-[hsl(130_55%_40%/0.12)] before:via-transparent before:to-white/40">
+                          <div style={{ transform: "translateZ(30px)" }}>
+                            <h2 className="font-sans text-xl md:text-2xl font-medium tracking-tight text-foreground mb-3">
+                              {visionTitle}
+                            </h2>
+                            <p className="font-sans text-sm md:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
+                              {visionText}
+                            </p>
+                          </div>
+                        </div>
+                      </TiltCard>
+                    </div>
+
+                    {/* Corner bracket accents around the right column (decorative) */}
+                    <div aria-hidden className="hidden lg:block absolute -bottom-2 -right-2 w-6 h-6 border-b border-r border-[hsl(130_55%_40%/0.4)]" />
+                    <div aria-hidden className="hidden lg:block absolute -bottom-2 left-4 w-6 h-6 border-b border-l border-[hsl(130_55%_40%/0.4)]" />
+                  </AnimatedSection>
+                )}
+              </div>
             )}
           </div>
         </div>
-      )}
+      </section>
 
       {/* 4. Team image with glass frame */}
       {c.about_team_image && (

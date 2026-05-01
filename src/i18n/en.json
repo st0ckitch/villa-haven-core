@@ -47,7 +47,10 @@
     "statCenter": "From Tbilisi",
     "partnersTitle": "Our Partners",
     "hectare": "hectares",
-    "minute": "min"
+    "minute": "min",
+    "missionLabel": "Mission",
+    "visionLabel": "Vision",
+    "tagline": "Building European-standard living in Georgia."
   },
   "services": {
     "title1": "",
