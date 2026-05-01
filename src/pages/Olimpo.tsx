@@ -33,13 +33,15 @@ import { pickGridCols } from "@/lib/pickGridCols";
 
 const KEYS = [
   "olimpo_hero_image",
-  "olimpo_title",
-  "olimpo_description",
-  "olimpo_vision_title",
-  "olimpo_vision_text",
+  // Per-language rows are the source of truth for `pick()`; keep the
+  // language-neutral keys too as fallback for older/unmigrated rows.
+  "olimpo_title", "olimpo_title_ka", "olimpo_title_en", "olimpo_title_ru",
+  "olimpo_description", "olimpo_description_ka", "olimpo_description_en", "olimpo_description_ru",
+  "olimpo_vision_title", "olimpo_vision_title_ka", "olimpo_vision_title_en", "olimpo_vision_title_ru",
+  "olimpo_vision_text", "olimpo_vision_text_ka", "olimpo_vision_text_en", "olimpo_vision_text_ru",
   "olimpo_video_url",
-  "olimpo_join_title",
-  "olimpo_join_description",
+  "olimpo_join_title", "olimpo_join_title_ka", "olimpo_join_title_en", "olimpo_join_title_ru",
+  "olimpo_join_description", "olimpo_join_description_ka", "olimpo_join_description_en", "olimpo_join_description_ru",
   "olimpo_member_services",
   "olimpo_club_benefits_title_ka", "olimpo_club_benefits_title_en", "olimpo_club_benefits_title_ru",
   "olimpo_club_benefits_text_ka", "olimpo_club_benefits_text_en", "olimpo_club_benefits_text_ru",
