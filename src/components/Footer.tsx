@@ -36,13 +36,17 @@ export const Footer = () => {
     { name: "X", url: settings.social_x, icon: Twitter, alwaysShow: false },
   ].filter((s) => s.alwaysShow || s.url);
 
+  // Mirror the navbar order (with Projects dropdown expanded inline) so the
+  // footer fast-links list reads in the same sequence as the top nav.
   const quickLinks = [
-    { label: t("nav.home"), to: "/" },
+    { label: t("nav.chooseVilla"), to: "/site-plan" },
     { label: t("footer.polograph"), to: "/polograph" },
     { label: t("footer.olimpo"), to: "/olimpo" },
     { label: t("footer.equestrian"), to: "/ipodromi" },
-    { label: t("footer.gallery"), to: "/gallery" },
+    { label: t("nav.aboutUs"), to: "/about" },
     { label: t("footer.news"), to: "/blog" },
+    { label: t("footer.gallery"), to: "/gallery" },
+    { label: t("nav.contact"), to: "/contact" },
   ];
 
   const catalogs = CATALOG_KEYS
