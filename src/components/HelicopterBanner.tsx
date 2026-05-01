@@ -5,7 +5,8 @@ import { Plane } from "lucide-react";
 /**
  * Thin horizontal banner for Polograph's "Helicopter Aerodrome" feature.
  * Replaces the Investment Stats section per client feedback (PPTX slide 6).
- * Placeholder helicopter illustration — replace /helicopter-banner.jpg when asset is provided.
+ * Background uses a stylized SVG helicopter illustration in /public.
+ * Swap `/helicopter-banner.svg` for a real photo (.jpg) when one is provided.
  */
 export const HelicopterBanner = () => {
   const { t } = useLanguage();
@@ -18,15 +19,17 @@ export const HelicopterBanner = () => {
             bg-gradient-to-r from-[hsl(130_55%_40%/0.15)] via-[hsl(130_55%_50%/0.25)] to-[hsl(130_55%_40%/0.15)]
             backdrop-blur-md border border-[hsl(130_55%_40%/0.2)]
             shadow-[0_12px_40px_rgba(45,143,67,0.15)]">
-            {/* Background image placeholder (swap for helicopter photo) */}
+            {/* Background helicopter illustration (SVG, brand-green palette).
+                Swap for a real /helicopter-banner.jpg photo when one is delivered. */}
             <img
-              src="/helicopter-banner.jpg"
+              src="/helicopter-banner.svg"
               alt=""
               aria-hidden
               onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = "none"; }}
-              className="absolute inset-0 w-full h-full object-cover opacity-25"
+              className="absolute inset-0 w-full h-full object-cover opacity-60"
             />
-            <div className="absolute inset-0 bg-gradient-to-r from-white/70 via-white/30 to-transparent" />
+            {/* Left-side fade so the text stays readable over the illustration */}
+            <div className="absolute inset-0 bg-gradient-to-r from-white/85 via-white/55 to-white/10" />
 
             <div className="relative flex flex-col md:flex-row items-start md:items-center gap-4 md:gap-8 p-6 md:p-10 w-full">
               <div className="shrink-0 w-16 h-16 md:w-20 md:h-20 rounded-2xl bg-gradient-to-br from-[hsl(130_55%_40%/0.25)] to-[hsl(130_55%_40%/0.1)] flex items-center justify-center">
