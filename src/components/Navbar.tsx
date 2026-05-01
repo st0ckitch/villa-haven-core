@@ -76,7 +76,7 @@ export const Navbar = () => {
     <header className="fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-[1200px]">
       <div className="bg-background/70 backdrop-blur-xl border border-border/30 rounded-full px-6 flex items-center justify-between h-14 lg:h-16 shadow-lg">
         <Link to="/" className="font-serif text-xl lg:text-2xl tracking-tight text-foreground">
-          Igavi<span className="text-primary">.</span>
+          Polograph<span className="text-primary">.</span>
         </Link>
 
         <nav className={`hidden lg:flex items-center ${navGap}`}>
