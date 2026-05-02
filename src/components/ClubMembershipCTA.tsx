@@ -77,19 +77,23 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
                   )}
                 </div>
 
-                <MagneticButton strength={0.25}>
-                  <Link
-                    to="/contact"
-                    className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full
-                      bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white
-                      hover:from-[#359e4d] hover:to-[#44b862]
-                      shadow-[0_8px_24px_rgba(45,143,67,0.35)] hover:shadow-[0_12px_32px_rgba(45,143,67,0.45)]
-                      transition-all font-sans text-sm font-semibold whitespace-nowrap"
-                  >
-                    {t("contact.ctaButton")}
-                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                  </Link>
-                </MagneticButton>
+                {/* CTA hidden on Equestrian — the riding club is invitation-only,
+                    so a "Get in touch" button would contradict the framing. */}
+                {!isEquestrian && (
+                  <MagneticButton strength={0.25}>
+                    <Link
+                      to="/contact"
+                      className="group inline-flex items-center gap-2 px-6 py-3.5 rounded-full
+                        bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white
+                        hover:from-[#359e4d] hover:to-[#44b862]
+                        shadow-[0_8px_24px_rgba(45,143,67,0.35)] hover:shadow-[0_12px_32px_rgba(45,143,67,0.45)]
+                        transition-all font-sans text-sm font-semibold whitespace-nowrap"
+                    >
+                      {t("contact.ctaButton")}
+                      <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+                  </MagneticButton>
+                )}
               </div>
 
               {/* Numbered service grid */}
