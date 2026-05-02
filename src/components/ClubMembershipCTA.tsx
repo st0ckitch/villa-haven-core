@@ -2,7 +2,7 @@ import { AnimatedSection } from "@/components/AnimatedSection";
 import { MagneticButton } from "@/components/MagneticButton";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { Link } from "react-router-dom";
-import { Crown, ArrowRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 
 interface ClubMembershipCTAProps {
   project: "olimpo" | "equestrian";
@@ -62,18 +62,7 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
               {/* Header */}
               <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
                 <div className="max-w-2xl">
-                  <div className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full mb-4 ${
-                    isEquestrian
-                      ? "bg-white/15 backdrop-blur-md border border-white/30"
-                      : "bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)]"
-                  }`}>
-                    <Crown className={`w-3.5 h-3.5 ${isEquestrian ? "text-white" : "text-[hsl(130_55%_35%)]"}`} />
-                    <span className={`font-sans text-[10px] font-bold uppercase tracking-[0.2em] ${
-                      isEquestrian ? "text-white" : "text-[hsl(130_55%_30%)]"
-                    }`}>
-                      {t("projects.memberServices")}
-                    </span>
-                  </div>
+                  {/* "Services for club members" badge removed per client request */}
                   <h2 className={`font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight mb-3 leading-tight ${
                     isEquestrian ? "text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]" : "text-foreground"
                   }`}>
