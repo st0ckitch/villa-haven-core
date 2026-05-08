@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform, useMotionTemplate } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -103,7 +103,8 @@ export const HeroSection = () => {
   // Layer 3 (front): title floats UP faster + fades + blurs
   const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
   const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const titleBlur = useTransform(scrollYProgress, [0, 0.6], (v) => `blur(${v * 8}px)`);
+  const titleBlurAmount = useTransform(scrollYProgress, [0, 0.6], [0, 8]);
+  const titleBlur = useMotionTemplate`blur(${titleBlurAmount}px)`;
 
   // Video mode
   if (heroMode === "video" && heroVideoUrl) {

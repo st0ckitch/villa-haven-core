@@ -19,7 +19,7 @@ export const MagneticButton = ({ children, className = "", strength = 0.3, as = 
   const springX = useSpring(x, { stiffness: 200, damping: 15, mass: 0.5 });
   const springY = useSpring(y, { stiffness: 200, damping: 15, mass: 0.5 });
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (!ref.current || reduced) return;
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
@@ -41,15 +41,16 @@ export const MagneticButton = ({ children, className = "", strength = 0.3, as = 
 
   const MotionTag = as === "button" ? motion.button : as === "span" ? motion.span : motion.div;
 
+  const Tag: any = MotionTag;
   return (
-    <MotionTag
-      ref={ref as React.RefObject<HTMLDivElement & HTMLButtonElement & HTMLSpanElement>}
+    <Tag
+      ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={`inline-block ${className}`}
       style={{ x: springX, y: springY }}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 };

@@ -33,11 +33,15 @@ export const GreenFrameSection = () => {
           </div>
         </AnimatedSection>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="flex flex-wrap justify-center gap-4">
           {FRAME_ITEMS.map((item, i) => {
             const Icon = item.icon;
             return (
-              <AnimatedSection key={item.titleKey} delay={i * 60}>
+              <AnimatedSection
+                key={item.titleKey}
+                delay={i * 60}
+                className="w-full md:w-[calc((100%-1rem)/2)] lg:w-[calc((100%-2rem)/3)]"
+              >
                 <TiltCard maxTilt={5} scale={1.02} glare={false}>
                   <div className="bg-white/60 backdrop-blur-md border border-white/40 rounded-2xl p-5 md:p-6
                     shadow-[0_2px_16px_rgba(0,0,0,0.04)]
