@@ -110,17 +110,16 @@ const Ipodromi = () => {
     <Layout>
       <SEO title={`${titleText} — Igavi`} description={descriptionText.slice(0, 160)} />
 
-      {/* 1. Hero — breadcrumb uses short generic label to avoid duplicate with title (slide 14) */}
-      {c.equestrian_hero_image && (
-        <ProjectHero
-          image={c.equestrian_hero_image}
-          breadcrumb={t("footer.equestrian")}
-          title={titleText}
-          subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
-          badge={t("nav.projects")}
-          backLink={{ label: t("nav.home"), to: "/" }}
-        />
-      )}
+      {/* 1. Hero — match Polograph / Olimpo. Falls back to a bundled render
+          when Supabase has no `equestrian_hero_image` row yet. */}
+      <ProjectHero
+        image={c.equestrian_hero_image || "/renders/ipodromi-1.jpg"}
+        breadcrumb={t("footer.equestrian")}
+        title={titleText}
+        subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
+        badge={t("nav.projects")}
+        backLink={{ label: t("nav.home"), to: "/" }}
+      />
 
       {/* 2. Gallery + Description */}
       <AnimatedSection>
