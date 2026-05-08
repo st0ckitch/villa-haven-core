@@ -1,32 +1,15 @@
+# Center the Green Frame cards grid
 
+## Problem
+`GreenFrameSection` uses a 3-column grid for 5 items, leaving the last row (2 cards) left-aligned. The user wants the layout centered so the bottom 2 cards sit in the middle.
 
-# Use DM Galaktioni Font for All Headings
-
-## Overview
-Replace the heading font from FiraGO to DM Galaktioni across the entire website. FiraGO remains as the body/sans font.
-
-## Steps
-
-### 1. Extract and install the font
-- Extract `typeface.ge-DM_GalaktioniUNI-.zip` to get the font file(s)
-- Copy the `.ttf`/`.otf` file(s) to `public/fonts/`
-
-### 2. `src/index.css` — Add @font-face declarations
-- Add `@font-face` for `'DM Galaktioni'` pointing to the extracted font file(s)
-- Update the `h1-h6` rule to use `font-family: "DM Galaktioni", "FiraGO", serif;`
-
-### 3. `tailwind.config.ts` — Update `fontFamily.serif`
-- Change serif stack to `['"DM Galaktioni"', '"FiraGO"', "Georgia", "serif"]`
-- Add a new `heading` font family: `['"DM Galaktioni"', '"FiraGO"', "serif"]`
-
-### 4. No individual page changes needed
-The CSS rule `h1, h2, h3, h4, h5, h6 { font-family: ... }` in `index.css` will globally apply the new heading font. Any component using `font-serif` class will also pick it up via the Tailwind config update.
+## Approach
+Switch from `grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3` to a flex-wrap centered layout with fixed card widths per breakpoint — same pattern already used in `ServicesGlassGrid`. This naturally centers the trailing row.
 
 ## Files
 
 | File | Change |
 |------|--------|
-| `public/fonts/` | Add DM Galaktioni font file(s) |
-| `src/index.css` | Add @font-face + update heading font-family rule |
-| `tailwind.config.ts` | Update serif font stack to include DM Galaktioni |
+| `src/components/GreenFrameSection.tsx` | Replace the grid wrapper with `flex flex-wrap justify-center gap-4`; give each card a responsive width (full on mobile, ~1/2 on md, ~1/3 on lg) so the last row of 2 cards centers. |
 
+No logic, copy, or styling-token changes — only the layout wrapper and card width classes.
