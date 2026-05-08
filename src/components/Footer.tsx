@@ -98,12 +98,6 @@ export const Footer = () => {
                 <Phone className="w-4 h-4 shrink-0" />
                 <span>{t("footer.salesPhone")}: {phone}</span>
               </a>
-              <a href="mailto:info@igavidevelopment.ge" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                <Mail className="w-4 h-4 shrink-0" /> info@igavidevelopment.ge
-              </a>
-              <a href="mailto:sales@igavidevelopment.ge" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
-                <Mail className="w-4 h-4 shrink-0" /> sales@igavidevelopment.ge
-              </a>
               <a href="mailto:info@polograph.ge" className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <Mail className="w-4 h-4 shrink-0" /> info@polograph.ge
               </a>

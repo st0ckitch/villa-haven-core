@@ -101,10 +101,10 @@ const Ipodromi = () => {
   };
   const titleText = pick("equestrian_title", t("ipodromi.title"));
   const descriptionText = pick("equestrian_description", t("ipodromi.descriptionDefault"));
-  const visionTitle = pick("equestrian_vision_title", "");
-  const visionText = pick("equestrian_vision_text", "");
-  const joinTitle = pick("equestrian_join_title", "");
-  const joinDescription = pick("equestrian_join_description", "");
+  const visionTitle = pick("equestrian_vision_title", t("ipodromi.visionTitleDefault"));
+  const visionText = pick("equestrian_vision_text", t("ipodromi.visionTextDefault"));
+  const joinTitle = pick("equestrian_join_title", t("ipodromi.joinTitleDefault"));
+  const joinDescription = pick("equestrian_join_description", t("ipodromi.joinDescriptionDefault"));
 
   return (
     <Layout>

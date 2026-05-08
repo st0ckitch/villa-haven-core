@@ -100,8 +100,8 @@ const Olimpo = () => {
   };
   const titleText = pick("olimpo_title", t("olimpo.titleDefault"));
   const descriptionText = pick("olimpo_description", t("olimpo.descriptionDefault"));
-  const visionTitle = pick("olimpo_vision_title", "");
-  const visionText = pick("olimpo_vision_text", "");
+  const visionTitle = pick("olimpo_vision_title", t("olimpo.visionTitleDefault"));
+  const visionText = pick("olimpo_vision_text", t("olimpo.visionTextDefault"));
   const joinTitle = pick("olimpo_join_title", "");
   const joinDescription = pick("olimpo_join_description", "");
   const clubBenefitsTitle = pick("olimpo_club_benefits_title", t("olimpo.clubBenefitsTitle"));
