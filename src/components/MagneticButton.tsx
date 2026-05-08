@@ -19,7 +19,7 @@ export const MagneticButton = ({ children, className = "", strength = 0.3, as = 
   const springX = useSpring(x, { stiffness: 200, damping: 15, mass: 0.5 });
   const springY = useSpring(y, { stiffness: 200, damping: 15, mass: 0.5 });
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+  const handleMouseMove = (e: React.MouseEvent) => {
     if (!ref.current || reduced) return;
     const rect = ref.current.getBoundingClientRect();
     const centerX = rect.left + rect.width / 2;
