@@ -41,15 +41,16 @@ export const MagneticButton = ({ children, className = "", strength = 0.3, as = 
 
   const MotionTag = as === "button" ? motion.button : as === "span" ? motion.span : motion.div;
 
+  const Tag: any = MotionTag;
   return (
-    <MotionTag
-      ref={ref as React.RefObject<HTMLDivElement & HTMLButtonElement & HTMLSpanElement>}
+    <Tag
+      ref={ref}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className={`inline-block ${className}`}
       style={{ x: springX, y: springY }}
     >
       {children}
-    </MotionTag>
+    </Tag>
   );
 };
