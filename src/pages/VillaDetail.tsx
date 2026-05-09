@@ -126,7 +126,7 @@ const VillaDetail = () => {
           <div className="lg:col-span-2 space-y-8">
             <div>
               <div className="flex items-start gap-3 mb-3 flex-wrap">
-                <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground">{villa.name}</h1>
+                <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">{villa.name}</h1>
                 <Badge variant="outline" className={`mt-2 font-sans text-xs border ${statusColors[villa.status]} ${villa.status === "available" ? "animate-pulse" : ""}`}>{t(`sitePlan.${villa.status}`)}</Badge>
                 {plotZone && (
                   <span className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-[hsl(130_55%_40%/0.1)] border border-[hsl(130_55%_40%/0.25)] text-[11px] font-sans font-semibold tracking-wide text-[hsl(130_55%_30%)]">

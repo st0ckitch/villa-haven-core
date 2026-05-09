@@ -46,10 +46,10 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
         <div className="m-4 md:m-0 bg-white/65 backdrop-blur-2xl border border-white/50 rounded-3xl p-6 md:p-10
           shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
           {/* Title with character reveal — single heading, no kicker (client feedback) */}
-          {/* leading-[1.25]: SplitText wraps each char in overflow:hidden;
-              Georgian glyphs (ფ, გ, ც, ი) have descenders that get clipped at
-              tighter line-heights. 1.25 keeps the bottoms intact across ka/en/ru. */}
-          <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.25] pb-1 mb-2 whitespace-nowrap">
+          {/* leading-[1.4]: SplitText pads each char wrapper to keep Georgian
+              descenders (გ, ფ, ც, ჯ) from being clipped, but the parent line-box
+              still needs breathing room so descenders don't touch the next line. */}
+          <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.4] md:leading-[1.4] lg:leading-[1.4] pb-1 mb-2 whitespace-nowrap">
             <SplitText text={title} split="char" stagger={0.03} as="span" />
           </h1>
 

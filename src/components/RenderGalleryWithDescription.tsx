@@ -76,6 +76,7 @@ export const RenderGalleryWithDescription = ({
   return (
     <>
       <div className="container mx-auto px-6 py-12">
+        {/* Gallery: main image + thumbnails side by side on lg+ */}
         <div className="grid lg:grid-cols-[1.4fr_1fr] gap-6 lg:gap-8 items-start">
           {/* Left: Main image */}
           <div
@@ -90,56 +91,52 @@ export const RenderGalleryWithDescription = ({
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
 
-          {/* Right: Thumbnails + description */}
-          <div className="flex flex-col gap-6">
-            {/* Thumbnail grid */}
-            {renders.length > 1 && (
-              <div className="grid grid-cols-3 gap-2.5">
-                {thumbnails.map((img, idx) => {
-                  // Find actual index in renders array
-                  const actualIdx = renders.findIndex((r) => r.id === img.id);
-                  return (
-                    <button
-                      key={img.id}
-                      onClick={() => setActiveIndex(actualIdx)}
-                      className="relative aspect-square overflow-hidden rounded-xl group ring-1 ring-border hover:ring-[hsl(130_55%_40%/0.4)] transition-all"
-                    >
-                      <img
-                        src={img.image_url}
-                        alt={img.title || `render-${idx}`}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
-                      />
-                    </button>
-                  );
-                })}
-              </div>
-            )}
-
-            {/* Title + description */}
-            <div>
-              <h1 className="text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground mb-4">
-                {title}
-              </h1>
-              <p className="font-sans text-muted-foreground leading-relaxed text-sm md:text-base whitespace-pre-line">
-                {description}
-              </p>
+          {/* Right: Thumbnails */}
+          {renders.length > 1 && (
+            <div className="grid grid-cols-3 gap-2.5">
+              {thumbnails.map((img, idx) => {
+                const actualIdx = renders.findIndex((r) => r.id === img.id);
+                return (
+                  <button
+                    key={img.id}
+                    onClick={() => setActiveIndex(actualIdx)}
+                    className="relative aspect-square overflow-hidden rounded-xl group ring-1 ring-border hover:ring-[hsl(130_55%_40%/0.4)] transition-all"
+                  >
+                    <img
+                      src={img.image_url}
+                      alt={img.title || `render-${idx}`}
+                      className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
+                  </button>
+                );
+              })}
             </div>
+          )}
+        </div>
 
-            {/* Vision block */}
-            {(visionTitle || visionText) && (
-              <div className="bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.15)] rounded-2xl p-6">
-                {visionTitle && <h2 className="text-lg font-medium mb-2">{visionTitle}</h2>}
-                {visionText && (
-                  <p className="font-sans text-muted-foreground leading-relaxed text-sm whitespace-pre-line">
-                    {visionText}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Extra content slot */}
-            {extraContent}
+        {/* Text content: constrained width below the gallery */}
+        <div className="mt-10 lg:mt-12 max-w-3xl flex flex-col gap-6">
+          <div>
+            <h1 className="text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground mb-4 leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
+              {title}
+            </h1>
+            <p className="font-sans text-muted-foreground leading-relaxed text-base lg:text-lg whitespace-pre-line">
+              {description}
+            </p>
           </div>
+
+          {(visionTitle || visionText) && (
+            <div className="bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.15)] rounded-2xl p-6">
+              {visionTitle && <h2 className="text-lg font-medium mb-2">{visionTitle}</h2>}
+              {visionText && (
+                <p className="font-sans text-muted-foreground leading-relaxed text-sm whitespace-pre-line">
+                  {visionText}
+                </p>
+              )}
+            </div>
+          )}
+
+          {extraContent}
         </div>
       </div>
 

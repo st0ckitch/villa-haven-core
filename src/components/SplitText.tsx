@@ -70,11 +70,16 @@ export const SplitText = ({
               display: "inline-block",
               overflow: "hidden",
               verticalAlign: "top",
+              // Georgian glyphs (გ, ფ, ც, ჯ, ჰ) have descenders that extend below
+              // the baseline. Pad the wrapper so overflow:hidden doesn't clip them;
+              // a matching negative margin keeps surrounding layout unchanged.
+              paddingBottom: "0.25em",
+              marginBottom: "-0.25em",
             }}
           >
             <motion.span
-              initial={{ y: "110%", opacity: 0 }}
-              animate={visible ? { y: "0%", opacity: 1 } : { y: "110%", opacity: 0 }}
+              initial={{ y: "150%", opacity: 0 }}
+              animate={visible ? { y: "0%", opacity: 1 } : { y: "150%", opacity: 0 }}
               transition={{
                 duration: 0.7,
                 delay: delay + i * stagger,

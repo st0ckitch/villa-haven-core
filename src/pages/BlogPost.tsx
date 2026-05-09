@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 import { BlogPostingLd, BreadcrumbLd } from "@/components/JsonLd";
 import { supabase } from "@/integrations/supabase/client";
 import DOMPurify from "dompurify";
-import { ArrowLeft, Calendar, Clock, Facebook, Instagram } from "lucide-react";
+import { ArrowLeft, Calendar, Clock, Facebook } from "lucide-react";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 
 type BlogPost = Record<string, any>;
@@ -134,7 +134,7 @@ const BlogPostPage = () => {
               );
             })}
           </div>
-          <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mt-2 mb-6 leading-[1.1]">{localTitle}</h1>
+          <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mt-2 mb-6 leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">{localTitle}</h1>
 
           {/* Metadata glass chips */}
           <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground font-sans mb-10">
@@ -181,15 +181,6 @@ const BlogPostPage = () => {
               >
                 <Facebook className="w-3.5 h-3.5" />
                 Facebook
-              </a>
-              <a
-                href={`https://www.instagram.com/?url=${encodeURIComponent(window.location.href)}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-sm font-sans text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-[hsl(130_55%_30%)] transition-all duration-300 hover:-translate-y-0.5"
-              >
-                <Instagram className="w-3.5 h-3.5" />
-                Instagram
               </a>
             </div>
           </div>

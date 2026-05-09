@@ -95,8 +95,8 @@ const Polograph = () => {
   };
   const titleText = pick("polograph_title", t("polograph.titleDefault"));
   const descriptionText = pick("polograph_description", t("polograph.descriptionDefault"));
-  const visionTitle = pick("polograph_vision_title", "");
-  const visionText = pick("polograph_vision_text", "");
+  const visionTitle = pick("polograph_vision_title", t("polograph.visionTitleDefault"));
+  const visionText = pick("polograph_vision_text", t("polograph.visionTextDefault"));
   const deliveryTitle = pick("polograph_delivery_title", "");
   const deliveryText = pick("polograph_delivery_text", "");
 

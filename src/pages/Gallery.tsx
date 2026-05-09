@@ -43,7 +43,7 @@ const Gallery = () => {
       <section className="pt-28 lg:pt-32 pb-16 lg:pb-24">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-4">
+            <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-4 leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
               {t("gallery.title")}
             </h1>
             <p className="text-muted-foreground font-sans mb-10 max-w-lg">

@@ -114,7 +114,7 @@ const About = () => {
                 </div>
 
                 {!c.about_hero_image && (
-                  <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-foreground mb-8 leading-[0.95]">
+                  <h1 className="font-sans text-4xl md:text-6xl lg:text-7xl font-medium tracking-tight text-foreground mb-8 leading-[1.15] md:leading-[1.15] lg:leading-[1.15]">
                     {pageTitle}
                   </h1>
                 )}
