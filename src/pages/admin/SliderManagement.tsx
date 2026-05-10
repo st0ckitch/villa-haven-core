@@ -113,7 +113,8 @@ const SliderManagement = () => {
 
   const saveMutation = useMutation({
     mutationFn: async (slide: SlideForm & { id?: string }) => {
-      const payload = {
+      // Full payload (per-language columns added by migration 20260423120000).
+      const fullPayload = {
         image_url: slide.image_url,
         title: slide.title || slide.title_ka || slide.title_en || null,
         title_ka: slide.title_ka || null,
@@ -126,13 +127,35 @@ const SliderManagement = () => {
         sort_order: slide.sort_order,
         is_active: slide.is_active,
       };
-      if (slide.id) {
-        const { error } = await supabase.from("hero_slides").update(payload).eq("id", slide.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("hero_slides").insert(payload);
-        if (error) throw error;
+      // Legacy fallback: if PostgREST's schema cache hasn't picked up the
+      // per-language columns yet (PGRST204 / 42703), retry with only the
+      // original single-language columns. The legacy `title`/`description`
+      // already gets populated from whichever language the user filled in,
+      // so no data is lost — they can re-save once the cache clears to
+      // populate the per-language rows.
+      const legacyPayload = {
+        image_url: fullPayload.image_url,
+        title: fullPayload.title,
+        description: fullPayload.description,
+        sort_order: fullPayload.sort_order,
+        is_active: fullPayload.is_active,
+      };
+      const isMissingColumnError = (err: { code?: string; message?: string } | null) =>
+        !!err && (err.code === "PGRST204" || err.code === "42703" ||
+          /column .* does not exist|schema cache/i.test(err.message || ""));
+
+      const run = async (payload: typeof fullPayload | typeof legacyPayload) => {
+        if (slide.id) {
+          return supabase.from("hero_slides").update(payload).eq("id", slide.id);
+        }
+        return supabase.from("hero_slides").insert(payload);
+      };
+
+      let { error } = await run(fullPayload);
+      if (isMissingColumnError(error)) {
+        ({ error } = await run(legacyPayload));
       }
+      if (error) throw error;
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["admin-hero-slides"] });
