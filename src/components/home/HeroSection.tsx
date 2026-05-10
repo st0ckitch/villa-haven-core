@@ -3,24 +3,28 @@ import { AnimatePresence, motion, useScroll, useTransform, useMotionTemplate } f
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+// Brand-owned fallbacks: shown when `hero_slides` is empty or the API can't
+// reach Supabase. Swapped from generic Unsplash photos to actual Polograph /
+// Ipodromi renders so the homepage always shows on-brand imagery, even before
+// the admin uploads custom slides.
 const fallbackSlides = [
   {
-    image_url: "https://images.unsplash.com/photo-1613490493576-7fde63acd811?w=1920&q=80",
+    image_url: "/renders/polograph-aerial-1.jpg",
     title: null as string | null,
     description: null as string | null,
   },
   {
-    image_url: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920&q=80",
+    image_url: "/renders/polograph-aerial-2.jpg",
     title: null,
     description: null,
   },
   {
-    image_url: "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=1920&q=80",
+    image_url: "/renders/polograph-villa.jpg",
     title: null,
     description: null,
   },
   {
-    image_url: "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=1920&q=80",
+    image_url: "/renders/ipodromi-1.jpg",
     title: null,
     description: null,
   },
