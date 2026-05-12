@@ -77,8 +77,6 @@ export const AmenitiesSection = () => {
     { value: Number(settings.stat_5_value) || 0, suffix: settings.stat_5_suffix || "", label: settings.stat_5_label || "" },
   ].filter(s => s.value > 0 && s.label);
 
-  const slogan = settings.amenities_slogan || "";
-
   return (
     <section className="relative py-12 lg:py-16 overflow-hidden">
       {/* Gradient mesh background */}
@@ -109,17 +107,6 @@ export const AmenitiesSection = () => {
       </AnimatedSection>
 
       <div className="container mx-auto px-6">
-
-        {/* Slogan — single-line, tight spacing (client feedback Apr 23, 2026) */}
-        {slogan && (
-          <AnimatedSection className="mt-4">
-            <div className="max-w-4xl mx-auto text-center">
-              <p className="text-sm md:text-base italic text-muted-foreground leading-snug whitespace-nowrap overflow-hidden text-ellipsis">
-                "{slogan}"
-              </p>
-            </div>
-          </AnimatedSection>
-        )}
 
         {/* Stats row */}
         <AnimatedSection delay={200} className="mt-6">
