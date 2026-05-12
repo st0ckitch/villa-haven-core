@@ -16,20 +16,20 @@ type VillaImage = Tables<"villa_images">;
 
 interface VillaForm {
   name: string; slug: string; section: string; size_sqm: string; bedrooms: string; bathrooms: string;
-  price: string; status: string; description: string; description_ka: string; description_ru: string; features: string;
-  condominium: string; view_type: string; sector: string; cadastral_codes: string;
-  total_area: string; living_area: string; balcony_area: string; bedroom_count: string;
-  living_room: string; kitchen: string; wet_point_1: string; wet_point_2: string;
-  technical_room: string; ceiling_height: string; parking: string;
+  price: string; status: string; description: string; description_ka: string; description_ru: string;
+  view_type: string; sector: string; cadastral_codes: string;
+  plot_area: string; total_area: string; living_area: string;
+  rooms_count: string; bedroom_count: string;
+  wet_point_1: string; pool: string; parking: string;
 }
 
 const emptyForm: VillaForm = {
   name: "", slug: "", section: "a-section", size_sqm: "", bedrooms: "", bathrooms: "",
-  price: "", status: "available", description: "", description_ka: "", description_ru: "", features: "",
-  condominium: "", view_type: "", sector: "", cadastral_codes: "",
-  total_area: "", living_area: "", balcony_area: "", bedroom_count: "",
-  living_room: "", kitchen: "", wet_point_1: "", wet_point_2: "",
-  technical_room: "", ceiling_height: "", parking: "",
+  price: "", status: "available", description: "", description_ka: "", description_ru: "",
+  view_type: "", sector: "", cadastral_codes: "",
+  plot_area: "", total_area: "", living_area: "",
+  rooms_count: "", bedroom_count: "",
+  wet_point_1: "", pool: "", parking: "",
 };
 
 const slugify = (text: string) =>
@@ -76,14 +76,16 @@ const VillaManagement = () => {
       size_sqm: String(villa.size_sqm), bedrooms: String(villa.bedrooms), bathrooms: String(villa.bathrooms),
       price: villa.price ? String(villa.price) : "", status: villa.status,
       description: villa.description || "", description_ka: villa.description_ka || "", description_ru: villa.description_ru || "",
-      features: villa.features ? JSON.stringify(villa.features) : "",
-      condominium: v.condominium || "", view_type: v.view_type || "", sector: v.sector || "",
-      cadastral_codes: v.cadastral_codes || "", total_area: v.total_area ? String(v.total_area) : "",
-      living_area: v.living_area ? String(v.living_area) : "", balcony_area: v.balcony_area ? String(v.balcony_area) : "",
-      bedroom_count: v.bedroom_count ? String(v.bedroom_count) : "", living_room: v.living_room ? String(v.living_room) : "",
-      kitchen: v.kitchen ? String(v.kitchen) : "", wet_point_1: v.wet_point_1 ? String(v.wet_point_1) : "",
-      wet_point_2: v.wet_point_2 ? String(v.wet_point_2) : "", technical_room: v.technical_room ? String(v.technical_room) : "",
-      ceiling_height: v.ceiling_height || "", parking: v.parking || "",
+      view_type: v.view_type || "", sector: v.sector || "",
+      cadastral_codes: v.cadastral_codes || "",
+      plot_area: v.plot_area != null ? String(v.plot_area) : "",
+      total_area: v.total_area != null ? String(v.total_area) : "",
+      living_area: v.living_area != null ? String(v.living_area) : "",
+      rooms_count: v.rooms_count != null ? String(v.rooms_count) : "",
+      bedroom_count: v.bedroom_count != null ? String(v.bedroom_count) : "",
+      wet_point_1: v.wet_point_1 != null ? String(v.wet_point_1) : "",
+      pool: v.pool === true ? "yes" : v.pool === false ? "no" : "",
+      parking: v.parking || "",
     });
     await fetchImages(villa.id);
     setDialogOpen(true);
@@ -104,27 +106,22 @@ const VillaManagement = () => {
     }
     setSaving(true);
 
-    let parsedFeatures = null;
-    if (form.features.trim()) {
-      try { parsedFeatures = JSON.parse(form.features); }
-      catch { toast({ title: "Invalid JSON in features", variant: "destructive" }); setSaving(false); return; }
-    }
-
     const payload: any = {
       name: form.name, slug: form.slug || slugify(form.name), section: form.section,
       size_sqm: Number(form.size_sqm), bedrooms: Number(form.bedrooms), bathrooms: Number(form.bathrooms),
       price: form.price ? Number(form.price) : null,
       status: form.status as Villa["status"],
       description: form.description || null, description_ka: form.description_ka || null, description_ru: form.description_ru || null,
-      features: parsedFeatures,
-      condominium: form.condominium || null, view_type: form.view_type || null, sector: form.sector || null,
+      view_type: form.view_type || null, sector: form.sector || null,
       cadastral_codes: form.cadastral_codes || null,
-      total_area: form.total_area ? Number(form.total_area) : null, living_area: form.living_area ? Number(form.living_area) : null,
-      balcony_area: form.balcony_area ? Number(form.balcony_area) : null, bedroom_count: form.bedroom_count ? Number(form.bedroom_count) : null,
-      living_room: form.living_room ? Number(form.living_room) : null, kitchen: form.kitchen ? Number(form.kitchen) : null,
-      wet_point_1: form.wet_point_1 ? Number(form.wet_point_1) : null, wet_point_2: form.wet_point_2 ? Number(form.wet_point_2) : null,
-      technical_room: form.technical_room ? Number(form.technical_room) : null,
-      ceiling_height: form.ceiling_height || null, parking: form.parking || null,
+      plot_area: form.plot_area ? Number(form.plot_area) : null,
+      total_area: form.total_area ? Number(form.total_area) : null,
+      living_area: form.living_area ? Number(form.living_area) : null,
+      rooms_count: form.rooms_count ? Number(form.rooms_count) : null,
+      bedroom_count: form.bedroom_count ? Number(form.bedroom_count) : null,
+      wet_point_1: form.wet_point_1 ? Number(form.wet_point_1) : null,
+      pool: form.pool === "yes" ? true : form.pool === "no" ? false : null,
+      parking: form.parking || null,
     };
 
     if (editing) {
@@ -324,34 +321,43 @@ const VillaManagement = () => {
             </Tabs>
           </div>
 
-          {/* Features */}
-          <div className="mt-4">
-            <label className="text-sm font-medium font-sans">Features (JSON)</label>
-            <Textarea value={form.features} onChange={(e) => setForm((f) => ({ ...f, features: e.target.value }))} rows={2} className="font-sans font-mono text-xs mt-1" placeholder='["Pool", "Garden", "Parking"]' />
-          </div>
-
-          {/* Extended Parameters */}
+          {/* Extended Parameters — fixed list matching the public villa page */}
           <div className="mt-4 border-t border-border pt-4">
-            <label className="text-sm font-medium font-sans mb-2 block">Extended Parameters</label>
+            <label className="text-sm font-medium font-sans mb-2 block">Parameters</label>
             <div className="grid grid-cols-2 gap-3">
               {([
-                ["condominium", "Condominium"], ["view_type", "View"], ["sector", "Sector"],
-                ["cadastral_codes", "Cadastral Codes"], ["total_area", "Total Area (m²)"],
-                ["living_area", "Living Area (m²)"], ["balcony_area", "Balcony Area (m²)"],
-                ["bedroom_count", "Bedroom Count"], ["living_room", "Living Room"],
-                ["kitchen", "Kitchen"], ["wet_point_1", "Wet Point 1"], ["wet_point_2", "Wet Point 2"],
-                ["technical_room", "Technical Room"], ["ceiling_height", "Ceiling Height"], ["parking", "Parking"],
-              ] as const).map(([key, label]) => (
+                ["sector", "Sector", "text"],
+                ["cadastral_codes", "Cadastral Code", "text"],
+                ["plot_area", "Plot Area (m²)", "number"],
+                ["view_type", "View", "text"],
+                ["total_area", "Total Area (m²)", "number"],
+                ["living_area", "Living Area (m²)", "number"],
+                ["rooms_count", "Rooms", "number"],
+                ["bedroom_count", "Bedrooms", "number"],
+                ["wet_point_1", "Wet Point", "number"],
+                ["parking", "Parking", "text"],
+              ] as const).map(([key, label, type]) => (
                 <div key={key}>
                   <label className="text-xs font-sans text-muted-foreground">{label}</label>
                   <Input
                     value={(form as any)[key] || ""}
                     onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
                     className="font-sans mt-0.5 h-8 text-sm"
-                    type={["total_area","living_area","balcony_area","bedroom_count","living_room","kitchen","wet_point_1","wet_point_2","technical_room"].includes(key) ? "number" : "text"}
+                    type={type}
                   />
                 </div>
               ))}
+              <div>
+                <label className="text-xs font-sans text-muted-foreground">Pool</label>
+                <Select value={form.pool || "_unset"} onValueChange={(val) => setForm((f) => ({ ...f, pool: val === "_unset" ? "" : val }))}>
+                  <SelectTrigger className="font-sans mt-0.5 h-8 text-sm"><SelectValue /></SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="_unset">—</SelectItem>
+                    <SelectItem value="yes">Yes</SelectItem>
+                    <SelectItem value="no">No</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 

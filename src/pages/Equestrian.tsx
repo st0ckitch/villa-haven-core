@@ -15,7 +15,6 @@ import { InfrastructureTicker } from "@/components/InfrastructureTicker";
 import { ClubMembershipCTA } from "@/components/ClubMembershipCTA";
 import { ProjectHero } from "@/components/ProjectHero";
 import { GlassVideoFrame } from "@/components/GlassVideoFrame";
-import { ServicesGlassGrid } from "@/components/ServicesGlassGrid";
 import { TiltCard } from "@/components/TiltCard";
 import {
   Loader2,
@@ -24,14 +23,6 @@ import {
   TreePine,
   Crown,
   GraduationCap,
-  ConciergeBell,
-  ShieldCheck,
-  Trees,
-  Car,
-  Wrench,
-  SprayCan,
-  Stethoscope,
-  Home,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
@@ -57,17 +48,6 @@ const ADVANTAGES = [
   { icon: TreePine, key: "adv_outdoorArena" },
   { icon: Crown, key: "adv_dressageField" },
   { icon: GraduationCap, key: "adv_sportsSchool" },
-];
-
-const SERVICES = [
-  { icon: ConciergeBell, key: "serviceConcierge" },
-  { icon: ShieldCheck, key: "serviceSecurity" },
-  { icon: Trees, key: "serviceLandscape" },
-  { icon: Car, key: "serviceParking" },
-  { icon: Home, key: "serviceStables" },
-  { icon: Stethoscope, key: "serviceVeterinary" },
-  { icon: SprayCan, key: "serviceCleaning" },
-  { icon: Wrench, key: "serviceRidingGear" },
 ];
 
 const Ipodromi = () => {
@@ -202,13 +182,6 @@ const Ipodromi = () => {
           <InfrastructureTicker />
         </div>
       </div>
-
-      {/* 8. Services Grid */}
-      <ServicesGlassGrid
-        items={SERVICES}
-        namespace="ipodromi"
-        title={t("ipodromi.servicesTitle")}
-      />
 
       {/* 9. Catalog Downloads */}
       <CatalogSection />

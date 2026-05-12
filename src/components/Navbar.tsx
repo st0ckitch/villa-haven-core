@@ -91,7 +91,7 @@ export const Navbar = () => {
                   onMouseLeave={() => { projectsTimeout.current = setTimeout(() => setProjectsOpen(false), 150); }}
                 >
                   <button
-                    className={`${navText} font-semibold tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
+                    className={`${navText} tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
                       ["/polograph", "/olimpo", "/equestrian", "/ipodromi"].some((p) => location.pathname.startsWith(p)) ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
@@ -113,7 +113,7 @@ export const Navbar = () => {
                 >
                   <Link
                     to={link.to}
-                    className={`${navText} font-semibold tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
+                    className={`${navText} tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
                       location.pathname === "/site-plan" ? "text-primary" : "text-muted-foreground"
                     }`}
                   >
@@ -128,7 +128,7 @@ export const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`${navText} font-semibold tracking-wide transition-colors hover:text-primary ${
+                className={`${navText} tracking-wide transition-colors hover:text-primary ${
                   location.pathname === link.to ? "text-primary" : "text-muted-foreground"
                 }`}
               >
@@ -185,13 +185,13 @@ export const Navbar = () => {
       {isOpen && (
         <div className="lg:hidden bg-background/90 backdrop-blur-xl border border-border/30 rounded-2xl mt-2 mx-2 shadow-xl">
           <nav className="container mx-auto px-6 py-6 flex flex-col gap-4">
-            <Link to="/site-plan" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
+            <Link to="/site-plan" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
               {t("nav.chooseVilla")}
             </Link>
 
             {/* Projects group */}
             <div className="pl-0">
-              <p className="text-base font-medium text-foreground mb-2">{t("nav.projects")}</p>
+              <p className="text-base text-foreground mb-2">{t("nav.projects")}</p>
               <div className="pl-4 flex flex-col gap-2">
                 {projectSubLinks.map((sub) => (
                   <Link
@@ -206,16 +206,16 @@ export const Navbar = () => {
               </div>
             </div>
 
-            <Link to="/about" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
+            <Link to="/about" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
               {t("nav.aboutUs")}
             </Link>
-            <Link to="/blog" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
+            <Link to="/blog" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
               {t("nav.news")}
             </Link>
-            <Link to="/gallery" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
+            <Link to="/gallery" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
               {t("nav.gallery")}
             </Link>
-            <Link to="/contact" onClick={() => setIsOpen(false)} className="text-base font-medium text-foreground hover:text-primary transition-colors">
+            <Link to="/contact" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
               {t("nav.contact")}
             </Link>
 

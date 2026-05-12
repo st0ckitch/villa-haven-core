@@ -228,6 +228,12 @@
     "technicalRoom": "Technical Room",
     "ceilingHeight": "Ceiling Height",
     "parking": "Parking",
+    "plotArea": "Plot Area",
+    "roomsCount": "Rooms",
+    "bedroomsCount": "Bedrooms",
+    "pool": "Pool",
+    "yes": "Yes",
+    "no": "No",
     "clickForDetails": "Click to see more details",
     "moreDetails": "More details",
     "noImage": "No image"

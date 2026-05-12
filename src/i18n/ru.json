@@ -228,6 +228,12 @@
     "technicalRoom": "Техническое помещение",
     "ceilingHeight": "Высота потолков",
     "parking": "Парковка",
+    "plotArea": "Площадь участка",
+    "roomsCount": "Количество комнат",
+    "bedroomsCount": "Количество спален",
+    "pool": "Бассейн",
+    "yes": "Да",
+    "no": "Нет",
     "clickForDetails": "Нажмите для подробностей",
     "moreDetails": "Подробнее",
     "noImage": "Нет изображения"

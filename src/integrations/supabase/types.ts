@@ -501,9 +501,12 @@ export type Database = {
           living_room: number | null
           name: string
           parking: string | null
+          plot_area: number | null
+          pool: boolean | null
           position_x: number
           position_y: number
           price: number | null
+          rooms_count: number | null
           section: string | null
           sector: string | null
           size_sqm: number
@@ -535,9 +538,12 @@ export type Database = {
           living_room?: number | null
           name: string
           parking?: string | null
+          plot_area?: number | null
+          pool?: boolean | null
           position_x?: number
           position_y?: number
           price?: number | null
+          rooms_count?: number | null
           section?: string | null
           sector?: string | null
           size_sqm: number
@@ -569,9 +575,12 @@ export type Database = {
           living_room?: number | null
           name?: string
           parking?: string | null
+          plot_area?: number | null
+          pool?: boolean | null
           position_x?: number
           position_y?: number
           price?: number | null
+          rooms_count?: number | null
           section?: string | null
           sector?: string | null
           size_sqm?: number

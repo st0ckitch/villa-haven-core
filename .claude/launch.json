@@ -4,8 +4,8 @@
     {
       "name": "vite-dev",
       "runtimeExecutable": "/usr/local/bin/node",
-      "runtimeArgs": ["node_modules/.bin/vite"],
-      "port": 8080
+      "runtimeArgs": ["node_modules/.bin/vite", "--port", "8082"],
+      "port": 8082
     },
     {
       "name": "vite-preview",

@@ -7,7 +7,7 @@ import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lightbox } from "@/components/Lightbox";
-import { ArrowLeft, BedDouble, Bath, Maximize, MapPin, CheckCircle2 } from "lucide-react";
+import { BedDouble, Bath, Maximize, MapPin } from "lucide-react";
 import { useState } from "react";
 import { VillaContactForm } from "@/components/VillaContactForm";
 import { VillaPlotSummary } from "@/components/villa/VillaPlotSummary";
@@ -92,7 +92,6 @@ const VillaDetail = () => {
   const heroImage = images?.find((img) => img.is_hero) || images?.[0];
   const galleryImages = images || [];
   const description = getLocalizedField(villa, "description", language);
-  const features = villa.features as string[] | null;
 
   const openLightbox = (index: number) => { setLightboxIndex(index); setLightboxOpen(true); };
 
@@ -106,10 +105,6 @@ const VillaDetail = () => {
       </div>
 
       <div className="container mx-auto px-6 pt-28 lg:pt-32 pb-10 lg:pb-16">
-        <Link to="/polograph" className="inline-flex items-center gap-2 text-muted-foreground hover:text-[hsl(130_55%_30%)] transition-colors font-sans text-sm mb-8">
-          <ArrowLeft className="w-4 h-4" /> {t("villa.backToProperties")}
-        </Link>
-
         {/* Hero image with glass frame */}
         {heroImage && (
           <div className="relative mb-10">
@@ -159,24 +154,23 @@ const VillaDetail = () => {
               </div>
             </div>
 
-            {/* Extended Specifications */}
+            {/* Extended Specifications — fixed list per client screenshot (May 12, 2026) */}
             {(() => {
+              const v = villa as any;
+              const yesNo = (b: boolean | null | undefined) =>
+                b === true ? t("villa.yes") : b === false ? t("villa.no") : null;
               const specs = [
-                { label: t("villa.condominium"), value: (villa as any).condominium },
-                { label: t("villa.viewType"), value: (villa as any).view_type },
-                { label: t("villa.sector"), value: (villa as any).sector },
-                { label: t("villa.cadastralCodes"), value: (villa as any).cadastral_codes },
-                { label: t("villa.totalArea"), value: (villa as any).total_area ? `${(villa as any).total_area} m²` : null },
-                { label: t("villa.livingArea"), value: (villa as any).living_area ? `${(villa as any).living_area} m²` : null },
-                { label: t("villa.balconyArea"), value: (villa as any).balcony_area ? `${(villa as any).balcony_area} m²` : null },
-                { label: t("villa.bedroomCount"), value: (villa as any).bedroom_count },
-                { label: t("villa.livingRoom"), value: (villa as any).living_room },
-                { label: t("villa.kitchen"), value: (villa as any).kitchen },
-                { label: t("villa.wetPoint"), value: (villa as any).wet_point_1 },
-                { label: `${t("villa.wetPoint")} 2`, value: (villa as any).wet_point_2 },
-                { label: t("villa.technicalRoom"), value: (villa as any).technical_room },
-                { label: t("villa.ceilingHeight"), value: (villa as any).ceiling_height },
-                { label: t("villa.parking"), value: (villa as any).parking },
+                { label: t("villa.sector"), value: v.sector },
+                { label: t("villa.cadastralCodes"), value: v.cadastral_codes },
+                { label: t("villa.plotArea"), value: v.plot_area ? `${v.plot_area} m²` : null },
+                { label: t("villa.viewType"), value: v.view_type },
+                { label: t("villa.totalArea"), value: v.total_area ? `${v.total_area} m²` : null },
+                { label: t("villa.livingArea"), value: v.living_area ? `${v.living_area} m²` : null },
+                { label: t("villa.roomsCount"), value: v.rooms_count },
+                { label: t("villa.bedroomsCount"), value: v.bedroom_count },
+                { label: t("villa.wetPoint"), value: v.wet_point_1 },
+                { label: t("villa.pool"), value: yesNo(v.pool) },
+                { label: t("villa.parking"), value: v.parking },
               ].filter((s) => s.value != null && s.value !== "" && s.value !== 0);
               if (specs.length === 0) return null;
               return (
@@ -202,22 +196,6 @@ const VillaDetail = () => {
                     <h2 className="font-sans text-xl font-medium mb-3 text-foreground">{t("villa.description")}</h2>
                     <p className="font-sans text-muted-foreground leading-relaxed whitespace-pre-line">{description}</p>
                   </div>
-                </div>
-              </div>
-            )}
-
-            {features && features.length > 0 && (
-              <div className="relative bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] rounded-2xl p-6 md:p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
-                <h2 className="font-sans text-xl font-medium mb-5 text-foreground">{t("villa.features")}</h2>
-                <div className="grid sm:grid-cols-2 gap-3">
-                  {features.map((feature, i) => (
-                    <div key={i} className="flex items-center gap-2.5 font-sans text-sm">
-                      <div className="w-5 h-5 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.15)] to-[hsl(130_55%_40%/0.05)] flex items-center justify-center shrink-0">
-                        <CheckCircle2 className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2.5} />
-                      </div>
-                      <span className="text-foreground/80">{feature}</span>
-                    </div>
-                  ))}
                 </div>
               </div>
             )}

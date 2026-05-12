@@ -228,6 +228,12 @@
     "technicalRoom": "ტექნიკური ოთახი",
     "ceilingHeight": "ჭერის სიმაღლე",
     "parking": "პარკინგი",
+    "plotArea": "ნაკვეთის ფართი",
+    "roomsCount": "ოთახების რაოდენობა",
+    "bedroomsCount": "საძინებლების რაოდენობა",
+    "pool": "აუზი",
+    "yes": "დიახ",
+    "no": "არა",
     "clickForDetails": "დააჭირეთ დეტალებისთვის",
     "moreDetails": "ვრცლად",
     "noImage": "სურათი არ არის"
