@@ -43,7 +43,6 @@ export const getLocalizedField = <T extends Record<string, any>>(
   field: string,
   lang: Language
 ): string => {
-  if (lang === "en") return (item[field] as string) || "";
   const localized = item[`${field}_${lang}`] as string | null | undefined;
   return localized || (item[field] as string) || "";
 };
