@@ -46,6 +46,13 @@ const getEmbedUrl = (url: string): { type: "iframe" | "video"; src: string } => 
 export const HeroSection = () => {
   const [activeSlide, setActiveSlide] = useState(0);
 
+  // Read the previous session's slides synchronously on first render so we
+  // can paint immediately. Stable across renders, not reactive.
+  const cachedSlidesRef = useRef<CachedSlide[] | null>(null);
+  if (cachedSlidesRef.current === null) {
+    cachedSlidesRef.current = readCachedSlides();
+  }
+
   const { data: dbSlides } = useQuery({
     queryKey: ["hero-slides"],
     queryFn: async () => {
@@ -57,12 +64,13 @@ export const HeroSection = () => {
       if (error) throw error;
       return data;
     },
-    // Seed with the previous session's slides so first paint matches what
-    // the user saw last time — no flash to a stock fallback while the
-    // network call resolves.
-    initialData: readCachedSlides as any,
-    // Treat cached data as fresh for 5 minutes so navigations back to /
-    // don't refetch; the slider is already on screen.
+    // Only seed initialData when we actually have cached slides. Passing
+    // `null`/`undefined` would make react-query think the data is loaded
+    // and skip the queryFn entirely — that broke the hero earlier.
+    initialData: cachedSlidesRef.current ?? undefined,
+    // Treat the cache as immediately stale so we still hit the network in
+    // the background and pick up any admin edits within a few hundred ms.
+    initialDataUpdatedAt: 0,
     staleTime: 5 * 60_000,
   });
 
@@ -97,11 +105,23 @@ export const HeroSection = () => {
   const heroMode = heroSettings?.hero_mode || "slider";
   const heroVideoUrl = heroSettings?.hero_video_url || "";
 
-  // No fallback images: if `hero_slides` hasn't loaded yet AND there's no
-  // localStorage cache, render an empty slot (Layer 2 overlay still shows)
-  // rather than flashing a stock photo that doesn't match what the admin
-  // configured. First-ever visitors see the brand gradient for ~200ms.
-  const slides = dbSlides && dbSlides.length > 0 ? dbSlides : [];
+  // Last-resort fallbacks for the rare case where (a) localStorage has no
+  // cache and (b) the Supabase query fails. Uses brand-owned renders so the
+  // hero never renders as a blank gradient. On a successful first load the
+  // dbSlides immediately replace these.
+  const fallbackSlides: CachedSlide[] = [
+    { image_url: "/renders/polograph-aerial-1.jpg", title: null, description: null },
+    { image_url: "/renders/polograph-aerial-2.jpg", title: null, description: null },
+    { image_url: "/renders/polograph-villa.jpg",   title: null, description: null },
+    { image_url: "/renders/ipodromi-1.jpg",        title: null, description: null },
+  ];
+
+  const slides =
+    dbSlides && dbSlides.length > 0
+      ? dbSlides
+      : cachedSlidesRef.current && cachedSlidesRef.current.length > 0
+      ? cachedSlidesRef.current
+      : fallbackSlides;
 
   const nextSlide = useCallback(() => {
     setActiveSlide((prev) => (prev + 1) % slides.length);
