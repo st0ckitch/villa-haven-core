@@ -18,7 +18,7 @@ export const ServicesSection = () => {
       title: t("services.card2Title"),
       description: t("services.card2Desc"),
       // Replaced per PPTX slide 1: aerial of Olimpo sports complex.
-      image: "/renders/home/card-olimpo.png",
+      image: "/renders/home/card-olimpo.jpg",
       link: "/olimpo",
       cta: t("services.card2Cta"),
     },
@@ -26,7 +26,7 @@ export const ServicesSection = () => {
       title: t("services.card3Title"),
       description: t("services.card3Desc"),
       // Replaced per PPTX slide 1: aerial of Ipodromi horse arenas.
-      image: "/renders/home/card-ipodromi.png",
+      image: "/renders/home/card-ipodromi.jpg",
       link: "/equestrian",
       cta: t("services.card3Cta"),
     },

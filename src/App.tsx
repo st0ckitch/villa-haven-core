@@ -45,7 +45,27 @@ const Equestrian = lazy(() => import("./pages/Equestrian"));
 const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
 const Terms = lazy(() => import("./pages/Terms"));
 
-const queryClient = new QueryClient();
+// Defaults tuned for a content site: data rarely changes within a session,
+// so cache it aggressively to avoid re-fetching on every page navigation
+// (was causing the home hero to flash and pages to re-trigger spinners).
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      // 5 min — admin edits show up within the next page load
+      staleTime: 5 * 60_000,
+      // Keep cached data in memory for 30 min after last use; cheap to keep,
+      // huge UX win when navigating back to a previously visited page.
+      gcTime: 30 * 60_000,
+      // Don't auto-refetch when the user returns to the tab — the staleTime
+      // window already covers that, and refocus refetches were causing
+      // visible loading spinners on the homepage.
+      refetchOnWindowFocus: false,
+      // Same reason for reconnect events.
+      refetchOnReconnect: false,
+      retry: 1,
+    },
+  },
+});
 
 const PageLoader = () => (
   <div className="min-h-screen flex items-center justify-center bg-background">

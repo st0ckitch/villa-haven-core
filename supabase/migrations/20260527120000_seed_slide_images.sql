@@ -20,8 +20,8 @@ INSERT INTO public.project_renders (project, image_url, title_ka, title_en, titl
   ('polograph', '/renders/polograph/05-park.jpg',               'პარკი',               'Park',               'Парк',              5),
   ('polograph', '/renders/polograph/06-running-track.jpg',      'სარბენი ბილიკი',      'Running track',      'Беговая дорожка',    6),
   ('polograph', '/renders/polograph/07-sakura.jpg',             'საკურა',              'Sakura',             'Сакура',            7),
-  ('polograph', '/renders/polograph/08-lake.png',               'ტბა',                 'Lake',               'Озеро',             8),
-  ('polograph', '/renders/polograph/09-business-center.jpeg',   'ბიზნეს ცენტრი',       'Business Center',    'Бизнес-центр',      9),
+  ('polograph', '/renders/polograph/08-lake.jpg',               'ტბა',                 'Lake',               'Озеро',             8),
+  ('polograph', '/renders/polograph/09-business-center.jpg',   'ბიზნეს ცენტრი',       'Business Center',    'Бизнес-центр',      9),
   ('polograph', '/renders/polograph/10-round-garden.jpg',       'მრგვალი ბაღი',        'Round Garden',       'Круглый сад',      10);
 
 -- ─── Olimpo (slides 10-17) ─────────────────────────────────────────────────
@@ -32,13 +32,13 @@ INSERT INTO public.project_renders (project, image_url, title_ka, title_en, titl
   ('olimpo', '/renders/olimpo/02-olimpo-1.jpg',             'ოლიმპო',                  'Olimpo',                  'Олимпо',                  2),
   ('olimpo', '/renders/olimpo/03-olimpo-2.jpg',             'ოლიმპო',                  'Olimpo',                  'Олимпо',                  3),
   ('olimpo', '/renders/olimpo/04-tennis-courts.jpg',        'ჩოგბურთის კორტები',        'Tennis Courts',           'Теннисные корты',          4),
-  ('olimpo', '/renders/olimpo/05-football-stadium.jpeg',    'ფეხბურთის სტადიონი',       'Football Stadium',        'Футбольный стадион',       5),
+  ('olimpo', '/renders/olimpo/05-football-stadium.jpg',    'ფეხბურთის სტადიონი',       'Football Stadium',        'Футбольный стадион',       5),
   ('olimpo', '/renders/olimpo/06-hotel.jpg',                'სასტუმრო',                 'Hotel',                   'Отель',                   6),
   ('olimpo', '/renders/olimpo/07-padel-courts.jpg',         'პადელის კორტები',          'Padel Courts',            'Падел-корты',              7),
-  ('olimpo', '/renders/olimpo/08-wellness-center.png',      'ველნეს ცენტრი',            'Wellness Center',         'Велнес-центр',             8),
+  ('olimpo', '/renders/olimpo/08-wellness-center.jpg',      'ველნეს ცენტრი',            'Wellness Center',         'Велнес-центр',             8),
   ('olimpo', '/renders/olimpo/09-recreation-zones.jpg',     'რეკრეაციული ზონები',       'Recreation Zones',        'Зоны отдыха',              9),
-  ('olimpo', '/renders/olimpo/10-volleyball-field.png',     'ფრენბურთის მოედანი',       'Volleyball Court',        'Волейбольная площадка',   10),
-  ('olimpo', '/renders/olimpo/11-bike-paths.jpeg',          'ველობილიკები',             'Bike Paths',              'Велодорожки',             11),
+  ('olimpo', '/renders/olimpo/10-volleyball-field.jpg',     'ფრენბურთის მოედანი',       'Volleyball Court',        'Волейбольная площадка',   10),
+  ('olimpo', '/renders/olimpo/11-bike-paths.jpg',          'ველობილიკები',             'Bike Paths',              'Велодорожки',             11),
   ('olimpo', '/renders/olimpo/12-billiards.jpg',            'საბილიარდო',               'Billiards',               'Бильярдная',              12),
   ('olimpo', '/renders/olimpo/13-pools.jpg',                'ღია და დახურული აუზები',   'Open and Indoor Pools',    'Открытые и крытые бассейны', 13),
   ('olimpo', '/renders/olimpo/14-entertainment.jpg',        'გასართობი სივრცეები',       'Entertainment Spaces',     'Развлекательные зоны',     14);
@@ -106,4 +106,4 @@ INSERT INTO public.renders (image_url, title, title_ka, title_en, title_ru, cate
   ('/renders/gallery/gallery-40.jpg', 'Render 40', 'რენდერი 40', 'Render 40', 'Рендер 40', 'exterior', 40),
   ('/renders/gallery/gallery-41.jpg', 'Render 41', 'რენდერი 41', 'Render 41', 'Рендер 41', 'exterior', 41),
   ('/renders/gallery/gallery-42.jpg', 'Render 42', 'რენდერი 42', 'Render 42', 'Рендер 42', 'exterior', 42),
-  ('/renders/gallery/gallery-43.png', 'Render 43', 'რენდერი 43', 'Render 43', 'Рендер 43', 'exterior', 43);
+  ('/renders/gallery/gallery-43.jpg', 'Render 43', 'რენდერი 43', 'Render 43', 'Рендер 43', 'exterior', 43);

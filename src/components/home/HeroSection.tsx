@@ -3,32 +3,33 @@ import { AnimatePresence, motion, useScroll, useTransform, useMotionTemplate } f
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
-// Brand-owned fallbacks: shown when `hero_slides` is empty or the API can't
-// reach Supabase. Swapped from generic Unsplash photos to actual Polograph /
-// Ipodromi renders so the homepage always shows on-brand imagery, even before
-// the admin uploads custom slides.
-const fallbackSlides = [
-  {
-    image_url: "/renders/polograph-aerial-1.jpg",
-    title: null as string | null,
-    description: null as string | null,
-  },
-  {
-    image_url: "/renders/polograph-aerial-2.jpg",
-    title: null,
-    description: null,
-  },
-  {
-    image_url: "/renders/polograph-villa.jpg",
-    title: null,
-    description: null,
-  },
-  {
-    image_url: "/renders/ipodromi-1.jpg",
-    title: null,
-    description: null,
-  },
-];
+// Cache key used to hydrate the first paint with the most recently fetched
+// hero slides. Eliminates the "old image flash" by serving the previous
+// session's slides from localStorage while the network query revalidates.
+const HERO_CACHE_KEY = "hero-slides-cache-v1";
+
+type CachedSlide = { image_url: string; title: string | null; description: string | null };
+
+const readCachedSlides = (): CachedSlide[] | null => {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = window.localStorage.getItem(HERO_CACHE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+  } catch {
+    return null;
+  }
+};
+
+const writeCachedSlides = (slides: CachedSlide[]) => {
+  if (typeof window === "undefined") return;
+  try {
+    window.localStorage.setItem(HERO_CACHE_KEY, JSON.stringify(slides));
+  } catch {
+    // ignore quota / private-mode errors
+  }
+};
 
 const getEmbedUrl = (url: string): { type: "iframe" | "video"; src: string } => {
   const ytMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&?/]+)/);
@@ -56,7 +57,27 @@ export const HeroSection = () => {
       if (error) throw error;
       return data;
     },
+    // Seed with the previous session's slides so first paint matches what
+    // the user saw last time — no flash to a stock fallback while the
+    // network call resolves.
+    initialData: readCachedSlides as any,
+    // Treat cached data as fresh for 5 minutes so navigations back to /
+    // don't refetch; the slider is already on screen.
+    staleTime: 5 * 60_000,
   });
+
+  // Persist whenever new data arrives so the next session benefits.
+  useEffect(() => {
+    if (dbSlides && Array.isArray(dbSlides) && dbSlides.length > 0) {
+      writeCachedSlides(
+        dbSlides.map((s: any) => ({
+          image_url: s.image_url,
+          title: s.title ?? null,
+          description: s.description ?? null,
+        }))
+      );
+    }
+  }, [dbSlides]);
 
   const { data: heroSettings } = useQuery({
     queryKey: ["hero-settings"],
@@ -70,12 +91,17 @@ export const HeroSection = () => {
       data?.forEach((r) => (map[r.key] = r.value));
       return map;
     },
+    staleTime: 5 * 60_000,
   });
 
   const heroMode = heroSettings?.hero_mode || "slider";
   const heroVideoUrl = heroSettings?.hero_video_url || "";
 
-  const slides = dbSlides && dbSlides.length > 0 ? dbSlides : fallbackSlides;
+  // No fallback images: if `hero_slides` hasn't loaded yet AND there's no
+  // localStorage cache, render an empty slot (Layer 2 overlay still shows)
+  // rather than flashing a stock photo that doesn't match what the admin
+  // configured. First-ever visitors see the brand gradient for ~200ms.
+  const slides = dbSlides && dbSlides.length > 0 ? dbSlides : [];
 
   const nextSlide = useCallback(() => {
     setActiveSlide((prev) => (prev + 1) % slides.length);
@@ -92,6 +118,10 @@ export const HeroSection = () => {
   }, [dbSlides]);
 
   const current = slides[activeSlide];
+  // Build the immediate next slide URL so the browser starts decoding it
+  // in the background; eliminates the brief blank flash when AnimatePresence
+  // unmounts the current image and mounts the next.
+  const nextImageUrl = slides.length > 1 ? slides[(activeSlide + 1) % slides.length].image_url : null;
 
   // Scroll-driven parallax hooks (must be called before any early returns)
   const heroRef = useRef<HTMLElement>(null);
@@ -141,25 +171,39 @@ export const HeroSection = () => {
 
   // Slider mode (default) with 3D parallax layers
   return (
-    <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden">
-      {/* Layer 1: Parallax image */}
-      <motion.div
-        className="absolute inset-0"
-        style={{ y: imageY, scale: imageScale }}
-      >
-        <AnimatePresence mode="popLayout">
-          <motion.img
-            key={activeSlide}
-            src={current.image_url}
-            alt={current.title || "Hero slide"}
-            initial={{ opacity: 0, scale: 1.08 }}
-            animate={{ opacity: 1, scale: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 1.2, ease: "easeInOut" }}
-            className="absolute inset-0 w-full h-full object-cover"
-          />
-        </AnimatePresence>
-      </motion.div>
+    <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden bg-gradient-to-br from-[hsl(130_30%_15%)] via-[hsl(130_25%_20%)] to-[hsl(130_20%_12%)]">
+      {/* Hidden preloader for the next slide so it's decoded before transition.
+          Eliminates the flash to the fallback color between slides. */}
+      {nextImageUrl && (
+        <link rel="preload" as="image" href={nextImageUrl} />
+      )}
+
+      {/* Layer 1: Parallax image — only mounted once `current` exists,
+          which avoids flashing a stale fallback during the initial query. */}
+      {current && (
+        <motion.div
+          className="absolute inset-0"
+          style={{ y: imageY, scale: imageScale }}
+        >
+          <AnimatePresence mode="popLayout">
+            <motion.img
+              key={activeSlide}
+              src={current.image_url}
+              alt={current.title || "Hero slide"}
+              initial={{ opacity: 0, scale: 1.08 }}
+              animate={{ opacity: 1, scale: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 1.2, ease: "easeInOut" }}
+              className="absolute inset-0 w-full h-full object-cover"
+              // First slide is above the fold; load eagerly with high priority
+              // so the LCP image is requested as soon as possible.
+              loading={activeSlide === 0 ? "eager" : "lazy"}
+              fetchPriority={activeSlide === 0 ? "high" : "auto"}
+              decoding="async"
+            />
+          </AnimatePresence>
+        </motion.div>
+      )}
 
       {/* Layer 2: Animated overlay that darkens on scroll */}
       <motion.div
@@ -168,7 +212,7 @@ export const HeroSection = () => {
       />
 
       {/* Layer 3: Title with reverse parallax + blur exit */}
-      {(current.title || current.description) && (
+      {current && (current.title || current.description) && (
         <motion.div
           className="relative z-10 container mx-auto px-6"
           style={{ y: titleY, opacity: titleOpacity, filter: titleBlur }}
