@@ -17,14 +17,16 @@ export const ServicesSection = () => {
     {
       title: t("services.card2Title"),
       description: t("services.card2Desc"),
-      image: "https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80",
+      // Replaced per PPTX slide 1: aerial of Olimpo sports complex.
+      image: "/renders/home/card-olimpo.png",
       link: "/olimpo",
       cta: t("services.card2Cta"),
     },
     {
       title: t("services.card3Title"),
       description: t("services.card3Desc"),
-      image: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=800&q=80",
+      // Replaced per PPTX slide 1: aerial of Ipodromi horse arenas.
+      image: "/renders/home/card-ipodromi.png",
       link: "/equestrian",
       cta: t("services.card3Cta"),
     },
