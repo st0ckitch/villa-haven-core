@@ -14,7 +14,6 @@ import { RenderGalleryWithDescription } from "@/components/RenderGalleryWithDesc
 import { InfrastructureTicker } from "@/components/InfrastructureTicker";
 import { ClubMembershipCTA } from "@/components/ClubMembershipCTA";
 import { ProjectHero } from "@/components/ProjectHero";
-import { GlassVideoFrame } from "@/components/GlassVideoFrame";
 import { TiltCard } from "@/components/TiltCard";
 import {
   Loader2,
@@ -149,22 +148,49 @@ const Ipodromi = () => {
         </div>
       </div>
 
-      {/* 4. Video */}
-      {c.equestrian_video_url && (
-        <div className="container mx-auto px-6 pb-12 md:pb-16 max-w-5xl">
-          <AnimatedSection>
-            <GlassVideoFrame url={c.equestrian_video_url} label={t("nav.projects")} />
-          </AnimatedSection>
-        </div>
-      )}
+      {/* 4. Video — REMOVED per client (PPTX slide 19): "we don't have a video
+          at this stage, so let's remove it entirely". Kept admin key in DB so
+          re-enabling later is one toggle. */}
 
-      {/* 5. Equestrian Club Membership CTA (replaces former banner — moved up per client request) */}
+      {/* 5. Equestrian SCHOOL section — appears ABOVE the Club per PPTX slide 20
+          ("ზემოთ იყოს საცხენოსნო სკოლა და ქვემოთ საცხენოსნო კლუბი"). The existing
+          ClubMembershipCTA already carries the school's title/copy via
+          `joinTitle` → `t("ipodromi.joinTitleDefault")` = "საცხენოსნო სკოლა". */}
       <ClubMembershipCTA
         project="equestrian"
         joinTitle={joinTitle}
         joinDescription={joinDescription}
         services={memberServices}
       />
+
+      {/* 5b. Equestrian CLUB banner — added per PPTX slides 18 & 20.
+          Photo from slide 18 (01-club-banner.jpg) sits behind the heading copy
+          pulled from `ipodromi.equestrianClubBannerTitle` / `…Description`. */}
+      <section className="relative py-16 lg:py-20 overflow-hidden">
+        <div className="container mx-auto px-6 max-w-6xl">
+          <AnimatedSection>
+            <div className="relative rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(45,143,67,0.12)] border border-white/20">
+              <img
+                src="/renders/ipodromi/01-club-banner.jpg"
+                alt={t("ipodromi.equestrianClubBannerTitle")}
+                className="absolute inset-0 w-full h-full object-cover"
+                loading="lazy"
+              />
+              <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/45 to-black/30" />
+              <div className="relative p-8 md:p-12 lg:p-16">
+                <div className="max-w-2xl">
+                  <h2 className="font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight mb-3 leading-tight text-white drop-shadow-[0_2px_8px_rgba(0,0,0,0.4)]">
+                    {t("ipodromi.equestrianClubBannerTitle")}
+                  </h2>
+                  <p className="font-sans text-sm md:text-base leading-relaxed text-white/85">
+                    {t("ipodromi.equestrianClubDescription")}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </AnimatedSection>
+        </div>
+      </section>
 
       {/* 6. Infrastructure Ticker */}
       <div className="py-10">
