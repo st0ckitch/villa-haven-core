@@ -1,4 +1,5 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface LightboxProps {
@@ -19,9 +20,22 @@ export const Lightbox = ({ images, currentIndex, onClose }: LightboxProps) => {
     if (e.key === "ArrowRight") next();
   };
 
-  return (
+  // Lock body scroll so a tap on a dimmed gallery thumbnail (rendered inside an
+  // ancestor with a CSS transform) doesn't leave the page scrolled while the
+  // overlay is up.
+  useEffect(() => {
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prevOverflow; };
+  }, []);
+
+  // Portal to <body> so the fixed overlay isn't trapped inside an ancestor
+  // with `transform` applied (e.g. AnimatedSection's translate-y animation),
+  // which on mobile pushed the lightbox far up the page and required scrolling
+  // to find it.
+  return createPortal(
     <div
-      className="fixed inset-0 z-50 bg-foreground/90 flex items-center justify-center"
+      className="fixed inset-0 z-[100] bg-foreground/90 flex items-center justify-center"
       onClick={onClose}
       onKeyDown={handleKeyDown}
       tabIndex={0}
@@ -56,6 +70,7 @@ export const Lightbox = ({ images, currentIndex, onClose }: LightboxProps) => {
         />
         <p className="text-center text-background/80 text-sm font-sans mt-3">{images[index].title}</p>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
