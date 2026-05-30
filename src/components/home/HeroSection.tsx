@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import { AnimatePresence, motion, useScroll, useTransform, useMotionTemplate } from "framer-motion";
+import { AnimatePresence, motion, useScroll, useTransform } from "framer-motion";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -138,27 +138,33 @@ export const HeroSection = () => {
   }, [dbSlides]);
 
   const current = slides[activeSlide];
-  // Build the immediate next slide URL so the browser starts decoding it
-  // in the background; eliminates the brief blank flash when AnimatePresence
-  // unmounts the current image and mounts the next.
-  const nextImageUrl = slides.length > 1 ? slides[(activeSlide + 1) % slides.length].image_url : null;
 
-  // Scroll-driven parallax hooks (must be called before any early returns)
+  // Decode the next slide off-screen *before* AnimatePresence swaps it in,
+  // so the transition starts from a fully-decoded bitmap (no fallback flash,
+  // no main-thread decode hitch). Plain Image() is more reliable than
+  // <link rel=preload> rendered inside JSX.
+  useEffect(() => {
+    if (slides.length <= 1) return;
+    const nextUrl = slides[(activeSlide + 1) % slides.length].image_url;
+    if (!nextUrl) return;
+    const img = new Image();
+    img.decoding = "async";
+    img.src = nextUrl;
+  }, [activeSlide, slides]);
+
+  // Scroll-driven parallax — kept intentionally minimal. Only `transform`
+  // and `opacity` are animated; both are GPU-composited so they don't
+  // trigger layout/paint on every scroll frame. The earlier `filter:
+  // blur()` animation was the dominant cause of scroll jank because each
+  // frame forced a full repaint of the blurred title bounding box.
   const heroRef = useRef<HTMLElement>(null);
   const { scrollYProgress } = useScroll({
     target: heroRef,
     offset: ["start start", "end start"],
   });
-  // Layer 1 (back): image scales + moves slower
-  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "30%"]);
-  const imageScale = useTransform(scrollYProgress, [0, 1], [1, 1.15]);
-  // Layer 2 (mid): overlay darkens as you scroll
-  const overlayOpacity = useTransform(scrollYProgress, [0, 1], [0.4, 0.85]);
-  // Layer 3 (front): title floats UP faster + fades + blurs
-  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-50%"]);
-  const titleOpacity = useTransform(scrollYProgress, [0, 0.5], [1, 0]);
-  const titleBlurAmount = useTransform(scrollYProgress, [0, 0.6], [0, 8]);
-  const titleBlur = useMotionTemplate`blur(${titleBlurAmount}px)`;
+  const imageY = useTransform(scrollYProgress, [0, 1], ["0%", "20%"]);
+  const titleY = useTransform(scrollYProgress, [0, 1], ["0%", "-40%"]);
+  const titleOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
 
   // Video mode
   if (heroMode === "video" && heroVideoUrl) {
@@ -189,53 +195,47 @@ export const HeroSection = () => {
     );
   }
 
-  // Slider mode (default) with 3D parallax layers
+  // Slider mode (default). Two GPU-composited parallax layers only.
   return (
     <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden bg-gradient-to-br from-[hsl(130_30%_15%)] via-[hsl(130_25%_20%)] to-[hsl(130_20%_12%)]">
-      {/* Hidden preloader for the next slide so it's decoded before transition.
-          Eliminates the flash to the fallback color between slides. */}
-      {nextImageUrl && (
-        <link rel="preload" as="image" href={nextImageUrl} />
-      )}
-
-      {/* Layer 1: Parallax image — only mounted once `current` exists,
-          which avoids flashing a stale fallback during the initial query. */}
+      {/* Layer 1: Parallax image. The hero is always above the fold, so
+          every slide loads eagerly — `loading="lazy"` previously delayed
+          loading until each slide entered the viewport, causing a fetch
+          on every cycle. `will-change: transform` promotes the layer to
+          its own GPU layer so the parallax doesn't touch paint. */}
       {current && (
         <motion.div
           className="absolute inset-0"
-          style={{ y: imageY, scale: imageScale }}
+          style={{ y: imageY, willChange: "transform" }}
         >
           <AnimatePresence mode="popLayout">
             <motion.img
               key={activeSlide}
               src={current.image_url}
               alt={current.title || "Hero slide"}
-              initial={{ opacity: 0, scale: 1.08 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 1.2, ease: "easeInOut" }}
+              transition={{ duration: 1.0, ease: "easeInOut" }}
               className="absolute inset-0 w-full h-full object-cover"
-              // First slide is above the fold; load eagerly with high priority
-              // so the LCP image is requested as soon as possible.
-              loading={activeSlide === 0 ? "eager" : "lazy"}
-              fetchPriority={activeSlide === 0 ? "high" : "auto"}
+              loading="eager"
               decoding="async"
             />
           </AnimatePresence>
         </motion.div>
       )}
 
-      {/* Layer 2: Animated overlay that darkens on scroll */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-t from-black via-black/30 to-transparent pointer-events-none"
-        style={{ opacity: overlayOpacity }}
-      />
+      {/* Layer 2: Static gradient overlay (was animated via scroll opacity;
+          the visual diff is negligible and the constant repaint isn't worth
+          it). */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/25 to-transparent pointer-events-none" />
 
-      {/* Layer 3: Title with reverse parallax + blur exit */}
+      {/* Layer 3: Title — parallax via transform + opacity only (no filter
+          blur, which was the dominant cause of scroll jank). */}
       {current && (current.title || current.description) && (
         <motion.div
           className="relative z-10 container mx-auto px-6"
-          style={{ y: titleY, opacity: titleOpacity, filter: titleBlur }}
+          style={{ y: titleY, opacity: titleOpacity, willChange: "transform, opacity" }}
         >
           <AnimatePresence mode="wait">
             <motion.div
