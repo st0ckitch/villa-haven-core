@@ -17,19 +17,29 @@ type VillaImage = Tables<"villa_images">;
 interface VillaForm {
   name: string; slug: string; section: string; size_sqm: string; bedrooms: string; bathrooms: string;
   price: string; status: string; description: string; description_ka: string; description_ru: string;
-  view_type: string; sector: string; cadastral_codes: string;
-  plot_area: string; total_area: string; living_area: string;
-  rooms_count: string; bedroom_count: string;
-  wet_point_1: string; pool: string; parking: string;
+  view_type: string; sector: string; cadastral_codes: string; ceiling_height: string;
+  plot_area: string; total_area: string; living_area: string; balcony_area: string; yard_area: string;
+  floor_1_total_area: string; floor_1_living_area: string; floor_1_summer_area: string;
+  floor_2_total_area: string; floor_2_living_area: string; floor_2_summer_area: string;
+  rooms_count: string; bedroom_count: string; living_room: string; dining_room: string;
+  study_room: string; kitchen: string; wardrobe: string; terrace: string; balcony_count: string;
+  wet_point_1: string; wet_point_2: string;
+  auxiliary_rooms_1: string; auxiliary_rooms_2: string; technical_room: string;
+  pool: string; parking: string;
 }
 
 const emptyForm: VillaForm = {
   name: "", slug: "", section: "a-section", size_sqm: "", bedrooms: "", bathrooms: "",
   price: "", status: "available", description: "", description_ka: "", description_ru: "",
-  view_type: "", sector: "", cadastral_codes: "",
-  plot_area: "", total_area: "", living_area: "",
-  rooms_count: "", bedroom_count: "",
-  wet_point_1: "", pool: "", parking: "",
+  view_type: "", sector: "", cadastral_codes: "", ceiling_height: "",
+  plot_area: "", total_area: "", living_area: "", balcony_area: "", yard_area: "",
+  floor_1_total_area: "", floor_1_living_area: "", floor_1_summer_area: "",
+  floor_2_total_area: "", floor_2_living_area: "", floor_2_summer_area: "",
+  rooms_count: "", bedroom_count: "", living_room: "", dining_room: "",
+  study_room: "", kitchen: "", wardrobe: "", terrace: "", balcony_count: "",
+  wet_point_1: "", wet_point_2: "",
+  auxiliary_rooms_1: "", auxiliary_rooms_2: "", technical_room: "",
+  pool: "", parking: "",
 };
 
 const slugify = (text: string) =>
@@ -78,12 +88,32 @@ const VillaManagement = () => {
       description: villa.description || "", description_ka: villa.description_ka || "", description_ru: villa.description_ru || "",
       view_type: v.view_type || "", sector: v.sector || "",
       cadastral_codes: v.cadastral_codes || "",
+      ceiling_height: v.ceiling_height || "",
       plot_area: v.plot_area != null ? String(v.plot_area) : "",
       total_area: v.total_area != null ? String(v.total_area) : "",
       living_area: v.living_area != null ? String(v.living_area) : "",
-      rooms_count: v.rooms_count != null ? String(v.rooms_count) : "",
+      balcony_area: v.balcony_area != null ? String(v.balcony_area) : "",
+      yard_area: v.yard_area != null ? String(v.yard_area) : "",
+      floor_1_total_area:  v.floor_1_total_area  != null ? String(v.floor_1_total_area)  : "",
+      floor_1_living_area: v.floor_1_living_area != null ? String(v.floor_1_living_area) : "",
+      floor_1_summer_area: v.floor_1_summer_area != null ? String(v.floor_1_summer_area) : "",
+      floor_2_total_area:  v.floor_2_total_area  != null ? String(v.floor_2_total_area)  : "",
+      floor_2_living_area: v.floor_2_living_area != null ? String(v.floor_2_living_area) : "",
+      floor_2_summer_area: v.floor_2_summer_area != null ? String(v.floor_2_summer_area) : "",
+      rooms_count:   v.rooms_count   != null ? String(v.rooms_count)   : "",
       bedroom_count: v.bedroom_count != null ? String(v.bedroom_count) : "",
-      wet_point_1: v.wet_point_1 != null ? String(v.wet_point_1) : "",
+      living_room:   v.living_room   != null ? String(v.living_room)   : "",
+      dining_room:   v.dining_room   != null ? String(v.dining_room)   : "",
+      study_room:    v.study_room    != null ? String(v.study_room)    : "",
+      kitchen:       v.kitchen       != null ? String(v.kitchen)       : "",
+      wardrobe:      v.wardrobe      != null ? String(v.wardrobe)      : "",
+      terrace:       v.terrace       != null ? String(v.terrace)       : "",
+      balcony_count: v.balcony_count != null ? String(v.balcony_count) : "",
+      wet_point_1:   v.wet_point_1   != null ? String(v.wet_point_1)   : "",
+      wet_point_2:   v.wet_point_2   != null ? String(v.wet_point_2)   : "",
+      auxiliary_rooms_1: v.auxiliary_rooms_1 != null ? String(v.auxiliary_rooms_1) : "",
+      auxiliary_rooms_2: v.auxiliary_rooms_2 != null ? String(v.auxiliary_rooms_2) : "",
+      technical_room:    v.technical_room    != null ? String(v.technical_room)    : "",
       pool: v.pool === true ? "yes" : v.pool === false ? "no" : "",
       parking: v.parking || "",
     });
@@ -114,12 +144,32 @@ const VillaManagement = () => {
       description: form.description || null, description_ka: form.description_ka || null, description_ru: form.description_ru || null,
       view_type: form.view_type || null, sector: form.sector || null,
       cadastral_codes: form.cadastral_codes || null,
+      ceiling_height: form.ceiling_height || null,
       plot_area: form.plot_area ? Number(form.plot_area) : null,
       total_area: form.total_area ? Number(form.total_area) : null,
       living_area: form.living_area ? Number(form.living_area) : null,
-      rooms_count: form.rooms_count ? Number(form.rooms_count) : null,
+      balcony_area: form.balcony_area ? Number(form.balcony_area) : null,
+      yard_area: form.yard_area ? Number(form.yard_area) : null,
+      floor_1_total_area:  form.floor_1_total_area  ? Number(form.floor_1_total_area)  : null,
+      floor_1_living_area: form.floor_1_living_area ? Number(form.floor_1_living_area) : null,
+      floor_1_summer_area: form.floor_1_summer_area ? Number(form.floor_1_summer_area) : null,
+      floor_2_total_area:  form.floor_2_total_area  ? Number(form.floor_2_total_area)  : null,
+      floor_2_living_area: form.floor_2_living_area ? Number(form.floor_2_living_area) : null,
+      floor_2_summer_area: form.floor_2_summer_area ? Number(form.floor_2_summer_area) : null,
+      rooms_count:   form.rooms_count   ? Number(form.rooms_count)   : null,
       bedroom_count: form.bedroom_count ? Number(form.bedroom_count) : null,
-      wet_point_1: form.wet_point_1 ? Number(form.wet_point_1) : null,
+      living_room:   form.living_room   ? Number(form.living_room)   : null,
+      dining_room:   form.dining_room   ? Number(form.dining_room)   : null,
+      study_room:    form.study_room    ? Number(form.study_room)    : null,
+      kitchen:       form.kitchen       ? Number(form.kitchen)       : null,
+      wardrobe:      form.wardrobe      ? Number(form.wardrobe)      : null,
+      terrace:       form.terrace       ? Number(form.terrace)       : null,
+      balcony_count: form.balcony_count ? Number(form.balcony_count) : null,
+      wet_point_1:   form.wet_point_1   ? Number(form.wet_point_1)   : null,
+      wet_point_2:   form.wet_point_2   ? Number(form.wet_point_2)   : null,
+      auxiliary_rooms_1: form.auxiliary_rooms_1 ? Number(form.auxiliary_rooms_1) : null,
+      auxiliary_rooms_2: form.auxiliary_rooms_2 ? Number(form.auxiliary_rooms_2) : null,
+      technical_room:    form.technical_room    ? Number(form.technical_room)    : null,
       pool: form.pool === "yes" ? true : form.pool === "no" ? false : null,
       parking: form.parking || null,
     };
@@ -321,42 +371,114 @@ const VillaManagement = () => {
             </Tabs>
           </div>
 
-          {/* Extended Parameters — fixed list matching the public villa page */}
-          <div className="mt-4 border-t border-border pt-4">
-            <label className="text-sm font-medium font-sans mb-2 block">Parameters</label>
-            <div className="grid grid-cols-2 gap-3">
-              {([
-                ["sector", "Sector", "text"],
-                ["cadastral_codes", "Cadastral Code", "text"],
-                ["plot_area", "Plot Area (m²)", "number"],
-                ["view_type", "View", "text"],
-                ["total_area", "Total Area (m²)", "number"],
-                ["living_area", "Living Area (m²)", "number"],
-                ["rooms_count", "Rooms", "number"],
-                ["bedroom_count", "Bedrooms", "number"],
-                ["wet_point_1", "Wet Point", "number"],
-                ["parking", "Parking", "text"],
-              ] as const).map(([key, label, type]) => (
-                <div key={key}>
-                  <label className="text-xs font-sans text-muted-foreground">{label}</label>
+          {/* Extended Parameters — every field is optional. Leave blank to hide on the public page. */}
+          <div className="mt-4 border-t border-border pt-4 space-y-4">
+            <div>
+              <label className="text-sm font-medium font-sans mb-2 block">Context</label>
+              <div className="grid grid-cols-2 gap-3">
+                {([
+                  ["sector", "Sector", "text"],
+                  ["cadastral_codes", "Cadastral Code", "text"],
+                  ["view_type", "View", "text"],
+                  ["ceiling_height", "Ceiling Height", "text"],
+                ] as const).map(([key, label, type]) => (
+                  <div key={key}>
+                    <label className="text-xs font-sans text-muted-foreground">{label}</label>
+                    <Input
+                      value={(form as any)[key] || ""}
+                      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                      className="font-sans mt-0.5 h-8 text-sm"
+                      type={type}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium font-sans mb-2 block">Areas (m²)</label>
+              <div className="grid grid-cols-2 gap-3">
+                {([
+                  ["plot_area", "Plot Area"],
+                  ["total_area", "Total Area"],
+                  ["living_area", "Living Area"],
+                  ["balcony_area", "Balcony Area"],
+                  ["yard_area", "Yard"],
+                  ["floor_1_total_area", "Floor 1 — Total"],
+                  ["floor_1_living_area", "Floor 1 — Living"],
+                  ["floor_1_summer_area", "Floor 1 — Summer"],
+                  ["floor_2_total_area", "Floor 2 — Total"],
+                  ["floor_2_living_area", "Floor 2 — Living"],
+                  ["floor_2_summer_area", "Floor 2 — Summer"],
+                ] as const).map(([key, label]) => (
+                  <div key={key}>
+                    <label className="text-xs font-sans text-muted-foreground">{label}</label>
+                    <Input
+                      type="number"
+                      value={(form as any)[key] || ""}
+                      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                      className="font-sans mt-0.5 h-8 text-sm"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium font-sans mb-2 block">Room counts</label>
+              <div className="grid grid-cols-2 gap-3">
+                {([
+                  ["rooms_count", "Rooms (total)"],
+                  ["bedroom_count", "Bedrooms"],
+                  ["living_room", "Living Room"],
+                  ["dining_room", "Dining"],
+                  ["study_room", "Study"],
+                  ["kitchen", "Kitchen"],
+                  ["wardrobe", "Wardrobe"],
+                  ["terrace", "Terrace"],
+                  ["balcony_count", "Balconies"],
+                  ["wet_point_1", "Wet Point (Floor 1)"],
+                  ["wet_point_2", "Wet Point (Floor 2)"],
+                  ["auxiliary_rooms_1", "Auxiliary (Floor 1)"],
+                  ["auxiliary_rooms_2", "Auxiliary (Floor 2)"],
+                  ["technical_room", "Technical Room"],
+                ] as const).map(([key, label]) => (
+                  <div key={key}>
+                    <label className="text-xs font-sans text-muted-foreground">{label}</label>
+                    <Input
+                      type="number"
+                      value={(form as any)[key] || ""}
+                      onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                      className="font-sans mt-0.5 h-8 text-sm"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div>
+              <label className="text-sm font-medium font-sans mb-2 block">Amenities</label>
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="text-xs font-sans text-muted-foreground">Pool</label>
+                  <Select value={form.pool || "_unset"} onValueChange={(val) => setForm((f) => ({ ...f, pool: val === "_unset" ? "" : val }))}>
+                    <SelectTrigger className="font-sans mt-0.5 h-8 text-sm"><SelectValue /></SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="_unset">—</SelectItem>
+                      <SelectItem value="yes">Yes</SelectItem>
+                      <SelectItem value="no">No</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div>
+                  <label className="text-xs font-sans text-muted-foreground">Parking / Garage</label>
                   <Input
-                    value={(form as any)[key] || ""}
-                    onChange={(e) => setForm((f) => ({ ...f, [key]: e.target.value }))}
+                    value={form.parking || ""}
+                    onChange={(e) => setForm((f) => ({ ...f, parking: e.target.value }))}
                     className="font-sans mt-0.5 h-8 text-sm"
-                    type={type}
+                    placeholder='e.g. "Yes", "No", "2 spaces"'
                   />
                 </div>
-              ))}
-              <div>
-                <label className="text-xs font-sans text-muted-foreground">Pool</label>
-                <Select value={form.pool || "_unset"} onValueChange={(val) => setForm((f) => ({ ...f, pool: val === "_unset" ? "" : val }))}>
-                  <SelectTrigger className="font-sans mt-0.5 h-8 text-sm"><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="_unset">—</SelectItem>
-                    <SelectItem value="yes">Yes</SelectItem>
-                    <SelectItem value="no">No</SelectItem>
-                  </SelectContent>
-                </Select>
               </div>
             </div>
           </div>
