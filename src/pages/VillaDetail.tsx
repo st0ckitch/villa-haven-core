@@ -162,13 +162,40 @@ const VillaDetail = () => {
               const specs = [
                 { label: t("villa.sector"), value: v.sector },
                 { label: t("villa.cadastralCodes"), value: v.cadastral_codes },
-                { label: t("villa.plotArea"), value: v.plot_area ? `${v.plot_area} m²` : null },
+                // Identity / context
+                { label: t("villa.sector"), value: v.sector },
+                { label: t("villa.cadastralCodes"), value: v.cadastral_codes },
                 { label: t("villa.viewType"), value: v.view_type },
+                { label: t("villa.ceilingHeight"), value: v.ceiling_height },
+                // Areas — overall
+                { label: t("villa.plotArea"), value: v.plot_area ? `${v.plot_area} m²` : null },
                 { label: t("villa.totalArea"), value: v.total_area ? `${v.total_area} m²` : null },
                 { label: t("villa.livingArea"), value: v.living_area ? `${v.living_area} m²` : null },
+                { label: t("villa.balconyArea"), value: v.balcony_area ? `${v.balcony_area} m²` : null },
+                { label: t("villa.yardArea"), value: v.yard_area ? `${v.yard_area} m²` : null },
+                // Areas — per floor
+                { label: t("villa.floor1TotalArea"),  value: v.floor_1_total_area  ? `${v.floor_1_total_area} m²`  : null },
+                { label: t("villa.floor1LivingArea"), value: v.floor_1_living_area ? `${v.floor_1_living_area} m²` : null },
+                { label: t("villa.floor1SummerArea"), value: v.floor_1_summer_area ? `${v.floor_1_summer_area} m²` : null },
+                { label: t("villa.floor2TotalArea"),  value: v.floor_2_total_area  ? `${v.floor_2_total_area} m²`  : null },
+                { label: t("villa.floor2LivingArea"), value: v.floor_2_living_area ? `${v.floor_2_living_area} m²` : null },
+                { label: t("villa.floor2SummerArea"), value: v.floor_2_summer_area ? `${v.floor_2_summer_area} m²` : null },
+                // Room counts
                 { label: t("villa.roomsCount"), value: v.rooms_count },
                 { label: t("villa.bedroomsCount"), value: v.bedroom_count },
-                { label: t("villa.wetPoint"), value: v.wet_point_1 },
+                { label: t("villa.livingRoom"), value: v.living_room },
+                { label: t("villa.diningRoom"), value: v.dining_room },
+                { label: t("villa.studyRoom"), value: v.study_room },
+                { label: t("villa.kitchen"), value: v.kitchen },
+                { label: t("villa.wardrobe"), value: v.wardrobe },
+                { label: t("villa.terrace"), value: v.terrace },
+                { label: t("villa.balconyCount"), value: v.balcony_count },
+                { label: t("villa.wetPoint1"), value: v.wet_point_1 },
+                { label: t("villa.wetPoint2"), value: v.wet_point_2 },
+                { label: t("villa.auxiliaryRooms1"), value: v.auxiliary_rooms_1 },
+                { label: t("villa.auxiliaryRooms2"), value: v.auxiliary_rooms_2 },
+                { label: t("villa.technicalRoom"), value: v.technical_room },
+                // Amenities
                 { label: t("villa.pool"), value: yesNo(v.pool) },
                 { label: t("villa.parking"), value: v.parking },
               ].filter((s) => s.value != null && s.value !== "" && s.value !== 0);
