@@ -13,7 +13,10 @@
 
     <meta name="twitter:card" content="summary_large_image" />
 
-    <link rel="stylesheet" href="/node_modules/bpg-algeti/css/bpg-algeti.min.css" />
+    <!-- Preload the two FiraGO weights that always show on first paint
+         (body 300, headings 600). Other weights load lazily on demand. -->
+    <link rel="preload" href="/fonts/firago/firago-300.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/firago/firago-600.woff2" as="font" type="font/woff2" crossorigin />
     <meta property="og:title" content="Igavi - იგავი — Premium Villa Development">
   <meta name="twitter:title" content="Igavi - იგავი — Premium Villa Development">
   <meta property="og:description" content="Discover premium villas by Igavi in Georgia. Find your dream home with modern architecture, elegant interiors, and world-class amenities.">

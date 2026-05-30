@@ -160,8 +160,6 @@ const VillaDetail = () => {
               const yesNo = (b: boolean | null | undefined) =>
                 b === true ? t("villa.yes") : b === false ? t("villa.no") : null;
               const specs = [
-                { label: t("villa.sector"), value: v.sector },
-                { label: t("villa.cadastralCodes"), value: v.cadastral_codes },
                 // Identity / context
                 { label: t("villa.sector"), value: v.sector },
                 { label: t("villa.cadastralCodes"), value: v.cadastral_codes },

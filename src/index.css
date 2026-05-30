@@ -2,74 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
+/* FiraGO — Mozilla's multi-script Fira derivative. The "latin" filename in
+   the upstream package is misleading; these weights actually carry Latin +
+   Cyrillic + Greek + Georgian (2,519 glyphs), which is what this site needs.
+   Body copy defaults to weight 300; headings keep their Tailwind weight
+   utilities and pick the matching FiraGO face automatically. */
 @font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-Thin.otf') format('opentype');
-  font-weight: 100;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-ExtraLight.otf') format('opentype');
-  font-weight: 200;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-Light.otf') format('opentype');
+  font-family: 'FiraGO';
+  src: url('/fonts/firago/firago-300.woff2') format('woff2');
   font-weight: 300;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-Regular.otf') format('opentype');
+  font-family: 'FiraGO';
+  src: url('/fonts/firago/firago-400.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-Medium.otf') format('opentype');
+  font-family: 'FiraGO';
+  src: url('/fonts/firago/firago-500.woff2') format('woff2');
   font-weight: 500;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-SemiBold.otf') format('opentype');
+  font-family: 'FiraGO';
+  src: url('/fonts/firago/firago-600.woff2') format('woff2');
   font-weight: 600;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-Bold.otf') format('opentype');
+  font-family: 'FiraGO';
+  src: url('/fonts/firago/firago-700.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-ExtraBold.otf') format('opentype');
+  font-family: 'FiraGO';
+  src: url('/fonts/firago/firago-800.woff2') format('woff2');
   font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Mersad';
-  src: url('/fonts/Mersad-Black.otf') format('opentype');
-  font-weight: 900;
   font-style: normal;
   font-display: swap;
 }
@@ -135,8 +116,8 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: "Mersad", sans-serif;
-    font-weight: 300;
+    font-family: "FiraGO", system-ui, sans-serif;
+    font-weight: 300; /* light — paragraphs feel airy by default */
   }
 
   body::before {
@@ -152,8 +133,9 @@
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: "Mersad", system-ui, sans-serif;
-    font-weight: 500;
+    font-family: "FiraGO", system-ui, sans-serif;
+    font-weight: 600; /* semibold — bolder than body, components with explicit
+                         font-light / font-medium classes still override */
   }
 }
 

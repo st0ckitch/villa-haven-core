@@ -348,8 +348,13 @@ const PlotManager = () => {
 
                 {/* Inline villa selection */}
                 <div>
-                  <p className="text-xs font-sans font-semibold text-muted-foreground mb-2">Assign Villas</p>
-                  <div className="max-h-40 overflow-y-auto space-y-1 border border-border rounded-md p-2">
+                  <p className="text-xs font-sans font-semibold text-muted-foreground mb-2">
+                    Assign Villas <span className="text-muted-foreground/60 font-normal">({allVillas.length})</span>
+                  </p>
+                  {/* max-h-[60vh] so the list grows with the screen but never
+                      pushes Save off-screen. Native overflow scrolling kicks
+                      in only when the list is genuinely longer than that. */}
+                  <div className="max-h-[60vh] overflow-y-auto space-y-1 border border-border rounded-md p-2">
                     {allVillas.length === 0 && <p className="text-xs text-muted-foreground text-center py-2">No villas found</p>}
                     {allVillas.map((villa) => (
                       <label key={villa.id} className="flex items-center gap-2 p-1.5 rounded hover:bg-muted/50 cursor-pointer transition-colors">

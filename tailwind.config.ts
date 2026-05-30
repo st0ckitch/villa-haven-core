@@ -19,8 +19,13 @@ export default {
     },
     extend: {
       fontFamily: {
-        serif: ['"Mersad"', "Georgia", "serif"],
-        sans: ['"Mersad"', "system-ui", "sans-serif"],
+        // FiraGO covers Latin, Cyrillic, Georgian and Greek — the three
+        // scripts this site actually ships. Both `font-serif` and `font-sans`
+        // map to it so the existing Tailwind utility usage (font-serif on
+        // headings, font-sans on body copy) keeps working without a global
+        // search-and-replace.
+        sans:  ['"FiraGO"', "system-ui", "sans-serif"],
+        serif: ['"FiraGO"', "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",
