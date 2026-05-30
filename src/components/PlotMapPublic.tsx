@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef, useCallback } from "react";
+import { createPortal } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -168,6 +169,15 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
     const onPop = () => setSelectedZone(null);
     window.addEventListener("popstate", onPop);
     return () => window.removeEventListener("popstate", onPop);
+  }, [selectedZone]);
+
+  // Lock body scroll while the sheet is open so its `fixed` position visibly
+  // pins to the viewport on mobile (the page used to scroll behind it).
+  useEffect(() => {
+    if (!selectedZone) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prevOverflow; };
   }, [selectedZone]);
 
   const pointsToSvg = (points: { x: number; y: number }[]) =>
@@ -343,18 +353,22 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
         </div>
       </div>
 
-      {/* Zone Detail Popup — top sheet on desktop, bottom sheet on mobile */}
-      {selectedZone && (
+      {/* Zone Detail Popup — top sheet on desktop, bottom sheet on mobile.
+          Portaled to <body> so the `fixed` overlay anchors to the viewport
+          rather than the AnimatedSection ancestor (whose translate-y entrance
+          animation otherwise traps the sheet inside the section and forced
+          mobile users to scroll the page to find it). */}
+      {selectedZone && createPortal(
         <>
           {/* Backdrop */}
           <div
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={closePopup}
           />
           {/* Sheet */}
           <div
             className="
-              fixed z-50 left-1/2 -translate-x-1/2 w-full max-w-lg px-4
+              fixed z-[100] left-1/2 -translate-x-1/2 w-full max-w-lg px-4
               bottom-0 pb-4 sm:bottom-auto sm:pb-0
               sm:top-24
               animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-top-4 duration-200
@@ -458,7 +472,8 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
               </div>
             </div>
           </div>
-        </>
+        </>,
+        document.body
       )}
 
       {/* Price / Contact Dialog */}
