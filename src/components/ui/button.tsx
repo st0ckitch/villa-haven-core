@@ -11,7 +11,10 @@ const buttonVariants = cva(
       variant: {
         default: "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white hover:from-[#359e4d] hover:to-[#44b862] shadow-md hover:shadow-lg hover:shadow-[#2d8f43]/30",
         destructive: "bg-destructive text-destructive-foreground hover:bg-destructive/90",
-        outline: "border border-white/25 bg-white/30 backdrop-blur-sm hover:bg-white/50 hover:text-accent-foreground",
+        // `hover:text-accent-foreground` resolved to white, which on top of
+        // `hover:bg-white/50` made the label invisible (white-on-near-white).
+        // Force dark text on hover so labels stay readable on light backgrounds.
+        outline: "border border-white/25 bg-white/30 backdrop-blur-sm text-foreground hover:bg-white/55 hover:text-foreground",
         secondary: "bg-white/40 backdrop-blur-sm text-secondary-foreground hover:bg-white/55",
         ghost: "hover:bg-accent hover:text-accent-foreground",
         link: "text-primary underline-offset-4 hover:underline",
