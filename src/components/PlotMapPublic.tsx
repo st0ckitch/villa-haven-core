@@ -66,16 +66,30 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   const [allVillas, setAllVillas] = useState<AssignedVilla[]>([]);
   const [selectedZone, setSelectedZone] = useState<PlotZone | null>(null);
   const [hoveredZoneId, setHoveredZoneId] = useState<string | null>(null);
-  const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
   const [loading, setLoading] = useState(true);
   const [priceDialog, setPriceDialog] = useState<{ open: boolean; villa: AssignedVilla | null; zone: PlotZone | null }>({ open: false, villa: null, zone: null });
   const containerRef = useRef<HTMLDivElement>(null);
+  // Tooltip position lives in a ref + DOM mutation (not React state) — on a
+  // map with ~300 polygons, calling setTooltipPos on every mousemove fires
+  // ~60 state updates/sec, each re-rendering the entire polygon list. The
+  // page locked up. Now the tooltip element's transform is mutated directly
+  // via tooltipRef, throttled to rAF, so the polygons never re-render on
+  // hover-move.
+  const tooltipRef = useRef<HTMLDivElement | null>(null);
+  const tooltipRafRef = useRef<number | null>(null);
   const { language, t } = useLanguage();
 
   const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!containerRef.current) return;
+    if (!containerRef.current || !tooltipRef.current) return;
     const rect = containerRef.current.getBoundingClientRect();
-    setTooltipPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    // Coalesce to one DOM update per animation frame.
+    if (tooltipRafRef.current != null) cancelAnimationFrame(tooltipRafRef.current);
+    tooltipRafRef.current = requestAnimationFrame(() => {
+      if (!tooltipRef.current) return;
+      tooltipRef.current.style.transform = `translate(calc(${x}px - 50%), calc(${y - 40}px))`;
+    });
   }, []);
 
   useEffect(() => {
@@ -288,7 +302,7 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                           className={`transition-all duration-200 ${isAvailable && !dimmed ? "cursor-pointer" : "cursor-default"}`}
                           onClick={() => !dimmed && handleZoneClick(zone)}
                           onMouseEnter={() => isAvailable && !dimmed && setHoveredZoneId(zone.id)}
-                          onMouseLeave={() => { setHoveredZoneId(null); setTooltipPos(null); }}
+                          onMouseLeave={() => { setHoveredZoneId(null); }}
                           onMouseMove={(e: any) => { if (isAvailable && !dimmed) handleMouseMove(e); }}
                           style={{ filter: isActive ? `drop-shadow(0 0 3px ${statusColors[zone.status]})` : undefined }}
                         />
@@ -296,15 +310,18 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                     })}
                   </svg>
 
-                  {/* Floating hover tooltip (desktop only — touch shows the sheet on tap) */}
-                  {hoveredZoneId && tooltipPos && !selectedZone && (
-                    <div
-                      className="absolute z-30 bg-card border border-border rounded-lg px-3 py-1.5 shadow-lg pointer-events-none whitespace-nowrap hidden sm:block"
-                      style={{ left: tooltipPos.x, top: tooltipPos.y - 40, transform: "translateX(-50%)" }}
-                    >
-                      <span className="text-xs font-sans text-foreground">{t("villa.moreDetails")}</span>
-                    </div>
-                  )}
+                  {/* Floating hover tooltip (desktop only — touch shows the sheet on tap).
+                      Always rendered so we can mutate its transform via tooltipRef
+                      without React reconciliation. Visibility is toggled by
+                      `hoveredZoneId` flipping `opacity` — that's a single
+                      style mutation per hover-start/end, not per mousemove. */}
+                  <div
+                    ref={tooltipRef}
+                    className="absolute z-30 top-0 left-0 bg-card border border-border rounded-lg px-3 py-1.5 shadow-lg pointer-events-none whitespace-nowrap hidden sm:block transition-opacity duration-150"
+                    style={{ opacity: hoveredZoneId && !selectedZone ? 1 : 0 }}
+                  >
+                    <span className="text-xs font-sans text-foreground">{t("villa.moreDetails")}</span>
+                  </div>
                 </div>
               </TransformComponent>
 

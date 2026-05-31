@@ -46,12 +46,14 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
       )}
 
       {/* Bottom-left floating glass card — title + subtitle only.
-          Higher card opacity (85% mobile, ~78% desktop) plus a stronger
-          shadow keeps the title legible over busy renders. Previous 65%
-          read as washed-out on light photos. */}
+          Lower card opacity (50% mobile, 45% desktop) so the render
+          underneath still shows through clearly. Earlier 85%/78% washed
+          the photo out completely per client feedback 2026-05-31.
+          A stronger drop shadow + stronger backdrop blur keep the title
+          legible despite the higher transparency. */}
       <div className="absolute bottom-0 left-0 right-0 md:bottom-10 md:left-10 md:right-auto md:max-w-2xl">
-        <div className="m-4 md:m-0 bg-white/85 md:bg-white/[0.78] backdrop-blur-2xl border border-white/60 rounded-3xl p-6 md:p-10
-          shadow-[0_24px_64px_rgba(0,0,0,0.22)]">
+        <div className="m-4 md:m-0 bg-white/50 md:bg-white/45 backdrop-blur-2xl border border-white/40 rounded-3xl p-6 md:p-10
+          shadow-[0_24px_64px_rgba(0,0,0,0.18)]">
           {/* Title with character reveal — single heading, no kicker (client feedback) */}
           {/* leading-[1.4]: SplitText pads each char wrapper to keep Georgian
               descenders (გ, ფ, ც, ჯ) from being clipped, but the parent line-box
