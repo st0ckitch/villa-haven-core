@@ -11,11 +11,11 @@ export const ServicesSection = () => {
       title: t("services.card1Title"),
       description: t("services.card1Desc"),
       image: "https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=800&q=80",
-      // Card 1's CTA is "Choose Villa or Condominium" — should land directly
-      // on the plot map (the actual villa-picker), not the Polograph page,
-      // which the visitor has to scroll through to reach the map. Matches
-      // the Navbar's "Choose Villa" link which already goes here.
-      link: "/site-plan",
+      // Card 1's CTA is now "About Polograph" — links to the Polograph
+      // project page (was briefly /site-plan when the CTA read "Choose
+      // Villa or Condominium"; user reverted both label and destination
+      // on 2026-05-31).
+      link: "/polograph",
       cta: t("services.card1Cta"),
     },
     {
