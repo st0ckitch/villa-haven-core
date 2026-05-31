@@ -354,7 +354,10 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
             className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
             onClick={closePopup}
           />
-          {/* Sheet */}
+          {/* Sheet — sized to the viewport so it never gets taller than the
+              screen. On mobile it docks to the bottom (sheet style) and on
+              ≥sm it floats from the top. Inner card uses flex column so the
+              header / description stay pinned while the villa list scrolls. */}
           <div
             className="
               fixed z-[100] left-1/2 -translate-x-1/2 w-full max-w-lg px-4
@@ -364,10 +367,10 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
             "
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="bg-card border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden">
+            <div className="flex flex-col bg-card border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[85vh] sm:max-h-[calc(100vh-7rem)]">
               {/* Header — leads with the plot code (A3/D14/…) when present so the
                   visitor immediately sees the identifier the sales team uses. */}
-              <div className="flex items-center justify-between p-5 border-b border-border">
+              <div className="flex items-center justify-between p-5 border-b border-border shrink-0">
                 <div>
                   <h3 className="font-serif text-lg font-semibold text-foreground">
                     {selectedZone.code
@@ -395,18 +398,21 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                 </Button>
               </div>
 
-              {/* Description */}
+              {/* Description (pinned) */}
               {(() => {
                 const desc = getLocalizedField(selectedZone as any, "description", language);
                 return desc ? (
-                  <div className="px-5 pt-4">
+                  <div className="px-5 pt-4 shrink-0">
                     <p className="text-sm text-muted-foreground font-sans leading-relaxed">{desc}</p>
                   </div>
                 ) : null;
               })()}
 
-              {/* Villas */}
-              <div className="p-5 space-y-4">
+              {/* Villas — scroll region. `min-h-0` is required for the flex
+                  child to actually shrink below its content height and
+                  trigger the overflow-y-auto scrollbar. `overscroll-contain`
+                  stops scroll from chaining to the page underneath. */}
+              <div className="p-5 space-y-4 flex-1 min-h-0 overflow-y-auto overscroll-contain">
                 {zoneVillas.length > 0 ? (
                   <>
                     <p className="text-xs uppercase tracking-wider text-muted-foreground font-sans font-medium">
