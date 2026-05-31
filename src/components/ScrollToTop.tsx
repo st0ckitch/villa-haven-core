@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { useLocation } from "react-router-dom";
+import { clearChunkReloadFlag } from "@/lib/lazyWithRetry";
 
 /**
  * Resets scroll to the top of the page on every route change.
@@ -24,6 +25,11 @@ export const ScrollToTop = () => {
   const { pathname, hash } = useLocation();
 
   useEffect(() => {
+    // A successful route render means we navigated without hitting a
+    // stale chunk — clear the one-shot reload guard so the next genuine
+    // chunk miss is allowed to trigger a reload again.
+    clearChunkReloadFlag();
+
     if (hash) return;
 
     const lenis = window.__lenis;

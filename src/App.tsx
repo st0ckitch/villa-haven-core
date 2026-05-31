@@ -1,4 +1,4 @@
-import { Suspense, lazy } from "react";
+import { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -14,37 +14,44 @@ import { CookieBanner } from "@/components/CookieBanner";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ScrollProgress } from "@/components/ScrollProgress";
 import { ScrollToTop } from "@/components/ScrollToTop";
+import { ChunkErrorBoundary } from "@/components/ChunkErrorBoundary";
 import { NoiseOverlay } from "@/components/NoiseOverlay";
 import { Cursor } from "@/components/Cursor";
+import { lazyWithRetry } from "@/lib/lazyWithRetry";
 
-const Index = lazy(() => import("./pages/Index"));
-const NotFound = lazy(() => import("./pages/NotFound"));
-const AdminLogin = lazy(() => import("./pages/AdminLogin"));
-const Dashboard = lazy(() => import("./pages/admin/Dashboard"));
-const VillaManagement = lazy(() => import("./pages/admin/VillaManagement"));
-const BlogManagement = lazy(() => import("./pages/admin/BlogManagement"));
-const BlogEditor = lazy(() => import("./pages/admin/BlogEditor"));
-const RendersManagement = lazy(() => import("./pages/admin/RendersManagement"));
-const PlotManager = lazy(() => import("./pages/admin/PlotManager"));
-const SliderManagement = lazy(() => import("./pages/admin/SliderManagement"));
-const SiteSettings = lazy(() => import("./pages/admin/SiteSettings"));
-const AboutManagement = lazy(() => import("./pages/admin/AboutManagement"));
-const PolographManagement = lazy(() => import("./pages/admin/PolographManagement"));
-const OlimpoManagement = lazy(() => import("./pages/admin/OlimpoManagement"));
-const EquestrianManagement = lazy(() => import("./pages/admin/EquestrianManagement"));
-const Gallery = lazy(() => import("./pages/Gallery"));
-const SitePlan = lazy(() => import("./pages/SitePlan"));
-const Blog = lazy(() => import("./pages/Blog"));
-const BlogPostPage = lazy(() => import("./pages/BlogPost"));
-const VillaDetail = lazy(() => import("./pages/VillaDetail"));
-const ResetPassword = lazy(() => import("./pages/ResetPassword"));
-const Contact = lazy(() => import("./pages/Contact"));
-const About = lazy(() => import("./pages/About"));
-const Polograph = lazy(() => import("./pages/Polograph"));
-const Olimpo = lazy(() => import("./pages/Olimpo"));
-const Equestrian = lazy(() => import("./pages/Equestrian"));
-const PrivacyPolicy = lazy(() => import("./pages/PrivacyPolicy"));
-const Terms = lazy(() => import("./pages/Terms"));
+// Routes are code-split via React.lazy → dynamic import(). Wrapped in
+// lazyWithRetry so the user doesn't get a blank screen after a deploy
+// when their cached index.html points at chunk URLs that no longer
+// exist — the wrapper retries once on transient failures and forces a
+// single reload on real stale-deploy misses.
+const Index = lazyWithRetry(() => import("./pages/Index"));
+const NotFound = lazyWithRetry(() => import("./pages/NotFound"));
+const AdminLogin = lazyWithRetry(() => import("./pages/AdminLogin"));
+const Dashboard = lazyWithRetry(() => import("./pages/admin/Dashboard"));
+const VillaManagement = lazyWithRetry(() => import("./pages/admin/VillaManagement"));
+const BlogManagement = lazyWithRetry(() => import("./pages/admin/BlogManagement"));
+const BlogEditor = lazyWithRetry(() => import("./pages/admin/BlogEditor"));
+const RendersManagement = lazyWithRetry(() => import("./pages/admin/RendersManagement"));
+const PlotManager = lazyWithRetry(() => import("./pages/admin/PlotManager"));
+const SliderManagement = lazyWithRetry(() => import("./pages/admin/SliderManagement"));
+const SiteSettings = lazyWithRetry(() => import("./pages/admin/SiteSettings"));
+const AboutManagement = lazyWithRetry(() => import("./pages/admin/AboutManagement"));
+const PolographManagement = lazyWithRetry(() => import("./pages/admin/PolographManagement"));
+const OlimpoManagement = lazyWithRetry(() => import("./pages/admin/OlimpoManagement"));
+const EquestrianManagement = lazyWithRetry(() => import("./pages/admin/EquestrianManagement"));
+const Gallery = lazyWithRetry(() => import("./pages/Gallery"));
+const SitePlan = lazyWithRetry(() => import("./pages/SitePlan"));
+const Blog = lazyWithRetry(() => import("./pages/Blog"));
+const BlogPostPage = lazyWithRetry(() => import("./pages/BlogPost"));
+const VillaDetail = lazyWithRetry(() => import("./pages/VillaDetail"));
+const ResetPassword = lazyWithRetry(() => import("./pages/ResetPassword"));
+const Contact = lazyWithRetry(() => import("./pages/Contact"));
+const About = lazyWithRetry(() => import("./pages/About"));
+const Polograph = lazyWithRetry(() => import("./pages/Polograph"));
+const Olimpo = lazyWithRetry(() => import("./pages/Olimpo"));
+const Equestrian = lazyWithRetry(() => import("./pages/Equestrian"));
+const PrivacyPolicy = lazyWithRetry(() => import("./pages/PrivacyPolicy"));
+const Terms = lazyWithRetry(() => import("./pages/Terms"));
 
 // Defaults tuned for a content site: data rarely changes within a session,
 // so cache it aggressively to avoid re-fetching on every page navigation
@@ -90,7 +97,8 @@ const App = () => (
                 <Cursor />
                 <Analytics />
                 <CookieBanner />
-                <Suspense fallback={<PageLoader />}>
+                <ChunkErrorBoundary fallback={<PageLoader />}>
+                  <Suspense fallback={<PageLoader />}>
                   <Routes>
                     <Route path="/" element={<Index />} />
                     <Route path="/gallery" element={<Gallery />} />
@@ -133,7 +141,8 @@ const App = () => (
                     </Route>
                     <Route path="*" element={<NotFound />} />
                   </Routes>
-                </Suspense>
+                  </Suspense>
+                </ChunkErrorBoundary>
               </SmoothScroll>
             </AuthProvider>
           </BrowserRouter>
