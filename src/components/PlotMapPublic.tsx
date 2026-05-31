@@ -218,6 +218,22 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
     }
   }, []);
 
+  // Stable callbacks for the memoized PolygonZone children. MUST live
+  // above the `if (loading) return` early-return below — declaring them
+  // after the early return violates the rules of hooks (the hook count
+  // would change between renders once `loading` flips to false).
+  const handleZoneEnter = useCallback((id: string) => setHoveredZoneId(id), []);
+  const handleZoneLeave = useCallback(() => setHoveredZoneId(null), []);
+  const pickById = useCallback(
+    (id: string) => {
+      const z = zones.find((zz) => zz.id === id);
+      if (!z || z.status !== "available") return;
+      setSelectedZone(z);
+      window.history.pushState({ plotPopup: z.id }, "");
+    },
+    [zones]
+  );
+
   // Listen for browser Back while popup is open
   useEffect(() => {
     if (!selectedZone) return;
@@ -291,17 +307,6 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   // highlighting now lives on the individual polygon (cheap, memoized).
   const activeHighlight = selectedZone;
 
-  // Stable callbacks so the memoized PolygonZone children don't re-render
-  // every time the parent renders for an unrelated reason.
-  const handleZoneEnter = useCallback((id: string) => setHoveredZoneId(id), []);
-  const handleZoneLeave = useCallback(() => setHoveredZoneId(null), []);
-  const pickById = useCallback(
-    (id: string) => {
-      const z = zones.find((zz) => zz.id === id);
-      if (z) handleZoneClick(z);
-    },
-    [zones]
-  );
   // Same list of villas regardless of which plot is clicked — the visitor picks
   // their preferred villa, and the selected plot rides along via ?plot=<id>.
   const zoneVillas = selectedZone ? allVillas : [];
