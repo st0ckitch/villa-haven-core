@@ -19,10 +19,17 @@ interface ProjectHeroProps {
 export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps) => {
   return (
     <section className="relative w-full h-[55vh] md:h-[75vh] min-h-[420px] overflow-hidden">
-      {/* Background image */}
+      {/* Background image.
+          `decoding="async"` lets the browser decode off the main thread so
+          painting the rest of the page isn't blocked while a large JPEG is
+          being decompressed (we hit this with a 45 MB hero that froze the
+          tab for 3-4 seconds). `fetchPriority="high"` keeps it eager — it
+          is the LCP element. */}
       <img
         src={image}
         alt={title}
+        decoding="async"
+        fetchPriority="high"
         className="absolute inset-0 w-full h-full object-cover scale-[1.02]"
       />
 
