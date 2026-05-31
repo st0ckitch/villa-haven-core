@@ -21,9 +21,15 @@ type FormValues = z.infer<typeof formSchema>;
 
 interface VillaContactFormProps {
   villaName: string;
+  /** Plot identifier (A3 / D14 / …) when a plot has been selected. */
+  plotCode?: string | null;
+  /** Plot square meterage when a plot has been selected. */
+  plotSqm?: number | null;
+  /** Villa square meterage — paired with plotSqm to build the combination string. */
+  villaSqm?: number | null;
 }
 
-export const VillaContactForm = ({ villaName }: VillaContactFormProps) => {
+export const VillaContactForm = ({ villaName, plotCode, plotSqm, villaSqm }: VillaContactFormProps) => {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [submitting, setSubmitting] = useState(false);
@@ -37,6 +43,21 @@ export const VillaContactForm = ({ villaName }: VillaContactFormProps) => {
     resolver: zodResolver(formSchema),
   });
 
+  // Combination string for Bitrix per client WhatsApp 2026-05-31:
+  // "800 m² plot + 250 m² villa" (prefixed with the plot code when set).
+  // Only meaningful when an actual plot has been selected — without one,
+  // showing just "250 m² villa" on its own would be noise. Falls back to
+  // bare villaName via the Bitrix payload below.
+  const hasPlot = plotCode != null || plotSqm != null;
+  const combinationLine = (() => {
+    if (!hasPlot) return null;
+    const parts: string[] = [];
+    if (plotSqm) parts.push(`${plotSqm} m² plot`);
+    if (villaSqm) parts.push(`${villaSqm} m² villa`);
+    const sized = parts.join(" + ");
+    return plotCode ? `${plotCode}: ${sized || "plot + villa"}` : sized;
+  })();
+
   const onSubmit = async (values: FormValues) => {
     setSubmitting(true);
     try {
@@ -49,12 +70,18 @@ export const VillaContactForm = ({ villaName }: VillaContactFormProps) => {
       });
       if (error) throw error;
 
-      // Fire-and-forget Bitrix24 Lead creation — villa name appears in lead description.
+      // Fire-and-forget Bitrix24 Lead creation — villaName carries the rich
+      // "Villa — A3 (800 m² plot) + villa" string, and we also surface the
+      // shorter combination line inside the comment body so it's easy to scan.
+      const messageWithCombo = combinationLine
+        ? `${values.message ? values.message + "\n\n" : ""}Combination: ${combinationLine}`
+        : values.message;
+
       submitLeadToBitrix({
         full_name: values.full_name,
         email: values.email,
         phone: values.phone,
-        message: values.message,
+        message: messageWithCombo,
         property_interest: villaName,
       });
 
@@ -69,6 +96,12 @@ export const VillaContactForm = ({ villaName }: VillaContactFormProps) => {
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
+      {combinationLine && (
+        <div className="rounded-lg border border-primary/20 bg-primary/5 px-3 py-2 text-xs font-sans">
+          <span className="text-muted-foreground">Inquiring about:</span>{" "}
+          <span className="font-semibold text-foreground">{combinationLine}</span>
+        </div>
+      )}
       <div>
         <Input
           placeholder={t("contact.fullName")}

@@ -5,8 +5,14 @@ import { VillaContactForm } from "@/components/VillaContactForm";
 interface PlotPriceDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  villa: { id: string; name: string; price: number | null } | null;
-  zone: { id: string; name: string; price: number | null } | null;
+  villa: { id: string; name: string; price: number | null; size_sqm?: number | null } | null;
+  zone: {
+    id: string;
+    name: string;
+    price: number | null;
+    code?: string | null;
+    size_sqm?: number | null;
+  } | null;
 }
 
 export const PlotPriceDialog = ({ open, onOpenChange, villa, zone }: PlotPriceDialogProps) => {
@@ -16,7 +22,8 @@ export const PlotPriceDialog = ({ open, onOpenChange, villa, zone }: PlotPriceDi
 
   const hasBothPrices = villa.price != null && zone.price != null;
   const totalPrice = hasBothPrices ? Number(villa.price) + Number(zone.price) : null;
-  const propertyInterest = `${villa.name} + ${zone.name}`;
+  const zoneIdent = zone.code || zone.name;
+  const propertyInterest = `${villa.name} — ${zoneIdent}${zone.size_sqm ? ` (${zone.size_sqm} m² plot)` : ""}${villa.size_sqm ? ` + ${villa.size_sqm} m² villa` : ""}`;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -58,7 +65,12 @@ export const PlotPriceDialog = ({ open, onOpenChange, villa, zone }: PlotPriceDi
               ? (t("plotMap.sendRequestDesc") || "Interested? Send us a request about this combination.")
               : ""}
           </p>
-          <VillaContactForm villaName={propertyInterest} />
+          <VillaContactForm
+            villaName={propertyInterest}
+            plotCode={zone.code || null}
+            plotSqm={zone.size_sqm ?? null}
+            villaSqm={villa.size_sqm ?? null}
+          />
         </div>
       </DialogContent>
     </Dialog>

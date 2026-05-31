@@ -7,7 +7,7 @@ import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lightbox } from "@/components/Lightbox";
-import { BedDouble, Bath, Maximize, MapPin } from "lucide-react";
+import { BedDouble, Bath, Maximize, MapPin, X } from "lucide-react";
 import { useState } from "react";
 import { VillaContactForm } from "@/components/VillaContactForm";
 import { VillaPlotSummary } from "@/components/villa/VillaPlotSummary";
@@ -95,6 +95,22 @@ const VillaDetail = () => {
 
   const openLightbox = (index: number) => { setLightboxIndex(index); setLightboxOpen(true); };
 
+  // Build the combination label the visitor sees and that we send to Bitrix.
+  // Keep this in one place so the badge, the contact form, and the sidebar
+  // stay in lock-step.
+  const plotLabel = (() => {
+    if (!plotZone) return null;
+    const p: any = plotZone;
+    const plotIdent = p.code || getZoneCategory(p.name);
+    const plotSize = p.size_sqm ? `${p.size_sqm} m² plot` : "plot";
+    const villaSize = villa?.size_sqm ? `${villa.size_sqm} m² villa` : "villa";
+    return {
+      ident: plotIdent,
+      short: `${plotSize} + ${villaSize}`,
+      full: `${plotIdent} (${plotSize}) + ${villa?.name || villaSize}`,
+    };
+  })();
+
   return (
     <Layout>
       <SEO title={`${villa.name} — Igavi`} description={description || `${villa.name} — ${villa.size_sqm} m², ${villa.bedrooms} bedrooms`} />
@@ -123,9 +139,10 @@ const VillaDetail = () => {
               <div className="flex items-start gap-3 mb-3 flex-wrap">
                 <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">{villa.name}</h1>
                 <Badge variant="outline" className={`mt-2 font-sans text-xs border ${statusColors[villa.status]} ${villa.status === "available" ? "animate-pulse" : ""}`}>{t(`sitePlan.${villa.status}`)}</Badge>
-                {plotZone && (
-                  <span className="mt-2 inline-flex items-center px-3 py-1 rounded-full bg-[hsl(130_55%_40%/0.1)] border border-[hsl(130_55%_40%/0.25)] text-[11px] font-sans font-semibold tracking-wide text-[hsl(130_55%_30%)]">
-                    {getZoneCategory(plotZone.name)}
+                {plotLabel && (
+                  <span className="mt-2 inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[hsl(130_55%_40%/0.1)] border border-[hsl(130_55%_40%/0.25)] text-[11px] font-sans font-semibold tracking-wide text-[hsl(130_55%_30%)]">
+                    <MapPin className="w-3 h-3" />
+                    {plotLabel.ident} · {plotLabel.short}
                   </span>
                 )}
               </div>
@@ -250,12 +267,32 @@ const VillaDetail = () => {
                 <h3 className="font-sans text-lg font-medium mb-2 text-foreground">{t("villa.inquireTitle")}</h3>
                 <p className="font-sans text-sm text-muted-foreground mb-4">{t("villa.inquireDesc")}</p>
               </div>
-              <VillaContactForm villaName={plotZone ? `${villa.name} + ${plotZone.name}` : villa.name} />
-              <Link to="/site-plan">
-                <Button variant="outline" className="w-full font-sans mt-3">
-                  <MapPin className="w-4 h-4 mr-2" /> {t("villa.viewOnPlan")}
-                </Button>
-              </Link>
+              <VillaContactForm
+                villaName={plotLabel ? `${villa.name} — ${plotLabel.full}` : villa.name}
+                plotCode={plotZone?.code || null}
+                plotSqm={plotZone?.size_sqm ?? null}
+                villaSqm={villa.size_sqm ?? null}
+              />
+              {plotLabel ? (
+                <Link to="/polograph?pick-plot=1" className="block">
+                  <Button variant="outline" className="w-full font-sans mt-3">
+                    <MapPin className="w-4 h-4 mr-2" /> {t("villa.changePlot")}
+                  </Button>
+                </Link>
+              ) : (
+                <Link to="/polograph?pick-plot=1" className="block">
+                  <Button variant="default" className="w-full font-sans mt-3">
+                    <MapPin className="w-4 h-4 mr-2" /> {t("villa.choosePlot")}
+                  </Button>
+                </Link>
+              )}
+              {plotLabel && (
+                <Link to={`/projects/${villa.section || "a-section"}/${villa.slug || villa.id}`} className="block">
+                  <Button variant="ghost" size="sm" className="w-full font-sans text-xs">
+                    <X className="w-3 h-3 mr-1" /> {t("villa.clearPlot")}
+                  </Button>
+                </Link>
+              )}
             </div>
           </div>
         </div>

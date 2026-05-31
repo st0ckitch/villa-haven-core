@@ -304,37 +304,46 @@ export type Database = {
       }
       plot_zones: {
         Row: {
+          code: string | null
           created_at: string
           description: string | null
           id: string
+          length_m: number | null
           name: string
           polygon: Json
           price: number | null
           size_sqm: number | null
           status: string
           updated_at: string
+          width_m: number | null
         }
         Insert: {
+          code?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          length_m?: number | null
           name: string
           polygon: Json
           price?: number | null
           size_sqm?: number | null
           status?: string
           updated_at?: string
+          width_m?: number | null
         }
         Update: {
+          code?: string | null
           created_at?: string
           description?: string | null
           id?: string
+          length_m?: number | null
           name?: string
           polygon?: Json
           price?: number | null
           size_sqm?: number | null
           status?: string
           updated_at?: string
+          width_m?: number | null
         }
         Relationships: []
       }
