@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
-import { Calculator, X, Plus, Minus, RotateCcw, Hand } from "lucide-react";
+import { Calculator, X, Plus, Minus, RotateCcw } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { PlotPriceDialog } from "@/components/PlotPriceDialog";
 import { getZoneCategory } from "@/lib/zoneCategory";
@@ -146,41 +146,15 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   const [selectedZone, setSelectedZone] = useState<PlotZone | null>(null);
   const [hoveredZoneId, setHoveredZoneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  // First-visit "click any plot" hint. Lazy-init from localStorage so the
-  // chip stays dismissed across reloads / repeat visits — once a user has
-  // figured out the interaction, never bother them again.
-  const [showClickHint, setShowClickHint] = useState<boolean>(() => {
-    if (typeof window === "undefined") return true;
-    return localStorage.getItem("plotMapClickHintDismissed") !== "1";
-  });
-  const dismissClickHint = useCallback(() => {
-    setShowClickHint(false);
-    try { localStorage.setItem("plotMapClickHintDismissed", "1"); } catch { /* private mode */ }
-  }, []);
   const [priceDialog, setPriceDialog] = useState<{ open: boolean; villa: AssignedVilla | null; zone: PlotZone | null }>({ open: false, villa: null, zone: null });
   const containerRef = useRef<HTMLDivElement>(null);
-  // Tooltip position lives in a ref + DOM mutation (not React state) — on a
-  // map with ~300 polygons, calling setTooltipPos on every mousemove fires
-  // ~60 state updates/sec, each re-rendering the entire polygon list. The
-  // page locked up. Now the tooltip element's transform is mutated directly
-  // via tooltipRef, throttled to rAF, so the polygons never re-render on
-  // hover-move.
-  const tooltipRef = useRef<HTMLDivElement | null>(null);
-  const tooltipRafRef = useRef<number | null>(null);
   const { language, t } = useLanguage();
 
-  const handleMouseMove = useCallback((e: React.MouseEvent) => {
-    if (!containerRef.current || !tooltipRef.current) return;
-    const rect = containerRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
-    // Coalesce to one DOM update per animation frame.
-    if (tooltipRafRef.current != null) cancelAnimationFrame(tooltipRafRef.current);
-    tooltipRafRef.current = requestAnimationFrame(() => {
-      if (!tooltipRef.current) return;
-      tooltipRef.current.style.transform = `translate(calc(${x}px - 50%), calc(${y - 40}px))`;
-    });
-  }, []);
+  // No-op kept as the onMove prop on PolygonZone — the hover tooltip was
+  // removed (user feedback 2026-05-31), so there's nothing to track on
+  // mousemove anymore. Stable identity via useCallback so the memoized
+  // PolygonZone children don't re-render every time the parent does.
+  const handleMouseMove = useCallback(() => {}, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -269,11 +243,8 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
       if (!z || z.status !== "available") return;
       setSelectedZone(z);
       window.history.pushState({ plotPopup: z.id }, "");
-      // First-click teaches the interaction → drop the hint chip and
-      // remember the dismissal so it doesn't re-appear next visit.
-      dismissClickHint();
     },
-    [zones, dismissClickHint]
+    [zones]
   );
 
   // Listen for browser Back while popup is open
@@ -427,56 +398,17 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                     })}
                   </svg>
 
-                  {/* Floating hover tooltip (desktop only — touch shows the sheet on tap).
-                      Always rendered so we can mutate its transform via tooltipRef
-                      without React reconciliation. Visibility is toggled by
-                      `hoveredZoneId` flipping `opacity` — that's a single
-                      style mutation per hover-start/end, not per mousemove. */}
-                  <div
-                    ref={tooltipRef}
-                    className="absolute z-30 top-0 left-0 bg-card border border-border rounded-lg px-3 py-1.5 shadow-lg pointer-events-none whitespace-nowrap hidden sm:block transition-opacity duration-150"
-                    style={{ opacity: hoveredZoneId && !selectedZone ? 1 : 0 }}
-                  >
-                    <span className="text-xs font-sans text-foreground">{t("villa.moreDetails")}</span>
-                  </div>
                 </div>
               </TransformComponent>
 
-              {/* Click-hint chip — anchored OUTSIDE TransformComponent so it
-                  doesn't pan/zoom with the map. Auto-dismisses on the first
-                  plot click + persisted in localStorage so a returning
-                  visitor never sees it again.
-
-                  Two layouts:
-                  - Mobile (default): a small pill tucked into the TOP-LEFT
-                    corner of the map, single-line short text
-                    ("Tap a plot") so it doesn't cover the map content.
-                  - sm+: the wider label sits centered at the top with the
-                    full sentence ("Tap any plot to see available villas").
-                    No wrap because the desktop frame has plenty of width. */}
-              {showClickHint && !selectedZone && (
-                <button
-                  type="button"
-                  onClick={dismissClickHint}
-                  className="absolute z-30 top-2 left-2 sm:top-5 sm:left-1/2 sm:-translate-x-1/2 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1 sm:py-2 rounded-full
-                    bg-white/90 backdrop-blur-md border border-[hsl(130_55%_40%/0.3)]
-                    shadow-[0_4px_24px_rgba(45,143,67,0.18)]
-                    animate-in fade-in slide-in-from-top-2 duration-300
-                    hover:bg-white transition-colors group whitespace-nowrap max-w-[calc(100%-1rem)]"
-                  aria-label={t("plotMap.clickHintDismiss")}
-                >
-                  <Hand className="w-3 h-3 sm:w-4 sm:h-4 text-[hsl(130_55%_30%)] motion-safe:animate-bounce shrink-0" strokeWidth={2.2} />
-                  {/* Short label on mobile, full sentence on sm+. Both
-                      strings stay in i18n so locale changes propagate. */}
-                  <span className="font-sans text-[11px] sm:text-sm font-medium text-foreground/85 sm:hidden">
-                    {t("plotMap.clickHintShort")}
-                  </span>
-                  <span className="hidden sm:inline font-sans text-sm font-medium text-foreground/85">
-                    {t("plotMap.clickHint")}
-                  </span>
-                  <X className="w-3 h-3 text-muted-foreground/60 group-hover:text-foreground transition-colors shrink-0" />
-                </button>
-              )}
+              {/* Both the "click to select" hint chip and the hover "more
+                  details" tooltip were removed per user feedback 2026-05-31
+                  ("remove დააწკაპუნე tooltip from everywhere"). The visual
+                  affordance on every available polygon (visible green fill
+                  + stroke) is now the only signal the map is clickable.
+                  Available plots paint at fill-opacity 0.08 / stroke-opacity
+                  0.45 at rest, so they read as outlined boxes without any
+                  textual prompt. */}
 
               {/* Zoom controls — vertical glass pill on the right edge of
                   the map. + and − are touch-friendly (40×40 hit area). The

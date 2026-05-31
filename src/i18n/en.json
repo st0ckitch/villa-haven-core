@@ -265,10 +265,7 @@
     "priceSummary": "Price Summary",
     "contactForPricing": "Contact Us for Pricing",
     "contactPricingDesc": "Pricing for this combination is available upon request. Please fill out the form below and our team will get back to you.",
-    "sendRequestDesc": "Interested? Send us a request about this combination.",
-    "clickHint": "Tap any plot to see available villas",
-    "clickHintShort": "Tap a plot",
-    "clickHintDismiss": "Dismiss hint"
+    "sendRequestDesc": "Interested? Send us a request about this combination."
   },
   "properties": {
     "title1": "Find ",

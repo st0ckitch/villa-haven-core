@@ -1,18 +1,17 @@
 import { useState, useCallback } from "react";
 import { Layout } from "@/components/Layout";
 import { PlotMapPublic } from "@/components/PlotMapPublic";
+import { AvailabilityPanel, type AvailabilityStatus } from "@/components/AvailabilityPanel";
 import { SEO } from "@/components/SEO";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const SitePlan = () => {
-  const [statusFilter, setStatusFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState<AvailabilityStatus>("all");
   const [counts, setCounts] = useState({ all: 0, available: 0, reserved: 0, sold: 0 });
   const { t } = useLanguage();
 
   const handleCounts = useCallback((c: typeof counts) => setCounts(c), []);
-
-  const statusKeys = ["all", "available", "reserved", "sold"] as const;
 
   return (
     <Layout>
@@ -31,22 +30,10 @@ const SitePlan = () => {
             </p>
           </AnimatedSection>
 
-          {/* Glass filter buttons */}
+          {/* Availability panel — sits outside the map's glass frame. */}
           <AnimatedSection delay={100}>
-            <div className="flex flex-wrap gap-2 mb-8">
-              {statusKeys.map((status) => (
-                <button
-                  key={status}
-                  onClick={() => setStatusFilter(status)}
-                  className={`px-5 py-2.5 rounded-full text-sm font-sans font-medium transition-all duration-300 ${
-                    statusFilter === status
-                      ? "bg-gradient-to-r from-[#2d8f43] to-[#3aa557] text-white shadow-[0_4px_16px_rgba(45,143,67,0.3)]"
-                      : "bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] text-foreground/70 hover:bg-white hover:border-[hsl(130_55%_40%/0.3)] hover:text-foreground"
-                  }`}
-                >
-                  {t(`sitePlan.${status}`)} ({counts[status]})
-                </button>
-              ))}
+            <div className="mb-8">
+              <AvailabilityPanel counts={counts} active={statusFilter} onChange={setStatusFilter} />
             </div>
           </AnimatedSection>
 
