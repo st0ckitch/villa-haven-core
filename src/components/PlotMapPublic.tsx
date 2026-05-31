@@ -158,13 +158,47 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
     return () => window.removeEventListener("popstate", onPop);
   }, [selectedZone]);
 
-  // Lock body scroll while the sheet is open so its `fixed` position visibly
-  // pins to the viewport on mobile (the page used to scroll behind it).
+  // Lock background scroll while the sheet is open.
+  //
+  // The naive `body.overflow = hidden` is insufficient — desktop Chromium
+  // and iOS Safari still let wheel / touchmove events bubble to the
+  // underlying page (or to any ancestor with its own `overflow: auto`),
+  // so users reported that scrolling inside the villa list panned the
+  // map behind the popup. Use the position-fixed pattern instead:
+  //
+  // 1. Pin <html> and <body> at the current scroll offset via `position:
+  //    fixed; top: -scrollY` — this physically removes them from the
+  //    scrolling layout, so nothing CAN scroll regardless of wheel /
+  //    touch handlers downstream.
+  // 2. Set `overscroll-behavior: none` so even rubber-band gestures
+  //    (touchpads, mobile) don't reach the page.
+  // 3. On cleanup, restore the saved scroll position — otherwise the
+  //    page snaps to top when the popup closes.
   useEffect(() => {
     if (!selectedZone) return;
-    const prevOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-    return () => { document.body.style.overflow = prevOverflow; };
+    const scrollY = window.scrollY;
+    const body = document.body;
+    const html = document.documentElement;
+    const prev = {
+      bodyPosition: body.style.position,
+      bodyTop: body.style.top,
+      bodyWidth: body.style.width,
+      bodyOverscroll: body.style.overscrollBehavior,
+      htmlOverscroll: html.style.overscrollBehavior,
+    };
+    body.style.position = "fixed";
+    body.style.top = `-${scrollY}px`;
+    body.style.width = "100%";
+    body.style.overscrollBehavior = "none";
+    html.style.overscrollBehavior = "none";
+    return () => {
+      body.style.position = prev.bodyPosition;
+      body.style.top = prev.bodyTop;
+      body.style.width = prev.bodyWidth;
+      body.style.overscrollBehavior = prev.bodyOverscroll;
+      html.style.overscrollBehavior = prev.htmlOverscroll;
+      window.scrollTo(0, scrollY);
+    };
   }, [selectedZone]);
 
   const pointsToSvg = (points: { x: number; y: number }[]) =>
@@ -349,10 +383,14 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
           mobile users to scroll the page to find it). */}
       {selectedZone && createPortal(
         <>
-          {/* Backdrop */}
+          {/* Backdrop — also catches wheel / touchmove that would otherwise
+              bubble to the map underneath. `touch-none` disables touch
+              gesture scrolling, and the onWheel preventDefault stops
+              trackpad scroll-through. */}
           <div
-            className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm animate-in fade-in duration-200"
+            className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 touch-none"
             onClick={closePopup}
+            onWheel={(e) => e.preventDefault()}
           />
           {/* Sheet — sized to the viewport so it never gets taller than the
               screen. On mobile it docks to the bottom (sheet style) and on
