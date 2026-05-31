@@ -8,14 +8,19 @@
 -- via admin will still show, and analytics / SEO won't carry placeholder
 -- strings into Bitrix descriptions.
 
+-- `title` (the base column) is NOT NULL in the schema, so we blank it
+-- with an empty string rather than NULL. The per-language `title_*`
+-- columns are nullable and get cleared properly. The Lightbox's
+-- `isGenericRenderTitle` already treats `''` the same as NULL → no
+-- caption is rendered.
 UPDATE public.renders
 SET
-  title    = NULL,
+  title    = '',
   title_ka = NULL,
   title_en = NULL,
   title_ru = NULL
 WHERE
-  (title    IS NOT NULL AND title    ~ '^Render\s*\d+$')
+  (title    ~ '^Render\s*\d+$')
   OR (title_ka IS NOT NULL AND title_ka ~ '^რენდერი\s*\d+$')
   OR (title_en IS NOT NULL AND title_en ~ '^Render\s*\d+$')
   OR (title_ru IS NOT NULL AND title_ru ~ '^Рендер\s*\d+$');
