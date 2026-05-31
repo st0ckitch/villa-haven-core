@@ -4,7 +4,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Upload, Plus, Trash2, Edit2, X, Check, MousePointer2 } from "lucide-react";
-import { Checkbox } from "@/components/ui/checkbox";
 
 interface PlotZone {
   id: string;
@@ -19,14 +18,10 @@ interface PlotZone {
   status: string;
   size_sqm: number | null;
   price: number | null;
+  code: string | null;
+  length_m: number | null;
+  width_m: number | null;
   polygon: { x: number; y: number }[];
-}
-
-interface Villa {
-  id: string;
-  name: string;
-  price: number | null;
-  status: string;
 }
 
 const statusColors: Record<string, string> = {
@@ -51,10 +46,6 @@ const PlotManager = () => {
   const [editingZone, setEditingZone] = useState<Partial<PlotZone> | null>(null);
   const [isNewZone, setIsNewZone] = useState(false);
 
-  // Inline villa selection
-  const [allVillas, setAllVillas] = useState<Villa[]>([]);
-  const [selectedVillaIds, setSelectedVillaIds] = useState<Set<string>>(new Set());
-
   const fetchData = useCallback(async () => {
     const [{ data: settings }, { data: zonesData }] = await Promise.all([
       supabase.from("plot_settings").select("*").limit(1).single(),
@@ -71,25 +62,9 @@ const PlotManager = () => {
 
   useEffect(() => { fetchData(); }, [fetchData]);
 
-  // Fetch villas list once
-  useEffect(() => {
-    supabase.from("villas").select("id, name, price, status").order("name")
-      .then(({ data }) => { if (data) setAllVillas(data as Villa[]); });
-  }, []);
-
-  // When editing an existing zone, load its villa assignments
-  const loadAssignments = useCallback(async (zoneId: string) => {
-    const { data } = await supabase
-      .from("plot_zone_villa_assignments")
-      .select("villa_id")
-      .eq("plot_zone_id", zoneId);
-    setSelectedVillaIds(new Set((data || []).map((a: any) => a.villa_id)));
-  }, []);
-
   const openEditZone = (zone: PlotZone) => {
     setEditingZone(zone);
     setIsNewZone(false);
-    loadAssignments(zone.id);
   };
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -146,8 +121,7 @@ const PlotManager = () => {
   const finishDrawing = () => {
     setIsDrawing(false);
     setIsNewZone(true);
-    setSelectedVillaIds(new Set());
-    setEditingZone({ name: "", description: "", status: "available", size_sqm: null, price: null, polygon: currentPoints });
+    setEditingZone({ name: "", description: "", status: "available", size_sqm: null, price: null, code: null, length_m: null, width_m: null, polygon: currentPoints });
   };
 
   const startDrawing = () => {
@@ -155,7 +129,6 @@ const PlotManager = () => {
     setCurrentPoints([]);
     setEditingZone(null);
     setIsNewZone(false);
-    setSelectedVillaIds(new Set());
   };
 
   const cancelDrawing = () => {
@@ -163,15 +136,6 @@ const PlotManager = () => {
     setCurrentPoints([]);
     setEditingZone(null);
     setIsNewZone(false);
-    setSelectedVillaIds(new Set());
-  };
-
-  const toggleVilla = (villaId: string) => {
-    setSelectedVillaIds((prev) => {
-      const next = new Set(prev);
-      if (next.has(villaId)) next.delete(villaId); else next.add(villaId);
-      return next;
-    });
   };
 
   const saveZone = async () => {
@@ -188,39 +152,31 @@ const PlotManager = () => {
       status: editingZone.status || "available",
       size_sqm: editingZone.size_sqm || null,
       price: editingZone.price || null,
+      code: editingZone.code || null,
+      length_m: editingZone.length_m ?? null,
+      width_m: editingZone.width_m ?? null,
       polygon: editingZone.polygon,
     };
 
-    let zoneId = editingZone.id;
-
     if (isNewZone) {
-      const { data, error } = await supabase.from("plot_zones").insert(payload).select("id").single();
+      const { error } = await supabase.from("plot_zones").insert(payload);
       if (error) { toast({ title: "Error saving zone", description: error.message, variant: "destructive" }); return; }
-      zoneId = data.id;
-    } else if (zoneId) {
-      const { error } = await supabase.from("plot_zones").update(payload).eq("id", zoneId);
+    } else if (editingZone.id) {
+      const { error } = await supabase.from("plot_zones").update(payload).eq("id", editingZone.id);
       if (error) { toast({ title: "Error updating zone", description: error.message, variant: "destructive" }); return; }
-    }
-
-    // Sync villa assignments
-    if (zoneId) {
-      await supabase.from("plot_zone_villa_assignments").delete().eq("plot_zone_id", zoneId);
-      if (selectedVillaIds.size > 0) {
-        await supabase.from("plot_zone_villa_assignments").insert(
-          Array.from(selectedVillaIds).map((villa_id) => ({ plot_zone_id: zoneId!, villa_id }))
-        );
-      }
     }
 
     toast({ title: isNewZone ? "Zone created" : "Zone updated" });
     setEditingZone(null);
     setIsNewZone(false);
     setCurrentPoints([]);
-    setSelectedVillaIds(new Set());
     fetchData();
   };
 
   const deleteZone = async (id: string) => {
+    // Cascade-delete any legacy assignment rows so the FK doesn't block deletion.
+    // The villa-pairing UI was removed (per WhatsApp 2026-05-31) but the table
+    // still exists in case we revive it for "recommended pairings" later.
     await supabase.from("plot_zone_villa_assignments").delete().eq("plot_zone_id", id);
     await supabase.from("plot_zones").delete().eq("id", id);
     toast({ title: "Zone deleted" });
@@ -334,6 +290,13 @@ const PlotManager = () => {
                     />
                   </div>
                 ))}
+                {/* Plot identifier / dimensions — surfaced in the public popup
+                    so visitors see "A3 · 20 × 40 m · 800 m²" instead of bare sqm. */}
+                <Input placeholder="Plot code (e.g. A3, D14)" value={editingZone.code ?? ""} onChange={(e) => setEditingZone((z) => ({ ...z, code: e.target.value }))} />
+                <div className="grid grid-cols-2 gap-2">
+                  <Input placeholder="Length (m)" type="number" value={editingZone.length_m ?? ""} onChange={(e) => setEditingZone((z) => ({ ...z, length_m: e.target.value ? Number(e.target.value) : null }))} />
+                  <Input placeholder="Width (m)" type="number" value={editingZone.width_m ?? ""} onChange={(e) => setEditingZone((z) => ({ ...z, width_m: e.target.value ? Number(e.target.value) : null }))} />
+                </div>
                 <Input placeholder="Size (m²)" type="number" value={editingZone.size_sqm ?? ""} onChange={(e) => setEditingZone((z) => ({ ...z, size_sqm: e.target.value ? Number(e.target.value) : null }))} />
                 <Input placeholder="Price ($)" type="number" value={editingZone.price ?? ""} onChange={(e) => setEditingZone((z) => ({ ...z, price: e.target.value ? Number(e.target.value) : null }))} />
                 <select
@@ -345,26 +308,6 @@ const PlotManager = () => {
                   <option value="reserved">Reserved</option>
                   <option value="sold">Sold</option>
                 </select>
-
-                {/* Inline villa selection */}
-                <div>
-                  <p className="text-xs font-sans font-semibold text-muted-foreground mb-2">
-                    Assign Villas <span className="text-muted-foreground/60 font-normal">({allVillas.length})</span>
-                  </p>
-                  {/* max-h-[60vh] so the list grows with the screen but never
-                      pushes Save off-screen. Native overflow scrolling kicks
-                      in only when the list is genuinely longer than that. */}
-                  <div className="max-h-[60vh] overflow-y-auto space-y-1 border border-border rounded-md p-2">
-                    {allVillas.length === 0 && <p className="text-xs text-muted-foreground text-center py-2">No villas found</p>}
-                    {allVillas.map((villa) => (
-                      <label key={villa.id} className="flex items-center gap-2 p-1.5 rounded hover:bg-muted/50 cursor-pointer transition-colors">
-                        <Checkbox checked={selectedVillaIds.has(villa.id)} onCheckedChange={() => toggleVilla(villa.id)} />
-                        <span className="text-xs font-sans truncate">{villa.name}</span>
-                        {villa.price != null && <span className="text-xs text-muted-foreground ml-auto">${Number(villa.price).toLocaleString()}</span>}
-                      </label>
-                    ))}
-                  </div>
-                </div>
 
                 <div className="flex gap-2">
                   <Button size="sm" onClick={saveZone} className="gap-1 flex-1">

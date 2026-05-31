@@ -16,6 +16,9 @@ interface PlotZone {
   status: string;
   size_sqm: number | null;
   price: number | null;
+  code: string | null;
+  length_m: number | null;
+  width_m: number | null;
   polygon: { x: number; y: number }[];
 }
 
@@ -24,6 +27,7 @@ interface AssignedVilla {
   name: string;
   slug: string | null;
   section: string | null;
+  size_sqm: number | null;
   price: number | null;
   status: string;
   heroImage?: string | null;
@@ -54,7 +58,9 @@ interface PlotMapPublicProps {
 export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPublicProps) => {
   const [imageUrl, setImageUrl] = useState<string | null>(null);
   const [zones, setZones] = useState<PlotZone[]>([]);
-  const [villasByZone, setVillasByZone] = useState<Record<string, AssignedVilla[]>>({});
+  // Per WhatsApp 2026-05-31: every plot can pair with any villa, so we hold a
+  // single global list instead of per-zone subsets.
+  const [allVillas, setAllVillas] = useState<AssignedVilla[]>([]);
   const [selectedZone, setSelectedZone] = useState<PlotZone | null>(null);
   const [hoveredZoneId, setHoveredZoneId] = useState<string | null>(null);
   const [tooltipPos, setTooltipPos] = useState<{ x: number; y: number } | null>(null);
@@ -71,10 +77,12 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
 
   useEffect(() => {
     const fetchData = async () => {
-      const [{ data: settings }, { data: zonesData }, { data: assignments }] = await Promise.all([
+      const [{ data: settings }, { data: zonesData }, { data: villasData }] = await Promise.all([
         supabase.from("plot_settings").select("*").limit(1).single(),
         supabase.from("plot_zones").select("*").order("created_at"),
-        supabase.from("plot_zone_villa_assignments").select("plot_zone_id, villa_id, villas(id, name, slug, section, price, status)"),
+        // Every plot lists every villa now — pull them all up-front in one query
+        // and order so the user always sees them in a stable, predictable order.
+        supabase.from("villas").select("id, name, slug, section, size_sqm, price, status").order("name"),
       ]);
       if (settings) setImageUrl(settings.image_url);
       if (zonesData) {
@@ -88,38 +96,19 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
         });
       }
 
-      // Build villa map and fetch hero images
-      if (assignments) {
-        const map: Record<string, AssignedVilla[]> = {};
-        const villaIds = new Set<string>();
-        for (const a of assignments as any[]) {
-          if (!a.villas) continue;
-          if (!map[a.plot_zone_id]) map[a.plot_zone_id] = [];
-          map[a.plot_zone_id].push({ ...a.villas } as AssignedVilla);
-          villaIds.add(a.villas.id);
-        }
+      if (villasData && villasData.length > 0) {
+        const villaIds = (villasData as any[]).map((v) => v.id);
+        const { data: heroImages } = await supabase
+          .from("villa_images")
+          .select("villa_id, image_url")
+          .in("villa_id", villaIds)
+          .eq("is_hero", true);
 
-        // Fetch hero images for all assigned villas
-        if (villaIds.size > 0) {
-          const { data: heroImages } = await supabase
-            .from("villa_images")
-            .select("villa_id, image_url")
-            .in("villa_id", Array.from(villaIds))
-            .eq("is_hero", true);
-
-          if (heroImages) {
-            const heroMap: Record<string, string> = {};
-            for (const img of heroImages) heroMap[img.villa_id] = img.image_url;
-            // Attach hero images to villas
-            for (const zoneId in map) {
-              for (const villa of map[zoneId]) {
-                villa.heroImage = heroMap[villa.id] || null;
-              }
-            }
-          }
-        }
-
-        setVillasByZone(map);
+        const heroMap: Record<string, string> = {};
+        for (const img of heroImages || []) heroMap[img.villa_id] = img.image_url;
+        setAllVillas(
+          (villasData as any[]).map((v) => ({ ...v, heroImage: heroMap[v.id] || null })) as AssignedVilla[]
+        );
       }
       setLoading(false);
     };
@@ -132,20 +121,18 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
 
   /**
    * Zone matches the active size filter (client feedback slide 7).
-   * A zone "matches" if its `size_sqm` falls in the range, OR if any assigned
-   * villa has `size_sqm` in the range. Non-matching zones are visually dimmed.
+   * Filters the zones by their own m² only. Villas are no longer scoped per
+   * zone (every plot can pair with every villa per WhatsApp 2026-05-31), so
+   * there's nothing villa-side to fall back on.
    */
   const zoneMatchesSizeFilter = useCallback(
     (zone: PlotZone): boolean => {
       if (!sizeFilter) return true;
       const [min, max] = sizeFilter;
-      // Check zone's own size first
       if (typeof zone.size_sqm === "number" && zone.size_sqm >= min && zone.size_sqm < max) return true;
-      // Check assigned villas
-      const villas = villasByZone[zone.id] || [];
-      return villas.some(() => false); // villas array currently has no size; fall back to zone size only
+      return false;
     },
-    [sizeFilter, villasByZone]
+    [sizeFilter]
   );
 
   const handleZoneClick = (zone: PlotZone) => {
@@ -217,7 +204,9 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   }
 
   const activeHighlight = selectedZone || (hoveredZoneId ? zones.find(z => z.id === hoveredZoneId) : null);
-  const zoneVillas = selectedZone ? villasByZone[selectedZone.id] || [] : [];
+  // Same list of villas regardless of which plot is clicked — the visitor picks
+  // their preferred villa, and the selected plot rides along via ?plot=<id>.
+  const zoneVillas = selectedZone ? allVillas : [];
 
   return (
     <>
@@ -376,13 +365,19 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
             onClick={(e) => e.stopPropagation()}
           >
             <div className="bg-card border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden">
-              {/* Header */}
+              {/* Header — leads with the plot code (A3/D14/…) when present so the
+                  visitor immediately sees the identifier the sales team uses. */}
               <div className="flex items-center justify-between p-5 border-b border-border">
                 <div>
                   <h3 className="font-serif text-lg font-semibold text-foreground">
-                    {getZoneCategory(getLocalizedField(selectedZone as any, "name", language))}
+                    {selectedZone.code
+                      ? selectedZone.code
+                      : getZoneCategory(getLocalizedField(selectedZone as any, "name", language))}
                   </h3>
-                  <div className="flex items-center gap-3 mt-1 text-sm text-muted-foreground font-sans">
+                  <div className="flex items-center flex-wrap gap-x-3 gap-y-1 mt-1 text-sm text-muted-foreground font-sans">
+                    {selectedZone.length_m && selectedZone.width_m && (
+                      <span>{selectedZone.length_m} × {selectedZone.width_m} m</span>
+                    )}
                     {selectedZone.size_sqm && <span>{selectedZone.size_sqm} m²</span>}
                     {selectedZone.price != null && (
                       <span className="font-semibold text-foreground">${Number(selectedZone.price).toLocaleString()}</span>
@@ -445,6 +440,13 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                               <p className="text-sm font-sans font-medium text-foreground truncate group-hover:text-[hsl(130_55%_30%)] transition-colors">
                                 {villa.name}
                               </p>
+                              {/* Combination preview — visitor sees the same string the sales team will receive in Bitrix. */}
+                              {(selectedZone.size_sqm || villa.size_sqm) && (
+                                <p className="text-[11px] text-muted-foreground font-sans">
+                                  {selectedZone.size_sqm ? `${selectedZone.size_sqm} m² plot` : "Plot"}
+                                  {villa.size_sqm ? ` + ${villa.size_sqm} m² villa` : ""}
+                                </p>
+                              )}
                               {villa.price != null && (
                                 <p className="text-xs text-muted-foreground font-sans">${Number(villa.price).toLocaleString()}</p>
                               )}
@@ -466,7 +468,7 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                   </>
                 ) : (
                   <p className="text-sm text-muted-foreground font-sans text-center py-4">
-                    No villas assigned to this zone yet.
+                    No villas available yet.
                   </p>
                 )}
               </div>
