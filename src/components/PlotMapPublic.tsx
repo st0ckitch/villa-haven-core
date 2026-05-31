@@ -442,27 +442,39 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                 </div>
               </TransformComponent>
 
-              {/* Click-hint chip — top-center of the map frame, gently
-                  bouncing hand icon + short label. Anchored OUTSIDE
-                  TransformComponent so it doesn't pan/zoom with the map.
-                  Auto-dismisses on the first successful plot click (via
-                  `pickById`). Hidden on repeat visits via localStorage. */}
+              {/* Click-hint chip — anchored OUTSIDE TransformComponent so it
+                  doesn't pan/zoom with the map. Auto-dismisses on the first
+                  plot click + persisted in localStorage so a returning
+                  visitor never sees it again.
+
+                  Two layouts:
+                  - Mobile (default): a small pill tucked into the TOP-LEFT
+                    corner of the map, single-line short text
+                    ("Tap a plot") so it doesn't cover the map content.
+                  - sm+: the wider label sits centered at the top with the
+                    full sentence ("Tap any plot to see available villas").
+                    No wrap because the desktop frame has plenty of width. */}
               {showClickHint && !selectedZone && (
                 <button
                   type="button"
                   onClick={dismissClickHint}
-                  className="absolute z-30 top-3 sm:top-5 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-full
+                  className="absolute z-30 top-2 left-2 sm:top-5 sm:left-1/2 sm:-translate-x-1/2 inline-flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-4 py-1 sm:py-2 rounded-full
                     bg-white/90 backdrop-blur-md border border-[hsl(130_55%_40%/0.3)]
                     shadow-[0_4px_24px_rgba(45,143,67,0.18)]
                     animate-in fade-in slide-in-from-top-2 duration-300
-                    hover:bg-white transition-colors group"
+                    hover:bg-white transition-colors group whitespace-nowrap max-w-[calc(100%-1rem)]"
                   aria-label={t("plotMap.clickHintDismiss")}
                 >
-                  <Hand className="w-4 h-4 text-[hsl(130_55%_30%)] motion-safe:animate-bounce" strokeWidth={2.2} />
-                  <span className="font-sans text-xs sm:text-sm font-medium text-foreground/85">
+                  <Hand className="w-3 h-3 sm:w-4 sm:h-4 text-[hsl(130_55%_30%)] motion-safe:animate-bounce shrink-0" strokeWidth={2.2} />
+                  {/* Short label on mobile, full sentence on sm+. Both
+                      strings stay in i18n so locale changes propagate. */}
+                  <span className="font-sans text-[11px] sm:text-sm font-medium text-foreground/85 sm:hidden">
+                    {t("plotMap.clickHintShort")}
+                  </span>
+                  <span className="hidden sm:inline font-sans text-sm font-medium text-foreground/85">
                     {t("plotMap.clickHint")}
                   </span>
-                  <X className="w-3 h-3 text-muted-foreground/60 group-hover:text-foreground transition-colors" />
+                  <X className="w-3 h-3 text-muted-foreground/60 group-hover:text-foreground transition-colors shrink-0" />
                 </button>
               )}
 
