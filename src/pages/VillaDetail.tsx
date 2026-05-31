@@ -273,14 +273,18 @@ const VillaDetail = () => {
                 plotSqm={plotZone?.size_sqm ?? null}
                 villaSqm={villa.size_sqm ?? null}
               />
+              {/* Choose / Change plot — sends the visitor to the dedicated
+                  plot-map page (not the Polograph project page), so they
+                  land directly on the picker instead of having to scroll.
+                  Matches the home "Choose villa or condominium" CTA. */}
               {plotLabel ? (
-                <Link to="/polograph?pick-plot=1" className="block">
+                <Link to="/site-plan" className="block">
                   <Button variant="outline" className="w-full font-sans mt-3">
                     <MapPin className="w-4 h-4 mr-2" /> {t("villa.changePlot")}
                   </Button>
                 </Link>
               ) : (
-                <Link to="/polograph?pick-plot=1" className="block">
+                <Link to="/site-plan" className="block">
                   <Button variant="default" className="w-full font-sans mt-3">
                     <MapPin className="w-4 h-4 mr-2" /> {t("villa.choosePlot")}
                   </Button>
