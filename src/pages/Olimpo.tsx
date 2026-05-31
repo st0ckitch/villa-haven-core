@@ -9,6 +9,7 @@ import { ContactSection } from "@/components/home/ContactSection";
 import { RenderGalleryWithDescription } from "@/components/RenderGalleryWithDescription";
 import { InfrastructureTicker } from "@/components/InfrastructureTicker";
 import { ClubMembershipCTA } from "@/components/ClubMembershipCTA";
+import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { ProjectHero } from "@/components/ProjectHero";
 import { GlassVideoFrame } from "@/components/GlassVideoFrame";
 import { TiltCard } from "@/components/TiltCard";
@@ -199,10 +200,8 @@ const Olimpo = () => {
       <div className="py-10">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <div className="text-center mb-6">
-              <p className="text-xs md:text-sm font-sans font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)]">
-                {t("projects.multipleInfra")}
-              </p>
+            <div className="mb-6">
+              <SectionEyebrow align="center">{t("projects.multipleInfra")}</SectionEyebrow>
             </div>
           </AnimatedSection>
         </div>

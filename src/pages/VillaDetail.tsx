@@ -263,7 +263,7 @@ const VillaDetail = () => {
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white/60 backdrop-blur-xl border border-[hsl(130_55%_40%/0.15)] rounded-3xl p-6 space-y-6 text-card-foreground shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
               <div>
-                <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_35%)] mb-2">{t("villa.inquire")}</p>
+                <p className="text-sm font-sans font-medium text-[hsl(130_55%_32%)] mb-2">{t("villa.inquire")}</p>
                 <h3 className="font-sans text-lg font-medium mb-2 text-foreground">{t("villa.inquireTitle")}</h3>
                 <p className="font-sans text-sm text-muted-foreground mb-4">{t("villa.inquireDesc")}</p>
               </div>

@@ -96,7 +96,7 @@ const Gallery = () => {
                     {/* Glass overlay on hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                       <div className="absolute bottom-4 left-4 right-4">
-                        <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-[9px] font-sans font-bold uppercase tracking-[0.2em] text-white mb-2">
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-sans font-medium text-white mb-2">
                           {t(`gallery.${render.category}`)}
                         </span>
                         <h3 className="text-white font-sans font-medium text-sm leading-tight">{getLocalizedField(render, "title", language)}</h3>

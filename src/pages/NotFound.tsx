@@ -60,7 +60,7 @@ const NotFound = () => {
           </div>
 
           <motion.p
-            className="text-[11px] font-sans font-bold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)] mb-4"
+            className="font-sans text-sm md:text-base font-medium text-[hsl(130_55%_32%)] mb-4"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3, duration: 0.6 }}

@@ -62,7 +62,7 @@ export const BlogSection = () => {
                   </div>
                 )}
                 <div className="p-5">
-                  <span className="text-xs font-sans font-medium text-primary uppercase tracking-wider">
+                  <span className="text-sm font-sans font-medium text-primary">
                     {post.category}
                   </span>
                   <h3 className="font-serif text-lg mt-1.5 mb-2 text-card-foreground group-hover:text-primary transition-colors">

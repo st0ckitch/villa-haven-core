@@ -119,7 +119,7 @@ const Blog = () => {
                               {((((post as any).categories as string[]) || [post.category]).slice(0, 2)).map((slug: string) => {
                                 const cat = categories.find((c) => c.slug === slug);
                                 return (
-                                  <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-[10px] font-sans font-bold uppercase tracking-[0.15em] text-[hsl(130_55%_30%)] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
+                                  <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-xs font-sans font-medium text-[hsl(130_55%_30%)] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
                                     {cat ? getLocalizedField(cat as any, "name", language) : slug}
                                   </span>
                                 );

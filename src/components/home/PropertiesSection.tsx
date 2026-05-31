@@ -74,7 +74,7 @@ export const PropertiesSection = () => {
                       />
                     </div>
                     <div className="p-5">
-                      <p className="font-sans text-xs text-muted-foreground uppercase tracking-wide mb-1">
+                      <p className="font-sans text-xs text-muted-foreground mb-1">
                         {t(`sitePlan.${villa.status}`)}
                       </p>
                       <h3 className="text-lg mb-1">{villa.name}</h3>

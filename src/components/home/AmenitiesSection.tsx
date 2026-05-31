@@ -3,6 +3,7 @@ import { useLanguage } from "@/contexts/LanguageContext";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { InfrastructureTicker } from "@/components/InfrastructureTicker";
+import { SectionEyebrow } from "@/components/SectionEyebrow";
 
 const CountUp = ({ target, suffix }: { target: number; suffix: string }) => {
   const [count, setCount] = useState(0);
@@ -89,10 +90,8 @@ export const AmenitiesSection = () => {
       <div className="container mx-auto px-6">
         {/* Single thin-line heading above infrastructure marquee (client feedback slide 3) */}
         <AnimatedSection>
-          <div className="mb-6 text-center">
-            <p className="text-xs md:text-sm font-sans font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)]">
-              {t("projects.multipleInfra")}
-            </p>
+          <div className="mb-6">
+            <SectionEyebrow align="center">{t("projects.multipleInfra")}</SectionEyebrow>
           </div>
         </AnimatedSection>
 
@@ -121,7 +120,7 @@ export const AmenitiesSection = () => {
                     <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-12 bg-foreground/[0.07]" />
                   )}
                   <CountUp target={stat.value} suffix={stat.suffix} />
-                  <p className="font-sans text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground/70 mt-2 break-words">{stat.label}</p>
+                  <p className="font-sans text-xs font-medium text-muted-foreground/80 mt-2 break-words">{stat.label}</p>
                 </div>
               ))}
             </div>

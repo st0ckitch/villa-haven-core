@@ -77,7 +77,7 @@ export const AboutSection = () => {
                 <div className="w-28 h-28 lg:w-32 lg:h-32 rounded-full bg-white/40 backdrop-blur-md border border-white/25 shadow-[0_4px_24px_rgba(0,0,0,0.06)] flex items-center justify-center mb-3">
                   <CountUp target={stat.value} suffix={stat.suffix} />
                 </div>
-                <p className="font-sans text-xs uppercase tracking-widest text-muted-foreground">{stat.label}</p>
+                <p className="font-sans text-sm font-medium text-muted-foreground">{stat.label}</p>
               </div>
             ))}
           </div>
@@ -86,7 +86,7 @@ export const AboutSection = () => {
         {/* Partner Logos Marquee */}
         <AnimatedSection delay={300}>
           <div className="mt-20 pt-16 border-t border-border">
-            <p className="text-center text-sm uppercase tracking-widest text-muted-foreground mb-8">
+            <p className="text-center font-sans text-base font-medium text-muted-foreground mb-8">
               {t("about.partnersTitle")}
             </p>
             <div className="overflow-hidden">

@@ -31,7 +31,7 @@ export const GlassVideoFrame = ({ url, label }: GlassVideoFrameProps) => {
           bg-white/80 backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)]
           shadow-[0_4px_16px_rgba(45,143,67,0.15)]">
           <Play className="w-3 h-3 text-[hsl(130_55%_35%)] fill-[hsl(130_55%_35%)]" />
-          <span className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-foreground/80">
+          <span className="font-sans text-xs font-semibold text-foreground/85">
             {label}
           </span>
         </div>

@@ -25,6 +25,7 @@ import {
   SprayCan,
 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
+import { SectionEyebrow } from "@/components/SectionEyebrow";
 
 /**
  * All `site_settings` keys we read for this page, including per-language variants.
@@ -178,10 +179,8 @@ const Polograph = () => {
       <div className="py-10">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <div className="text-center mb-6">
-              <p className="text-xs md:text-sm font-sans font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)]">
-                {t("projects.multipleInfra")}
-              </p>
+            <div className="mb-6">
+              <SectionEyebrow align="center">{t("projects.multipleInfra")}</SectionEyebrow>
             </div>
           </AnimatedSection>
         </div>

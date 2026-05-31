@@ -14,6 +14,7 @@ import { RenderGalleryWithDescription } from "@/components/RenderGalleryWithDesc
 import { InfrastructureTicker } from "@/components/InfrastructureTicker";
 import { ClubMembershipCTA } from "@/components/ClubMembershipCTA";
 import { ProjectHero } from "@/components/ProjectHero";
+import { SectionEyebrow } from "@/components/SectionEyebrow";
 import { TiltCard } from "@/components/TiltCard";
 import {
   Loader2,
@@ -196,10 +197,8 @@ const Ipodromi = () => {
       <div className="py-10">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <div className="text-center mb-6">
-              <p className="text-xs md:text-sm font-sans font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_35%)]">
-                {t("projects.multipleInfra")}
-              </p>
+            <div className="mb-6">
+              <SectionEyebrow align="center">{t("projects.multipleInfra")}</SectionEyebrow>
             </div>
           </AnimatedSection>
         </div>

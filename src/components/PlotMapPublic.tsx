@@ -545,7 +545,7 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
               >
                 {zoneVillas.length > 0 ? (
                   <>
-                    <p className="text-xs uppercase tracking-wider text-muted-foreground font-sans font-medium">
+                    <p className="text-sm font-sans font-medium text-muted-foreground">
                       {t("plotMap.availableVillas")}
                     </p>
                     <div className="grid gap-3">

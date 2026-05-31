@@ -68,7 +68,7 @@ export const Footer = () => {
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-sans text-xs font-bold uppercase tracking-widest mb-4 text-muted-foreground/60">
+            <h4 className="font-sans text-sm font-semibold mb-4 text-muted-foreground/80">
               {t("footer.quickLinks")}
             </h4>
             <nav className="flex flex-col gap-2.5">
@@ -86,7 +86,7 @@ export const Footer = () => {
 
           {/* Contact */}
           <div>
-            <h4 className="font-sans text-xs font-bold uppercase tracking-widest mb-4 text-muted-foreground/60">
+            <h4 className="font-sans text-sm font-semibold mb-4 text-muted-foreground/80">
               {t("footer.contactTitle")}
             </h4>
             <div className="flex flex-col gap-3">

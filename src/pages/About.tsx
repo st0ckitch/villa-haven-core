@@ -108,7 +108,7 @@ const About = () => {
                   bg-white/70 backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)]
                   shadow-[0_2px_12px_rgba(45,143,67,0.08)]">
                   <span className="w-1.5 h-1.5 rounded-full bg-[hsl(130_55%_40%)]" />
-                  <span className="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_30%)]">
+                  <span className="font-sans text-sm font-semibold text-[hsl(130_55%_30%)]">
                     {t("nav.aboutUs")}
                   </span>
                 </div>
@@ -129,7 +129,7 @@ const About = () => {
               {/* Edition-style metadata footer (bottom-left like the reference) */}
               <AnimatedSection delay={400}>
                 <div className="mt-12 pt-6 border-t border-[hsl(130_55%_40%/0.15)] max-w-xs">
-                  <p className="font-sans text-[10px] md:text-xs font-semibold uppercase tracking-[0.3em] text-[hsl(130_55%_30%)] mb-1">
+                  <p className="font-sans text-sm font-semibold text-[hsl(130_55%_30%)] mb-1">
                     Igavi · Est.
                   </p>
                   <p className="font-sans text-xs md:text-sm text-muted-foreground leading-snug">
@@ -150,7 +150,7 @@ const About = () => {
                         bg-white/80 backdrop-blur-xl border border-[hsl(130_55%_40%/0.25)]
                         shadow-[0_2px_10px_rgba(45,143,67,0.1)]">
                         <Compass className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2} />
-                        <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.25em] text-[hsl(130_55%_30%)]">
+                        <span className="font-sans text-sm font-semibold text-[hsl(130_55%_30%)]">
                           {t("about.missionLabel")}
                         </span>
                       </div>
@@ -180,7 +180,7 @@ const About = () => {
                         bg-white/80 backdrop-blur-xl border border-[hsl(130_55%_40%/0.25)]
                         shadow-[0_2px_10px_rgba(45,143,67,0.1)]">
                         <Telescope className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2} />
-                        <span className="font-sans text-[10px] font-semibold uppercase tracking-[0.25em] text-[hsl(130_55%_30%)]">
+                        <span className="font-sans text-sm font-semibold text-[hsl(130_55%_30%)]">
                           {t("about.visionLabel")}
                         </span>
                       </div>

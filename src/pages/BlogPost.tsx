@@ -128,7 +128,7 @@ const BlogPostPage = () => {
             {((post.categories && post.categories.length) ? post.categories : (post.category ? [post.category] : [])).map((slug: string) => {
               const cat = categories.find((c) => c.slug === slug);
               return (
-                <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-[hsl(130_55%_30%)]">
+                <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-[hsl(130_55%_40%/0.08)] border border-[hsl(130_55%_40%/0.2)] text-xs font-sans font-medium text-[hsl(130_55%_30%)]">
                   {cat ? getLocalizedField(cat, "name", language) : slug}
                 </span>
               );
@@ -171,7 +171,7 @@ const BlogPostPage = () => {
 
           {/* Share as glass chips */}
           <div className="mt-12">
-            <p className="text-[10px] font-sans font-bold uppercase tracking-[0.2em] text-primary/50 mb-3">{t("blog.share")}</p>
+            <p className="font-sans text-sm font-medium text-primary/70 mb-3">{t("blog.share")}</p>
             <div className="flex gap-2">
               <a
                 href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(window.location.href)}`}
