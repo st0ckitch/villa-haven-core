@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
-import { Calculator, X, ZoomIn, ZoomOut, Maximize2 } from "lucide-react";
+import { Calculator, X, Plus, Minus, RotateCcw } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { PlotPriceDialog } from "@/components/PlotPriceDialog";
 import { getZoneCategory } from "@/lib/zoneCategory";
@@ -38,6 +38,9 @@ const statusColors: Record<string, string> = {
   reserved: "hsl(40, 80%, 50%)",
   sold: "hsl(0, 60%, 50%)",
 };
+
+const ZOOM_MIN = 1;
+const ZOOM_MAX = 5;
 
 const statusLabels: Record<string, Record<string, string>> = {
   en: { available: "Free", reserved: "Reserved", sold: "Sold" },
@@ -231,16 +234,19 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
           // On mobile the map frame is ~320px wide; starting at 1.4x makes
           // small zones tappable without forcing the user to pinch first.
           initialScale={typeof window !== "undefined" && window.innerWidth < 640 ? 1.4 : 1}
-          minScale={1}
-          maxScale={5}
+          minScale={ZOOM_MIN}
+          maxScale={ZOOM_MAX}
           doubleClick={{ mode: "toggle", step: 1.2 }}
-          wheel={{ step: 0.15 }}
-          pinch={{ step: 5 }}
+          // Client request 2026-05-31: zoom only via the +/-/reset buttons,
+          // not wheel/trackpad/pinch — which kept accidentally zooming when
+          // users tried to scroll the page.
+          wheel={{ disabled: true }}
+          pinch={{ disabled: true }}
           panning={{ velocityDisabled: true }}
           centerOnInit
         >
           {({ zoomIn, zoomOut, resetTransform }) => (
-            <>
+          <>
               <TransformComponent
                 wrapperStyle={{ width: "100%", height: "auto" }}
                 contentStyle={{ width: "100%", height: "auto" }}
@@ -302,43 +308,39 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                 </div>
               </TransformComponent>
 
-              {/* Zoom controls — always visible, touch-friendly (44x44). */}
-              <div className="absolute bottom-3 right-3 z-30 flex flex-col gap-2">
-                <Button
+              {/* Zoom controls — vertical glass pill on the right edge of
+                  the map. + and − are touch-friendly (40×40 hit area). The
+                  middle "track" is purely visual (a thin pill that suggests
+                  a slider), since react-zoom-pan-pinch's setTransform from
+                  a Radix Slider misfires in our React tree — the proven
+                  render-prop zoomIn/zoomOut step zoom works reliably. */}
+              <div className="absolute right-3 top-1/2 -translate-y-1/2 z-30 flex flex-col items-center gap-1 bg-card/95 backdrop-blur-sm rounded-full p-1.5 border border-border shadow-lg">
+                <button
                   type="button"
-                  size="icon"
-                  variant="secondary"
-                  className="h-11 w-11 rounded-full bg-card/95 backdrop-blur-sm shadow-lg border border-border"
                   onClick={() => zoomIn()}
                   aria-label="Zoom in"
+                  className="grid place-items-center h-10 w-10 rounded-full hover:bg-muted transition-colors"
                 >
-                  <ZoomIn className="h-5 w-5" />
-                </Button>
-                <Button
+                  <Plus className="h-5 w-5" />
+                </button>
+                <div className="my-0.5 w-1.5 h-16 rounded-full bg-muted" aria-hidden />
+                <button
                   type="button"
-                  size="icon"
-                  variant="secondary"
-                  className="h-11 w-11 rounded-full bg-card/95 backdrop-blur-sm shadow-lg border border-border"
                   onClick={() => zoomOut()}
                   aria-label="Zoom out"
+                  className="grid place-items-center h-10 w-10 rounded-full hover:bg-muted transition-colors"
                 >
-                  <ZoomOut className="h-5 w-5" />
-                </Button>
-                <Button
+                  <Minus className="h-5 w-5" />
+                </button>
+                <div className="my-0.5 h-px w-6 bg-border" aria-hidden />
+                <button
                   type="button"
-                  size="icon"
-                  variant="secondary"
-                  className="h-11 w-11 rounded-full bg-card/95 backdrop-blur-sm shadow-lg border border-border"
                   onClick={() => resetTransform()}
                   aria-label="Reset zoom"
+                  className="grid place-items-center h-10 w-10 rounded-full hover:bg-muted transition-colors"
                 >
-                  <Maximize2 className="h-5 w-5" />
-                </Button>
-              </div>
-
-              {/* Pinch-to-zoom hint on mobile, first time only */}
-              <div className="absolute bottom-3 left-3 z-30 bg-card/90 backdrop-blur-sm border border-border rounded-full px-3 py-1.5 sm:hidden pointer-events-none">
-                <span className="text-[10px] font-sans text-muted-foreground">{t("sitePlan.pinchHint") !== "sitePlan.pinchHint" ? t("sitePlan.pinchHint") : "Pinch to zoom"}</span>
+                  <RotateCcw className="h-4 w-4" />
+                </button>
               </div>
             </>
           )}
