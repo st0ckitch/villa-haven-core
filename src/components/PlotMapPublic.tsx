@@ -160,45 +160,24 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
 
   // Lock background scroll while the sheet is open.
   //
-  // The naive `body.overflow = hidden` is insufficient — desktop Chromium
-  // and iOS Safari still let wheel / touchmove events bubble to the
-  // underlying page (or to any ancestor with its own `overflow: auto`),
-  // so users reported that scrolling inside the villa list panned the
-  // map behind the popup. Use the position-fixed pattern instead:
+  // The real culprit behind earlier scroll-through bugs was Lenis (the
+  // global smooth-scroll library in SmoothScroll.tsx) which installs a
+  // window-level `wheel` listener with `passive: false` and unconditionally
+  // calls `preventDefault()` so it can drive its own scroll. That was
+  // killing wheel events inside the popup before they reached the inner
+  // overflow:auto scroller. The fix lives on the scroller itself via
+  // `data-lenis-prevent` (see the JSX below) — Lenis sees that attribute
+  // and bails on the event so native browser scroll takes over.
   //
-  // 1. Pin <html> and <body> at the current scroll offset via `position:
-  //    fixed; top: -scrollY` — this physically removes them from the
-  //    scrolling layout, so nothing CAN scroll regardless of wheel /
-  //    touch handlers downstream.
-  // 2. Set `overscroll-behavior: none` so even rubber-band gestures
-  //    (touchpads, mobile) don't reach the page.
-  // 3. On cleanup, restore the saved scroll position — otherwise the
-  //    page snaps to top when the popup closes.
+  // For background lock, plain `body.overflow = hidden` is sufficient
+  // (Lenis owns the page scroll, and once we mark the popup scroller as
+  // `data-lenis-prevent`, the rest of the page can't scroll because
+  // Lenis still intercepts everything else).
   useEffect(() => {
     if (!selectedZone) return;
-    const scrollY = window.scrollY;
-    const body = document.body;
-    const html = document.documentElement;
-    const prev = {
-      bodyPosition: body.style.position,
-      bodyTop: body.style.top,
-      bodyWidth: body.style.width,
-      bodyOverscroll: body.style.overscrollBehavior,
-      htmlOverscroll: html.style.overscrollBehavior,
-    };
-    body.style.position = "fixed";
-    body.style.top = `-${scrollY}px`;
-    body.style.width = "100%";
-    body.style.overscrollBehavior = "none";
-    html.style.overscrollBehavior = "none";
-    return () => {
-      body.style.position = prev.bodyPosition;
-      body.style.top = prev.bodyTop;
-      body.style.width = prev.bodyWidth;
-      body.style.overscrollBehavior = prev.bodyOverscroll;
-      html.style.overscrollBehavior = prev.htmlOverscroll;
-      window.scrollTo(0, scrollY);
-    };
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => { document.body.style.overflow = prevOverflow; };
   }, [selectedZone]);
 
   const pointsToSvg = (points: { x: number; y: number }[]) =>
@@ -383,14 +362,14 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
           mobile users to scroll the page to find it). */}
       {selectedZone && createPortal(
         <>
-          {/* Backdrop — also catches wheel / touchmove that would otherwise
-              bubble to the map underneath. `touch-none` disables touch
-              gesture scrolling, and the onWheel preventDefault stops
-              trackpad scroll-through. */}
+          {/* Backdrop — touch-none stops touch gestures from reaching the
+              map underneath. Wheel events on the page (outside the popup)
+              are already handled by Lenis, and body.overflow=hidden plus
+              the data-lenis-prevent on the popup scroller combine to give
+              the right behavior: popup scrolls, background doesn't. */}
           <div
             className="fixed inset-0 z-[90] bg-black/50 backdrop-blur-sm animate-in fade-in duration-200 touch-none"
             onClick={closePopup}
-            onWheel={(e) => e.preventDefault()}
           />
           {/* Sheet — sized to the viewport so it never gets taller than the
               screen. On mobile it docks to the bottom (sheet style) and on
@@ -461,8 +440,15 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
               {/* Villas — scroll region. `min-h-0` is required for the flex
                   child to actually shrink below its content height and
                   trigger the overflow-y-auto scrollbar. `overscroll-contain`
-                  stops scroll from chaining to the page underneath. */}
-              <div className="p-5 space-y-4 flex-1 min-h-0 overflow-y-auto overscroll-contain">
+                  stops scroll from chaining to the page underneath.
+                  `data-lenis-prevent` is critical: the site uses Lenis
+                  smooth-scroll (SmoothScroll.tsx) which intercepts wheel
+                  events at the window level and `preventDefault`s them, so
+                  without opt-out, native scroll inside this list dies. */}
+              <div
+                className="p-5 space-y-4 flex-1 min-h-0 overflow-y-auto overscroll-contain"
+                data-lenis-prevent
+              >
                 {zoneVillas.length > 0 ? (
                   <>
                     <p className="text-xs uppercase tracking-wider text-muted-foreground font-sans font-medium">
