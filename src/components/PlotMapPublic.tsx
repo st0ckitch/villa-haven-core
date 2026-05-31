@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
-import { Calculator, X, Plus, Minus, RotateCcw } from "lucide-react";
+import { Calculator, X, Plus, Minus, RotateCcw, Hand } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { PlotPriceDialog } from "@/components/PlotPriceDialog";
 import { getZoneCategory } from "@/lib/zoneCategory";
@@ -70,27 +70,55 @@ type PolygonZoneProps = {
   onLeave: () => void;
   onMove: (e: React.MouseEvent) => void;
 };
+/**
+ * Affordance for an available plot.
+ *
+ * Originally available plots had `fillOpacity: 0` + `stroke: transparent`,
+ * so they were completely invisible until the cursor hovered them. Visitors
+ * (esp. on mobile, where there's no hover) had no signal that the map was
+ * interactive at all — the client report 2026-05-31 was "users don't realize
+ * the plot map is clickable."
+ *
+ * Now every available plot paints a low-opacity green fill + a slightly
+ * darker stroke. Plots look like clickable boxes at rest; hover/selection
+ * still ramp brightness via existing isActive logic.
+ */
+const AVAILABLE_REST_FILL_OPACITY = 0.08;
+const AVAILABLE_REST_STROKE_OPACITY = 0.45;
+
 const PolygonZone = memo(({
   zoneId, points, showFill, fillColor, fillOp,
   isAvailable, isDimmed, isActive,
   onPick, onEnter, onLeave, onMove,
-}: PolygonZoneProps) => (
-  <polygon
-    points={points}
-    fill={showFill ? fillColor : "transparent"}
-    fillOpacity={fillOp}
-    stroke="transparent"
-    strokeWidth="0"
-    className={`${isAvailable && !isDimmed ? "cursor-pointer" : "cursor-default"} ${isActive ? "transition-opacity duration-150" : ""}`}
-    onClick={() => !isDimmed && onPick(zoneId)}
-    onMouseEnter={() => isAvailable && !isDimmed && onEnter(zoneId)}
-    onMouseLeave={onLeave}
-    onMouseMove={(e) => { if (isAvailable && !isDimmed) onMove(e); }}
-    // drop-shadow CSS filter is GPU-expensive — only paint it for the
-    // single active polygon, not all 300 on every hover.
-    style={isActive ? { filter: `drop-shadow(0 0 3px ${fillColor})` } : undefined}
-  />
-));
+}: PolygonZoneProps) => {
+  // Available plots at rest get a persistent affordance. Non-available
+  // (reserved/sold/dimmed) follow the existing showFill logic.
+  const restAffordance = isAvailable && !isDimmed && !isActive;
+  const actualFill = restAffordance ? fillColor : (showFill ? fillColor : "transparent");
+  const actualFillOp = restAffordance ? AVAILABLE_REST_FILL_OPACITY : fillOp;
+  const actualStroke = restAffordance ? fillColor : "transparent";
+  const actualStrokeOp = restAffordance ? AVAILABLE_REST_STROKE_OPACITY : 0;
+
+  return (
+    <polygon
+      points={points}
+      fill={actualFill}
+      fillOpacity={actualFillOp}
+      stroke={actualStroke}
+      strokeOpacity={actualStrokeOp}
+      strokeWidth={restAffordance ? "0.18" : "0"}
+      vectorEffect="non-scaling-stroke"
+      className={`${isAvailable && !isDimmed ? "cursor-pointer" : "cursor-default"} ${isActive ? "transition-opacity duration-150" : ""}`}
+      onClick={() => !isDimmed && onPick(zoneId)}
+      onMouseEnter={() => isAvailable && !isDimmed && onEnter(zoneId)}
+      onMouseLeave={onLeave}
+      onMouseMove={(e) => { if (isAvailable && !isDimmed) onMove(e); }}
+      // drop-shadow CSS filter is GPU-expensive — only paint it for the
+      // single active polygon, not all 300 on every hover.
+      style={isActive ? { filter: `drop-shadow(0 0 3px ${fillColor})` } : undefined}
+    />
+  );
+});
 PolygonZone.displayName = "PolygonZone";
 
 const statusLabels: Record<string, Record<string, string>> = {
@@ -118,6 +146,17 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   const [selectedZone, setSelectedZone] = useState<PlotZone | null>(null);
   const [hoveredZoneId, setHoveredZoneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  // First-visit "click any plot" hint. Lazy-init from localStorage so the
+  // chip stays dismissed across reloads / repeat visits — once a user has
+  // figured out the interaction, never bother them again.
+  const [showClickHint, setShowClickHint] = useState<boolean>(() => {
+    if (typeof window === "undefined") return true;
+    return localStorage.getItem("plotMapClickHintDismissed") !== "1";
+  });
+  const dismissClickHint = useCallback(() => {
+    setShowClickHint(false);
+    try { localStorage.setItem("plotMapClickHintDismissed", "1"); } catch { /* private mode */ }
+  }, []);
   const [priceDialog, setPriceDialog] = useState<{ open: boolean; villa: AssignedVilla | null; zone: PlotZone | null }>({ open: false, villa: null, zone: null });
   const containerRef = useRef<HTMLDivElement>(null);
   // Tooltip position lives in a ref + DOM mutation (not React state) — on a
@@ -230,8 +269,11 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
       if (!z || z.status !== "available") return;
       setSelectedZone(z);
       window.history.pushState({ plotPopup: z.id }, "");
+      // First-click teaches the interaction → drop the hint chip and
+      // remember the dismissal so it doesn't re-appear next visit.
+      dismissClickHint();
     },
-    [zones]
+    [zones, dismissClickHint]
   );
 
   // Listen for browser Back while popup is open
@@ -399,6 +441,30 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                   </div>
                 </div>
               </TransformComponent>
+
+              {/* Click-hint chip — top-center of the map frame, gently
+                  bouncing hand icon + short label. Anchored OUTSIDE
+                  TransformComponent so it doesn't pan/zoom with the map.
+                  Auto-dismisses on the first successful plot click (via
+                  `pickById`). Hidden on repeat visits via localStorage. */}
+              {showClickHint && !selectedZone && (
+                <button
+                  type="button"
+                  onClick={dismissClickHint}
+                  className="absolute z-30 top-3 sm:top-5 left-1/2 -translate-x-1/2 inline-flex items-center gap-2 px-4 py-2 rounded-full
+                    bg-white/90 backdrop-blur-md border border-[hsl(130_55%_40%/0.3)]
+                    shadow-[0_4px_24px_rgba(45,143,67,0.18)]
+                    animate-in fade-in slide-in-from-top-2 duration-300
+                    hover:bg-white transition-colors group"
+                  aria-label={t("plotMap.clickHintDismiss")}
+                >
+                  <Hand className="w-4 h-4 text-[hsl(130_55%_30%)] motion-safe:animate-bounce" strokeWidth={2.2} />
+                  <span className="font-sans text-xs sm:text-sm font-medium text-foreground/85">
+                    {t("plotMap.clickHint")}
+                  </span>
+                  <X className="w-3 h-3 text-muted-foreground/60 group-hover:text-foreground transition-colors" />
+                </button>
+              )}
 
               {/* Zoom controls — vertical glass pill on the right edge of
                   the map. + and − are touch-friendly (40×40 hit area). The
