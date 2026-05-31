@@ -357,17 +357,29 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
           {/* Sheet — sized to the viewport so it never gets taller than the
               screen. On mobile it docks to the bottom (sheet style) and on
               ≥sm it floats from the top. Inner card uses flex column so the
-              header / description stay pinned while the villa list scrolls. */}
+              header / description stay pinned while the villa list scrolls.
+              Belt-and-suspenders: max-height is enforced on BOTH the outer
+              positioning wrapper and the inner card. Some browsers (notably
+              older Safari) don't propagate a flex child's max-height back up
+              to its `position: fixed` parent, which caused the inner card
+              to render at content height. Capping the wrapper too forces
+              the constraint regardless. */}
           <div
             className="
               fixed z-[100] left-1/2 -translate-x-1/2 w-full max-w-lg px-4
               bottom-0 pb-4 sm:bottom-auto sm:pb-0
               sm:top-24
+              max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-7rem)]
               animate-in fade-in slide-in-from-bottom-4 sm:slide-in-from-top-4 duration-200
             "
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="flex flex-col bg-card border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[85vh] sm:max-h-[calc(100vh-7rem)]">
+            {/* `100dvh` (dynamic viewport height) handles mobile browsers
+                that include the URL bar in `100vh` — without this, the
+                popup overshoots the visible area on iOS Safari and Chrome
+                Android when the address bar is showing. Falls back to
+                100vh on browsers without dvh support. */}
+            <div className="flex flex-col bg-card border border-border rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-7rem)]">
               {/* Header — leads with the plot code (A3/D14/…) when present so the
                   visitor immediately sees the identifier the sales team uses. */}
               <div className="flex items-center justify-between p-5 border-b border-border shrink-0">
