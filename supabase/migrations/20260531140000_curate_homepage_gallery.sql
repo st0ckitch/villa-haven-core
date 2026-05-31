@@ -19,10 +19,12 @@ SET sort_order = sort_order + 100
 WHERE sort_order < 100;
 
 -- 2) Insert the six featured establishing shots at the top.
+-- Category is 'exterior' to match the existing seeded gallery rows;
+-- admin can recategorize per row via /admin/renders if needed.
 INSERT INTO public.renders (image_url, title, title_ka, title_en, title_ru, category, sort_order) VALUES
-  ('/renders/polograph/03-polograph-aerial.jpg', 'Polograph aerial',  'პოლოგრაფი — საჰაერო ხედი',  'Polograph aerial',  'Полограф — вид с воздуха',  1),
-  ('/renders/polograph/02-polograph-overview.jpg', 'Polograph overview', 'პოლოგრაფი — საერთო ხედი',   'Polograph overview', 'Полограф — общий вид',      2),
-  ('/renders/ipodromi/04-ipodromi-aerial.jpg',  'Equestrian aerial', 'საცხენოსნო კომპლექსი',       'Equestrian aerial',  'Конный комплекс',           3),
-  ('/renders/olimpo/02-olimpo-1.jpg',           'Olimpo complex',    'ოლიმპო',                      'Olimpo complex',     'Олимпо',                    4),
-  ('/renders/polograph/10-round-garden.jpg',    'Round Garden',      'მრგვალი ბაღი',                'Round Garden',       'Круглый сад',               5),
-  ('/renders/polograph/08-lake.jpg',            'Polograph lake',    'პოლოგრაფის ტბა',              'Polograph lake',     'Озеро Полографа',           6);
+  ('/renders/polograph/03-polograph-aerial.jpg',   'Polograph aerial',   'პოლოგრაფი — საჰაერო ხედი',  'Polograph aerial',   'Полограф — вид с воздуха',  'exterior', 1),
+  ('/renders/polograph/02-polograph-overview.jpg', 'Polograph overview', 'პოლოგრაფი — საერთო ხედი',   'Polograph overview', 'Полограф — общий вид',      'exterior', 2),
+  ('/renders/ipodromi/04-ipodromi-aerial.jpg',     'Equestrian aerial',  'საცხენოსნო კომპლექსი',       'Equestrian aerial',  'Конный комплекс',           'exterior', 3),
+  ('/renders/olimpo/02-olimpo-1.jpg',              'Olimpo complex',     'ოლიმპო',                      'Olimpo complex',     'Олимпо',                    'exterior', 4),
+  ('/renders/polograph/10-round-garden.jpg',       'Round Garden',       'მრგვალი ბაღი',                'Round Garden',       'Круглый сад',               'exterior', 5),
+  ('/renders/polograph/08-lake.jpg',               'Polograph lake',     'პოლოგრაფის ტბა',              'Polograph lake',     'Озеро Полографа',           'exterior', 6);
