@@ -13,6 +13,7 @@ import { Analytics } from "@/components/Analytics";
 import { CookieBanner } from "@/components/CookieBanner";
 import { SmoothScroll } from "@/components/SmoothScroll";
 import { ScrollProgress } from "@/components/ScrollProgress";
+import { ScrollToTop } from "@/components/ScrollToTop";
 import { NoiseOverlay } from "@/components/NoiseOverlay";
 import { Cursor } from "@/components/Cursor";
 
@@ -83,6 +84,7 @@ const App = () => (
           <BrowserRouter basename={import.meta.env.BASE_URL}>
             <AuthProvider>
               <SmoothScroll>
+                <ScrollToTop />
                 <ScrollProgress />
                 <NoiseOverlay />
                 <Cursor />

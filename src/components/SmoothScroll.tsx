@@ -6,6 +6,16 @@ interface SmoothScrollProps {
   children: React.ReactNode;
 }
 
+// Make the active Lenis instance reachable from anywhere — primarily so
+// ScrollToTop can drive Lenis directly on route change. Calling
+// window.scrollTo(0,0) alone doesn't reliably reset Lenis's internal
+// virtual scroll position.
+declare global {
+  interface Window {
+    __lenis?: Lenis;
+  }
+}
+
 export const SmoothScroll = ({ children }: SmoothScrollProps) => {
   const reduced = useReducedMotion();
   const lenisRef = useRef<Lenis | null>(null);
@@ -23,6 +33,7 @@ export const SmoothScroll = ({ children }: SmoothScrollProps) => {
       touchMultiplier: 2,
     });
     lenisRef.current = lenis;
+    window.__lenis = lenis;
 
     let rafId: number;
     const raf = (time: number) => {
@@ -35,6 +46,7 @@ export const SmoothScroll = ({ children }: SmoothScrollProps) => {
       cancelAnimationFrame(rafId);
       lenis.destroy();
       lenisRef.current = null;
+      if (window.__lenis === lenis) delete window.__lenis;
     };
   }, [reduced]);
 
