@@ -16,14 +16,25 @@ interface ProjectHeroProps {
   backLink?: { label: string; to: string };
 }
 
+/**
+ * Project hero — full-bleed photo with the title placed directly on the image.
+ *
+ * The previous design wrapped the title in a translucent white glass card
+ * which read as a flat "white box" no matter how its opacity was tuned
+ * (client feedback 2026-05-31, applied to Polograph / Olimpo / Equestrian).
+ * Replaced with: a dark vertical gradient mask on the lower half of the
+ * photo + white title sitting on top. No panel, no border, no white wash —
+ * just photo, gradient, type. Closer to the Apple / Airbnb editorial hero
+ * pattern.
+ */
 export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps) => {
   return (
     <section className="relative w-full h-[55vh] md:h-[75vh] min-h-[420px] overflow-hidden">
       {/* Background image.
-          `decoding="async"` lets the browser decode off the main thread so
+          decoding="async" lets the browser decode off the main thread so
           painting the rest of the page isn't blocked while a large JPEG is
           being decompressed (we hit this with a 45 MB hero that froze the
-          tab for 3-4 seconds). `fetchPriority="high"` keeps it eager — it
+          tab for 3-4 seconds). fetchPriority="high" keeps it eager — it
           is the LCP element. */}
       <img
         src={image}
@@ -33,53 +44,53 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
         className="absolute inset-0 w-full h-full object-cover scale-[1.02]"
       />
 
-      {/* Bottom-weighted dark gradient — darker near the card (bottom) so the
-          glass card pops against a contrasted backdrop, lighter toward the
-          top so the photo still reads cleanly. Previous gradient
-          (from-bg via-bg/30 to-black/20) was almost evenly translucent and
-          left the card looking grey-on-grey per client feedback 2026-05-31. */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/55 to-transparent" />
+      {/* Dark scrim — covers the bottom 65% of the hero so the white title
+          sits on enough contrast to remain readable on bright photos, while
+          the top half of the image stays clean. Two layers: a top→bottom
+          tint to lift the lower half, plus a darker pool at the very bottom
+          where the text actually sits. No backdrop-blur — the look is now
+          editorial, not glassmorphism. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/30 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/55 to-transparent" />
 
-      {/* Top-right floating badge. Lighter blur (md vs xl) is much cheaper
-          for the GPU compositor when the user scrolls — a stack of
-          backdrop-blur-xl/2xl elements is a known perf killer on long pages. */}
+      {/* Top-right "Projects" pill — kept but recoloured for a dark hero
+          (white text on translucent-dark instead of dark text on
+          translucent-white) so it matches the new editorial tone. */}
       {badge && (
         <div className="hidden md:flex absolute top-8 right-8 items-center gap-2 px-4 py-2 rounded-full
-          bg-white/70 backdrop-blur-md border border-white/55
-          shadow-[0_4px_24px_rgba(0,0,0,0.12)]">
-          <div className="w-1.5 h-1.5 rounded-full bg-[hsl(130_55%_40%)] animate-pulse" />
-          <span className="font-sans text-xs font-semibold tracking-wide text-foreground/85">
+          bg-black/35 backdrop-blur-md border border-white/15
+          shadow-[0_4px_24px_rgba(0,0,0,0.18)]">
+          <div className="w-1.5 h-1.5 rounded-full bg-[hsl(130_55%_55%)] animate-pulse" />
+          <span className="font-sans text-xs font-semibold tracking-wide text-white/90">
             {badge}
           </span>
         </div>
       )}
 
-      {/* Bottom-left floating glass card — title + subtitle only.
-          Card is mostly transparent (30% mobile, 25% desktop) so the
-          render underneath shows through clearly. Earlier 50%/45% was
-          still too opaque per client feedback. A solid drop shadow plus
-          dark text-shadow keep the title legible without painting a
-          near-opaque white panel over the photo. backdrop-blur reduced
-          from 2xl→md to lower scroll-time GPU cost. */}
-      <div className="absolute bottom-0 left-0 right-0 md:bottom-10 md:left-10 md:right-auto md:max-w-2xl">
-        <div className="m-4 md:m-0 bg-white/30 md:bg-white/25 backdrop-blur-md border border-white/30 rounded-3xl p-6 md:p-10
-          shadow-[0_24px_64px_rgba(0,0,0,0.22)]">
-          {/* Title with character reveal — single heading, no kicker (client feedback) */}
-          {/* leading-[1.4]: SplitText pads each char wrapper to keep Georgian
-              descenders (გ, ფ, ც, ჯ) from being clipped, but the parent line-box
-              still needs breathing room so descenders don't touch the next line. */}
-          <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground leading-[1.4] md:leading-[1.4] lg:leading-[1.4] pb-1 mb-2 whitespace-nowrap">
-            <SplitText text={title} split="char" stagger={0.03} as="span" />
-          </h1>
+      {/* Title + subtitle — direct on photo, no card.
+          A green accent bar on the left signals brand without painting a
+          background. Drop-shadow on the text gives it just enough lift to
+          stay legible on lighter photo regions. */}
+      <div className="absolute bottom-6 left-4 right-4 md:bottom-12 md:left-12 md:right-12 md:max-w-3xl">
+        <div className="flex gap-4 md:gap-5">
+          <div className="w-[3px] md:w-1 self-stretch bg-gradient-to-b from-[hsl(130_55%_55%)] via-[hsl(130_55%_45%)] to-transparent rounded-full" />
+          <div>
+            {/* leading-[1.4]: SplitText pads each char wrapper to keep
+                Georgian descenders (გ, ფ, ც, ჯ) from being clipped, but the
+                parent line-box still needs breathing room so descenders
+                don't touch the next line. */}
+            <h1
+              className="font-sans text-3xl md:text-5xl lg:text-6xl font-light tracking-tight text-white leading-[1.35] md:leading-[1.35] lg:leading-[1.35] pb-1 mb-3 [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]"
+            >
+              <SplitText text={title} split="char" stagger={0.03} as="span" />
+            </h1>
 
-          {/* Subtitle — bumped from muted-foreground to foreground/75 so the
-              lead reads as continuous body copy rather than a faded hint
-              under the title. */}
-          {subtitle && (
-            <p className="font-sans text-sm md:text-base text-foreground/75 leading-relaxed max-w-xl">
-              {subtitle}
-            </p>
-          )}
+            {subtitle && (
+              <p className="font-sans text-sm md:text-base lg:text-lg text-white/85 leading-relaxed max-w-2xl [text-shadow:0_1px_12px_rgba(0,0,0,0.55)]">
+                {subtitle}
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </section>
