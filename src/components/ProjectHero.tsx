@@ -26,25 +26,32 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
         className="absolute inset-0 w-full h-full object-cover scale-[1.02]"
       />
 
-      {/* Dark gradient overlay */}
-      <div className="absolute inset-0 bg-gradient-to-t from-background via-background/30 to-black/20" />
+      {/* Bottom-weighted dark gradient — darker near the card (bottom) so the
+          glass card pops against a contrasted backdrop, lighter toward the
+          top so the photo still reads cleanly. Previous gradient
+          (from-bg via-bg/30 to-black/20) was almost evenly translucent and
+          left the card looking grey-on-grey per client feedback 2026-05-31. */}
+      <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/55 to-transparent" />
 
       {/* Top-right floating badge */}
       {badge && (
         <div className="hidden md:flex absolute top-8 right-8 items-center gap-2 px-4 py-2 rounded-full
-          bg-white/60 backdrop-blur-xl border border-white/40
-          shadow-[0_4px_24px_rgba(0,0,0,0.08)]">
+          bg-white/75 backdrop-blur-xl border border-white/55
+          shadow-[0_4px_24px_rgba(0,0,0,0.12)]">
           <div className="w-1.5 h-1.5 rounded-full bg-[hsl(130_55%_40%)] animate-pulse" />
-          <span className="font-sans text-xs font-semibold tracking-wide text-foreground/80">
+          <span className="font-sans text-xs font-semibold tracking-wide text-foreground/85">
             {badge}
           </span>
         </div>
       )}
 
-      {/* Bottom-left floating glass card — title + subtitle only */}
+      {/* Bottom-left floating glass card — title + subtitle only.
+          Higher card opacity (85% mobile, ~78% desktop) plus a stronger
+          shadow keeps the title legible over busy renders. Previous 65%
+          read as washed-out on light photos. */}
       <div className="absolute bottom-0 left-0 right-0 md:bottom-10 md:left-10 md:right-auto md:max-w-2xl">
-        <div className="m-4 md:m-0 bg-white/65 backdrop-blur-2xl border border-white/50 rounded-3xl p-6 md:p-10
-          shadow-[0_20px_60px_rgba(0,0,0,0.15)]">
+        <div className="m-4 md:m-0 bg-white/85 md:bg-white/[0.78] backdrop-blur-2xl border border-white/60 rounded-3xl p-6 md:p-10
+          shadow-[0_24px_64px_rgba(0,0,0,0.22)]">
           {/* Title with character reveal — single heading, no kicker (client feedback) */}
           {/* leading-[1.4]: SplitText pads each char wrapper to keep Georgian
               descenders (გ, ფ, ც, ჯ) from being clipped, but the parent line-box
@@ -53,9 +60,11 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
             <SplitText text={title} split="char" stagger={0.03} as="span" />
           </h1>
 
-          {/* Subtitle */}
+          {/* Subtitle — bumped from muted-foreground to foreground/75 so the
+              lead reads as continuous body copy rather than a faded hint
+              under the title. */}
           {subtitle && (
-            <p className="font-sans text-sm md:text-base text-muted-foreground leading-relaxed max-w-xl">
+            <p className="font-sans text-sm md:text-base text-foreground/75 leading-relaxed max-w-xl">
               {subtitle}
             </p>
           )}
