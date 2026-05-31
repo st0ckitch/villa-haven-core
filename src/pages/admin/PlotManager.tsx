@@ -219,7 +219,16 @@ const PlotManager = () => {
       )}
 
       {imageUrl ? (
-        <div className="flex gap-6">
+        // items-start: flexbox's default align-items:stretch was growing the
+        // map container to match the side panel. When the panel switched
+        // from the short "zones list" to the tall edit form (after
+        // finishDrawing set editingZone), the container grew but the image
+        // stayed at its natural height — and the SVG (absolute inset-0
+        // w-full h-full) followed the container. Polygon points stored as
+        // percentages of the shorter container then mapped into a taller
+        // SVG and visually drifted downward. items-start pins the container
+        // to the image's natural height regardless of side-panel state.
+        <div className="flex gap-6 items-start">
           <div
             ref={containerRef}
             className={`relative flex-1 rounded-xl overflow-hidden border border-border bg-muted ${isDrawing ? "cursor-crosshair" : ""}`}
