@@ -33,10 +33,12 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
           left the card looking grey-on-grey per client feedback 2026-05-31. */}
       <div className="absolute inset-0 bg-gradient-to-t from-background/95 via-background/55 to-transparent" />
 
-      {/* Top-right floating badge */}
+      {/* Top-right floating badge. Lighter blur (md vs xl) is much cheaper
+          for the GPU compositor when the user scrolls — a stack of
+          backdrop-blur-xl/2xl elements is a known perf killer on long pages. */}
       {badge && (
         <div className="hidden md:flex absolute top-8 right-8 items-center gap-2 px-4 py-2 rounded-full
-          bg-white/75 backdrop-blur-xl border border-white/55
+          bg-white/70 backdrop-blur-md border border-white/55
           shadow-[0_4px_24px_rgba(0,0,0,0.12)]">
           <div className="w-1.5 h-1.5 rounded-full bg-[hsl(130_55%_40%)] animate-pulse" />
           <span className="font-sans text-xs font-semibold tracking-wide text-foreground/85">
@@ -46,14 +48,15 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
       )}
 
       {/* Bottom-left floating glass card — title + subtitle only.
-          Lower card opacity (50% mobile, 45% desktop) so the render
-          underneath still shows through clearly. Earlier 85%/78% washed
-          the photo out completely per client feedback 2026-05-31.
-          A stronger drop shadow + stronger backdrop blur keep the title
-          legible despite the higher transparency. */}
+          Card is mostly transparent (30% mobile, 25% desktop) so the
+          render underneath shows through clearly. Earlier 50%/45% was
+          still too opaque per client feedback. A solid drop shadow plus
+          dark text-shadow keep the title legible without painting a
+          near-opaque white panel over the photo. backdrop-blur reduced
+          from 2xl→md to lower scroll-time GPU cost. */}
       <div className="absolute bottom-0 left-0 right-0 md:bottom-10 md:left-10 md:right-auto md:max-w-2xl">
-        <div className="m-4 md:m-0 bg-white/50 md:bg-white/45 backdrop-blur-2xl border border-white/40 rounded-3xl p-6 md:p-10
-          shadow-[0_24px_64px_rgba(0,0,0,0.18)]">
+        <div className="m-4 md:m-0 bg-white/30 md:bg-white/25 backdrop-blur-md border border-white/30 rounded-3xl p-6 md:p-10
+          shadow-[0_24px_64px_rgba(0,0,0,0.22)]">
           {/* Title with character reveal — single heading, no kicker (client feedback) */}
           {/* leading-[1.4]: SplitText pads each char wrapper to keep Georgian
               descenders (გ, ფ, ც, ჯ) from being clipped, but the parent line-box

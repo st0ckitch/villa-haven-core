@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback, memo } from "react";
 import { createPortal } from "react-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
@@ -41,6 +41,57 @@ const statusColors: Record<string, string> = {
 
 const ZOOM_MIN = 1;
 const ZOOM_MAX = 5;
+
+const pointsToSvgStr = (points: { x: number; y: number }[]) =>
+  points.map((p) => `${p.x},${p.y}`).join(" ");
+
+/**
+ * One polygon, memoized. With ~300 zones, the previous inline render
+ * re-built every polygon JSX node on every hover-state change, then asked
+ * React to diff all 300 SVG nodes. Wrapping each polygon in React.memo
+ * means only the polygon whose `isActive` / `isHovered` actually flipped
+ * gets re-rendered — at most 2 per hover transition instead of 300.
+ *
+ * Event handlers are intentionally small arrow wrappers; the callbacks
+ * they delegate to (onEnter/onLeave/etc) are stable via useCallback in the
+ * parent, so they don't bust the memo equality check.
+ */
+type PolygonZoneProps = {
+  zoneId: string;
+  points: string;
+  showFill: boolean;
+  fillColor: string;
+  fillOp: number;
+  isAvailable: boolean;
+  isDimmed: boolean;
+  isActive: boolean;
+  onPick: (id: string) => void;
+  onEnter: (id: string) => void;
+  onLeave: () => void;
+  onMove: (e: React.MouseEvent) => void;
+};
+const PolygonZone = memo(({
+  zoneId, points, showFill, fillColor, fillOp,
+  isAvailable, isDimmed, isActive,
+  onPick, onEnter, onLeave, onMove,
+}: PolygonZoneProps) => (
+  <polygon
+    points={points}
+    fill={showFill ? fillColor : "transparent"}
+    fillOpacity={fillOp}
+    stroke="transparent"
+    strokeWidth="0"
+    className={`${isAvailable && !isDimmed ? "cursor-pointer" : "cursor-default"} ${isActive ? "transition-opacity duration-150" : ""}`}
+    onClick={() => !isDimmed && onPick(zoneId)}
+    onMouseEnter={() => isAvailable && !isDimmed && onEnter(zoneId)}
+    onMouseLeave={onLeave}
+    onMouseMove={(e) => { if (isAvailable && !isDimmed) onMove(e); }}
+    // drop-shadow CSS filter is GPU-expensive — only paint it for the
+    // single active polygon, not all 300 on every hover.
+    style={isActive ? { filter: `drop-shadow(0 0 3px ${fillColor})` } : undefined}
+  />
+));
+PolygonZone.displayName = "PolygonZone";
 
 const statusLabels: Record<string, Record<string, string>> = {
   en: { available: "Free", reserved: "Reserved", sold: "Sold" },
@@ -233,7 +284,24 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
     );
   }
 
-  const activeHighlight = selectedZone || (hoveredZoneId ? zones.find(z => z.id === hoveredZoneId) : null);
+  // Dark "spotlight" overlay only kicks in once a zone is selected (clicked).
+  // Previously this included hover, which meant every cursor move into a
+  // polygon recomputed a complex clipPath polygon string AND re-painted the
+  // full-screen overlay — the dominant cost in the hover-lag. Hover-only
+  // highlighting now lives on the individual polygon (cheap, memoized).
+  const activeHighlight = selectedZone;
+
+  // Stable callbacks so the memoized PolygonZone children don't re-render
+  // every time the parent renders for an unrelated reason.
+  const handleZoneEnter = useCallback((id: string) => setHoveredZoneId(id), []);
+  const handleZoneLeave = useCallback(() => setHoveredZoneId(null), []);
+  const pickById = useCallback(
+    (id: string) => {
+      const z = zones.find((zz) => zz.id === id);
+      if (z) handleZoneClick(z);
+    },
+    [zones]
+  );
   // Same list of villas regardless of which plot is clicked — the visitor picks
   // their preferred villa, and the selected plot rides along via ?plot=<id>.
   const zoneVillas = selectedZone ? allVillas : [];
@@ -280,31 +348,33 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                     }}
                   />
 
-                  {/* SVG zone overlays */}
+                  {/* SVG zone overlays — each polygon is a memoized child so
+                      hover state only re-renders the affected polygon(s). */}
                   <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
                     {filtered.map((zone) => {
                       const isAvailable = zone.status === "available";
-                      const isActive = activeHighlight?.id === zone.id;
+                      const isActive = (activeHighlight?.id === zone.id) || (hoveredZoneId === zone.id);
                       const isUnavailable = zone.status === "reserved" || zone.status === "sold";
                       const matchesSize = zoneMatchesSizeFilter(zone);
-                      const dimmed = sizeFilter && !matchesSize;
+                      const dimmed = !!(sizeFilter && !matchesSize);
                       const showFill = isActive || isUnavailable || dimmed;
                       const fillColor = dimmed && !isActive && !isUnavailable ? "rgb(100,100,100)" : statusColors[zone.status];
                       const fillOp = dimmed && !isActive && !isUnavailable ? 0.35 : isActive ? 0.5 : isUnavailable ? 0.3 : 0;
                       return (
-                        <polygon
+                        <PolygonZone
                           key={zone.id}
-                          points={pointsToSvg(zone.polygon)}
-                          fill={showFill ? fillColor : "transparent"}
-                          fillOpacity={fillOp}
-                          stroke="transparent"
-                          strokeWidth="0"
-                          className={`transition-all duration-200 ${isAvailable && !dimmed ? "cursor-pointer" : "cursor-default"}`}
-                          onClick={() => !dimmed && handleZoneClick(zone)}
-                          onMouseEnter={() => isAvailable && !dimmed && setHoveredZoneId(zone.id)}
-                          onMouseLeave={() => { setHoveredZoneId(null); }}
-                          onMouseMove={(e: any) => { if (isAvailable && !dimmed) handleMouseMove(e); }}
-                          style={{ filter: isActive ? `drop-shadow(0 0 3px ${statusColors[zone.status]})` : undefined }}
+                          zoneId={zone.id}
+                          points={pointsToSvgStr(zone.polygon)}
+                          showFill={showFill}
+                          fillColor={fillColor}
+                          fillOp={fillOp}
+                          isAvailable={isAvailable}
+                          isDimmed={dimmed}
+                          isActive={isActive}
+                          onPick={pickById}
+                          onEnter={handleZoneEnter}
+                          onLeave={handleZoneLeave}
+                          onMove={handleMouseMove}
                         />
                       );
                     })}
