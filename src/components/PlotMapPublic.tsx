@@ -448,15 +448,10 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
           )}
         </TransformWrapper>
 
-        {/* Legend — stays outside the pan/zoom layer so it doesn't move */}
-        <div className="absolute top-3 right-3 z-20 bg-card/90 backdrop-blur-sm border border-border rounded-lg p-2.5 flex gap-3">
-          {(["available", "reserved", "sold"] as const).map((status) => (
-            <div key={status} className="flex items-center gap-1.5">
-              <div className="w-2.5 h-2.5 rounded-full" style={{ backgroundColor: statusColors[status] }} />
-              <span className="text-[10px] font-sans text-muted-foreground">{labels[status]}</span>
-            </div>
-          ))}
-        </div>
+        {/* The corner status legend was removed 2026-05-31 — the same
+            information already lives in the AvailabilityPanel above the
+            map (with live counts), and the client flagged the duplicate
+            as visual noise. */}
       </div>
 
       {/* Zone Detail Popup — top sheet on desktop, bottom sheet on mobile.

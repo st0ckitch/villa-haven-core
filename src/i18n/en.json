@@ -1,12 +1,12 @@
 {
   "nav": {
     "home": "Home",
-    "chooseVilla": "Choose Villa",
-    "chooseCondominium": "Choose Condominium",
+    "chooseVilla": "Choose",
+    "chooseCondominium": "Choose Villa",
     "polograph": "Polograph By Igavi",
     "aboutUs": "About Us",
     "news": "News",
-    "sitePlan": "Choose Villa",
+    "sitePlan": "Choose a Plot",
     "gallery": "Gallery",
     "blog": "News",
     "contact": "Contact",
@@ -55,7 +55,7 @@
   "services": {
     "title1": "",
     "titleEm": "Igavi Development",
-    "card1Title": "Polograph by Igavi",
+    "card1Title": "Polograph",
     "card1Desc": "An eco-friendly residential environment nestled in greenery — a unique setting where residents feel comfortable and in harmony.",
     "card1Cta": "About Polograph",
     "card2Title": "Olimpo",
@@ -136,7 +136,7 @@
     "phoneOrEmailRequired": "Please provide a phone number or email"
   },
   "footer": {
-    "desc": "Breathe freely, live in harmony with nature",
+    "desc": "A unique residential complex",
     "quickLinks": "Quick Links",
     "contactTitle": "Contact",
     "salesAddress": "Sales Office",
@@ -158,19 +158,19 @@
   },
   "gallery": {
     "title": "Gallery",
-    "subtitle": "Explore our collection of architectural renders showcasing the vision for Northshore.",
+    "subtitle": "Take a tour of Polograph",
     "all": "All",
-    "exterior": "Exterior",
-    "interior": "Interior",
-    "amenities": "Amenities",
-    "landscape": "Landscape",
+    "exterior": "Polograph",
+    "interior": "Olimpo",
+    "amenities": "Ipodromi",
+    "landscape": "Villas",
     "loading": "Loading...",
     "noRenders": "No renders found in this category."
   },
   "blog": {
     "title": "News",
-    "intro": "Interesting news and updates from Igavi Development.",
-    "subtitle": "Interesting news and updates from Igavi Development.",
+    "intro": "Interesting news and updates from Polograph.",
+    "subtitle": "Interesting news and updates from Polograph.",
     "loading": "Loading...",
     "noPosts": "No blog posts yet. Check back soon!",
     "minRead": "min read",
@@ -184,7 +184,7 @@
   },
   "sitePlan": {
     "title": "Choose Your Villa",
-    "subtitle": "Explore the masterplan and check villa availability in real-time.",
+    "subtitle": "Tap on a plot for detailed information",
     "instruction": "Choose your future home in Polograph. Browse the free land plots and pick your dream villa.",
     "all": "All",
     "available": "Free",
@@ -403,7 +403,7 @@
     "stat4Value": "73a",
     "stat4Label": "Market Segment",
     "sitePlanTitle": "Interactive Site Plan",
-    "titleDefault": "Polograph by Igavi",
+    "titleDefault": "Polograph",
     "descriptionDefault": "Polograph, a project by Igavi Development, is one of the region's most large-scale and unique residential complexes.\n\nPolograph offers an exclusive lifestyle where nature and comfort blend in harmony. A residential setting laid out across dozens of hectares, elegantly arranged — 279 premium-class villas designed individually with refined detail.\n\nA 20-minute drive from Tbilisi, on elevated, specially landscaped grounds set above the central highway, with breathtaking panoramic views from every vantage point.\n\nPolograph's eco-friendly residential environment is distinguished by unique greenery, an abundance of parks and a private lake. The natural cover wraps around the site as a boulevard — with walking and running paths, rest areas and many varieties of trees and plants.\n\nIn the forest park, unique trees and plants brought from Georgia and from around the world have been planted specifically for Polograph — species particularly suited to a residential setting.\n\nSakura Avenue — the inner streets of Polograph are lined with sakura trees in different colors, creating a mesmerizing pink gradient in the spring.\n\nFor residents who prefer to relax by the water, Polograph offers its own lake — within walking distance of the villas.\n\nThe Round Garden — Polograph's refined central plaza: featuring a striking fountain, rest areas, children's play zones, cafés and bars, restaurants, sports grounds and an amphitheater.\n\nThe Polograph complex offers a modern, comfortable business center and office spaces. Diverse infrastructure and entertainment venues make it possible to host a wide range of corporate events.\n\nResidents who prefer air travel can use Polograph's private helipad.",
     "visionTitleDefault": "Polograph Philosophy",
     "visionTextDefault": "Polograph's philosophy is to build and develop a unique, eco-friendly residential environment in harmony with nature — where greenery, fresh air, a healthy lifestyle and inner creative freedom are the everyday reality of its residents.",
