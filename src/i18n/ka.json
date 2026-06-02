@@ -3,6 +3,7 @@
     "home": "მთავარი",
     "chooseVilla": "შეარჩიე",
     "chooseCondominium": "შეარჩიე ვილა",
+    "navChoosePlot": "შეარჩიე ნაკვეთი",
     "polograph": "Polograph By Igavi",
     "aboutUs": "ჩვენ შესახებ",
     "news": "სიახლეები",
@@ -209,6 +210,7 @@
     "viewOnPlan": "გეგმაზე ნახვა",
     "choosePlot": "აირჩიე ნაკვეთი",
     "changePlot": "შეცვალე ნაკვეთი",
+    "downloadProject": "ვილას პროექტი (PDF)",
     "clearPlot": "ნაკვეთის გაუქმება",
     "otherVillas": "სხვა ვილები",
     "clickToView": "დააჭირეთ დეტალებისთვის",
@@ -261,6 +263,7 @@
   },
   "plotMap": {
     "availableVillas": "აირჩიეთ ვილა",
+    "availableLabel": "ხელმისაწვდომია",
     "calculate": "გამოთვლა",
     "viewVilla": "ვილის ნახვა",
     "priceSummary": "ფასის შეჯამება",

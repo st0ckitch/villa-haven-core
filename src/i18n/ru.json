@@ -3,6 +3,7 @@
     "home": "Главная",
     "chooseVilla": "Выбрать",
     "chooseCondominium": "Выбрать виллу",
+    "navChoosePlot": "Выбрать участок",
     "polograph": "Polograph By Igavi",
     "aboutUs": "О нас",
     "news": "Новости",
@@ -209,6 +210,7 @@
     "viewOnPlan": "Посмотреть на плане",
     "choosePlot": "Выбрать участок",
     "changePlot": "Сменить участок",
+    "downloadProject": "Проект виллы (PDF)",
     "clearPlot": "Сбросить выбор участка",
     "otherVillas": "Другие виллы",
     "clickToView": "Нажмите для деталей",
@@ -261,6 +263,7 @@
   },
   "plotMap": {
     "availableVillas": "Выберите виллу",
+    "availableLabel": "доступно",
     "calculate": "Рассчитать",
     "viewVilla": "Посмотреть виллу",
     "priceSummary": "Итого по цене",

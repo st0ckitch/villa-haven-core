@@ -548,70 +548,28 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                 className="p-5 space-y-4 flex-1 min-h-0 overflow-y-auto overscroll-contain"
                 data-lenis-prevent
               >
-                {zoneVillas.length > 0 ? (
-                  <>
-                    <p className="text-sm font-sans font-medium text-muted-foreground">
-                      {t("plotMap.availableVillas")}
-                    </p>
-                    <div className="grid gap-3">
-                      {zoneVillas.map((villa) => (
-                        <div
-                          key={villa.id}
-                          className="flex gap-3 items-center p-3 rounded-xl border border-border bg-muted/30 hover:bg-muted/60 transition-colors"
-                        >
-                          {/* Photo + name/price (clickable, opens villa in new tab) */}
-                          <a
-                            href={buildVillaHref(villa, selectedZone.id)}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex gap-3 items-center flex-1 min-w-0 group"
-                          >
-                            {villa.heroImage ? (
-                              <img
-                                src={villa.heroImage}
-                                alt={villa.name}
-                                className="w-20 h-14 rounded-lg object-cover shrink-0 transition-transform group-hover:scale-105"
-                              />
-                            ) : (
-                              <div className="w-20 h-14 rounded-lg bg-muted flex items-center justify-center shrink-0">
-                                <span className="text-[10px] text-muted-foreground font-sans">No image</span>
-                              </div>
-                            )}
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-sans font-medium text-foreground truncate group-hover:text-[hsl(130_55%_30%)] transition-colors">
-                                {villa.name}
-                              </p>
-                              {/* Combination preview — visitor sees the same string the sales team will receive in Bitrix. */}
-                              {(selectedZone.size_sqm || villa.size_sqm) && (
-                                <p className="text-[11px] text-muted-foreground font-sans">
-                                  {selectedZone.size_sqm ? `${selectedZone.size_sqm} m² plot` : "Plot"}
-                                  {villa.size_sqm ? ` + ${villa.size_sqm} m² villa` : ""}
-                                </p>
-                              )}
-                              {villa.price != null && (
-                                <p className="text-xs text-muted-foreground font-sans">${Number(villa.price).toLocaleString()}</p>
-                              )}
-                            </div>
-                          </a>
-                          {/* Calculator-only button */}
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="h-8 w-8 shrink-0"
-                            onClick={() => handleCalculate(villa, selectedZone)}
-                            title={t("plotMap.calculate") || "Calculate"}
-                          >
-                            <Calculator className="w-3.5 h-3.5" />
-                          </Button>
-                        </div>
-                      ))}
-                    </div>
-                  </>
-                ) : (
-                  <p className="text-sm text-muted-foreground font-sans text-center py-4">
-                    No villas available yet.
-                  </p>
-                )}
+                {/* Single "Choose Villa" CTA per client PDF 2026-05-31
+                    (Q6 — collapsing the in-popup villa list to a single
+                    button that routes through /villas?plot=<id>. The new
+                    intermediate page surfaces plot context at top and
+                    forwards the ?plot= param into the chosen villa's
+                    detail URL). The popup is now a brief confirmation
+                    surface, not a picker. */}
+                <a
+                  href={`${import.meta.env.BASE_URL.replace(/\/$/, "")}/villas?plot=${selectedZone.id}`}
+                  className="block"
+                  onClick={closePopup}
+                >
+                  <Button className="w-full font-sans" size="lg">
+                    {t("plotMap.availableVillas")}
+                  </Button>
+                </a>
+                {/* Lightweight reassurance below the CTA so the visitor
+                    knows what they're about to see. Keeps the popup from
+                    feeling empty. */}
+                <p className="text-xs text-muted-foreground font-sans text-center mt-2">
+                  {allVillas.length} {allVillas.length === 1 ? "villa" : "villas"} {t("plotMap.availableLabel")}
+                </p>
               </div>
             </div>
           </div>

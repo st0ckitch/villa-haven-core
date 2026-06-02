@@ -54,7 +54,16 @@ const CATALOG_KEYS = [
   { key: "catalog_equestrian", label: "Equestrian Club Catalog" },
 ];
 
-const ALL_KEYS = [...SETTING_KEYS, ...STAT_KEYS, ...LEAVE_REQUEST_KEYS, ...CATALOG_KEYS];
+// Homepage plot-map toggle — when "0" or empty, HomePlotMapSection
+// renders the static photo (homepage_plotmap_static_image) instead of
+// the live PlotMapPublic component. Lets the client temporarily hide
+// the interactive map without a code change.
+const HOMEPAGE_MAP_KEYS = [
+  { key: "homepage_plotmap_enabled", label: "Show interactive plot map on homepage? (1 = yes, 0 = no)" },
+  { key: "homepage_plotmap_static_image", label: "Static photo URL (shown when toggle is off)" },
+];
+
+const ALL_KEYS = [...SETTING_KEYS, ...STAT_KEYS, ...LEAVE_REQUEST_KEYS, ...CATALOG_KEYS, ...HOMEPAGE_MAP_KEYS];
 
 const SiteSettings = () => {
   const [values, setValues] = useState<Record<string, string>>({});
@@ -229,6 +238,28 @@ const SiteSettings = () => {
               <Input
                 value={values[key] ?? ""}
                 onChange={(e) => setValues((v) => ({ ...v, [key]: e.target.value }))}
+              />
+            </div>
+          ))}
+        </CardContent>
+      </Card>
+
+      {/* Homepage plot map toggle — controls whether the homepage shows
+          the live interactive plot map or a static photo banner. Use
+          "1" / "0" for the toggle and a publicly-reachable URL for the
+          static fallback image. */}
+      <Card className="mt-4">
+        <CardHeader>
+          <CardTitle className="text-base font-sans">Homepage Plot Map</CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          {HOMEPAGE_MAP_KEYS.map(({ key, label }) => (
+            <div key={key} className="space-y-1.5">
+              <Label className="text-sm font-sans">{label}</Label>
+              <Input
+                value={values[key] ?? ""}
+                onChange={(e) => setValues((v) => ({ ...v, [key]: e.target.value }))}
+                placeholder={key === "homepage_plotmap_enabled" ? "1" : "https://… or /renders/polograph/banner.jpg"}
               />
             </div>
           ))}

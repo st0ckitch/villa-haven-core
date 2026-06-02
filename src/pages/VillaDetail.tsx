@@ -7,7 +7,7 @@ import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lightbox } from "@/components/Lightbox";
-import { BedDouble, Bath, Maximize, MapPin, X } from "lucide-react";
+import { BedDouble, Bath, Maximize, MapPin, X, FileDown } from "lucide-react";
 import { useState } from "react";
 import { VillaContactForm } from "@/components/VillaContactForm";
 import { VillaPlotSummary } from "@/components/villa/VillaPlotSummary";
@@ -263,11 +263,46 @@ const VillaDetail = () => {
           {/* Glass sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white/60 backdrop-blur-xl border border-[hsl(130_55%_40%/0.15)] rounded-3xl p-6 space-y-6 text-card-foreground shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
-              <div>
-                <p className="text-sm font-sans font-medium text-[hsl(130_55%_32%)] mb-2">{t("villa.inquire")}</p>
-                <h3 className="font-sans text-lg font-medium mb-2 text-foreground">{t("villa.inquireTitle")}</h3>
-                <p className="font-sans text-sm text-muted-foreground mb-4">{t("villa.inquireDesc")}</p>
-              </div>
+              {/* Replaces the previous "Request more information" intro
+                  block per client PDF 2026-05-31. Two new elements:
+                  - 4-up villa-photo mini grid (one cell enlarges on
+                    hover via scale)
+                  - "Download villa project (PDF)" button when the villa
+                    has a project_pdf_url. Hidden when empty so unconfigured
+                    villas degrade gracefully. */}
+              {galleryImages.length > 0 && (
+                <div className="grid grid-cols-2 gap-2">
+                  {galleryImages.slice(0, 4).map((img, i) => (
+                    <button
+                      key={img.id}
+                      onClick={() => openLightbox(i)}
+                      className={`relative overflow-hidden rounded-xl aspect-[4/3] group
+                        border border-white/40 shadow-[0_2px_8px_rgba(0,0,0,0.04)]
+                        ${i === 0 ? "col-span-2 aspect-[16/9]" : ""}`}
+                    >
+                      <img
+                        src={img.image_url}
+                        alt={villa.name}
+                        loading="lazy"
+                        className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      />
+                    </button>
+                  ))}
+                </div>
+              )}
+              {(villa as any).project_pdf_url && (
+                <a
+                  href={(villa as any).project_pdf_url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  download
+                  className="block"
+                >
+                  <Button variant="outline" className="w-full font-sans">
+                    <FileDown className="w-4 h-4 mr-2" /> {t("villa.downloadProject")}
+                  </Button>
+                </a>
+              )}
               <VillaContactForm
                 villaName={plotLabel ? `${villa.name} — ${plotLabel.full}` : villa.name}
                 plotCode={plotZone?.code || null}

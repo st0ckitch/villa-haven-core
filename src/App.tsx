@@ -41,6 +41,7 @@ const OlimpoManagement = lazyWithRetry(() => import("./pages/admin/OlimpoManagem
 const EquestrianManagement = lazyWithRetry(() => import("./pages/admin/EquestrianManagement"));
 const Gallery = lazyWithRetry(() => import("./pages/Gallery"));
 const SitePlan = lazyWithRetry(() => import("./pages/SitePlan"));
+const Villas = lazyWithRetry(() => import("./pages/Villas"));
 const Blog = lazyWithRetry(() => import("./pages/Blog"));
 const BlogPostPage = lazyWithRetry(() => import("./pages/BlogPost"));
 const VillaDetail = lazyWithRetry(() => import("./pages/VillaDetail"));
@@ -103,6 +104,7 @@ const App = () => (
                     <Route path="/" element={<Index />} />
                     <Route path="/gallery" element={<Gallery />} />
                     <Route path="/site-plan" element={<SitePlan />} />
+                    <Route path="/villas" element={<Villas />} />
                     <Route path="/blog" element={<Blog />} />
                     <Route path="/blog/:slug" element={<BlogPostPage />} />
                     <Route path="/villas/:slug" element={<VillaDetail />} />

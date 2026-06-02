@@ -26,6 +26,10 @@ interface VillaForm {
   wet_point_1: string; wet_point_2: string;
   auxiliary_rooms_1: string; auxiliary_rooms_2: string; technical_room: string;
   pool: string; parking: string;
+  // Per-villa downloadable project PDF (replaces the sidebar "Request more
+  // information" block on the public villa detail page). Admin uploads the
+  // file via the input below; URL is stored in villas.project_pdf_url.
+  project_pdf_url: string;
 }
 
 const emptyForm: VillaForm = {
@@ -40,6 +44,7 @@ const emptyForm: VillaForm = {
   wet_point_1: "", wet_point_2: "",
   auxiliary_rooms_1: "", auxiliary_rooms_2: "", technical_room: "",
   pool: "", parking: "",
+  project_pdf_url: "",
 };
 
 const slugify = (text: string) =>
@@ -116,6 +121,7 @@ const VillaManagement = () => {
       technical_room:    v.technical_room    != null ? String(v.technical_room)    : "",
       pool: v.pool === true ? "yes" : v.pool === false ? "no" : "",
       parking: v.parking || "",
+      project_pdf_url: v.project_pdf_url || "",
     });
     await fetchImages(villa.id);
     setDialogOpen(true);
@@ -172,6 +178,7 @@ const VillaManagement = () => {
       technical_room:    form.technical_room    ? Number(form.technical_room)    : null,
       pool: form.pool === "yes" ? true : form.pool === "no" ? false : null,
       parking: form.parking || null,
+      project_pdf_url: form.project_pdf_url || null,
     };
 
     if (editing) {
@@ -370,6 +377,52 @@ const VillaManagement = () => {
               </TabsContent>
             </Tabs>
           </div>
+
+          {/* Project PDF — replaces the public "Request more info" block on
+              the villa detail page with a downloadable brochure per villa.
+              Stored as a public URL in villas.project_pdf_url; the file
+              itself lives in the existing `catalogs` storage bucket. */}
+          {editing && (
+            <div className="mt-4 border-t border-border pt-4">
+              <label className="text-sm font-medium font-sans mb-2 block">Villa project (PDF)</label>
+              <div className="flex items-center gap-3">
+                <Input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={async (e) => {
+                    const f = e.target.files?.[0];
+                    if (!f || !editing) return;
+                    const path = `villa-${editing.id}.pdf`;
+                    await supabase.storage.from("catalogs").remove([path]);
+                    const { error } = await supabase.storage
+                      .from("catalogs")
+                      .upload(path, f, { upsert: true, contentType: "application/pdf" });
+                    if (error) {
+                      toast({ title: "PDF upload failed", description: error.message, variant: "destructive" });
+                      return;
+                    }
+                    const { data: urlData } = supabase.storage.from("catalogs").getPublicUrl(path);
+                    setForm((fm) => ({ ...fm, project_pdf_url: urlData.publicUrl }));
+                    toast({ title: "PDF uploaded — remember to Save the villa to persist the URL." });
+                  }}
+                  className="font-sans"
+                />
+                {form.project_pdf_url && (
+                  <a
+                    href={form.project_pdf_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs font-sans text-primary hover:underline whitespace-nowrap"
+                  >
+                    View current
+                  </a>
+                )}
+              </div>
+              <p className="text-xs text-muted-foreground font-sans mt-1.5">
+                Replaces the previous "Request more information" sidebar on this villa's detail page.
+              </p>
+            </div>
+          )}
 
           {/* Extended Parameters — every field is optional. Leave blank to hide on the public page. */}
           <div className="mt-4 border-t border-border pt-4 space-y-4">

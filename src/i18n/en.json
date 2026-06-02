@@ -3,6 +3,7 @@
     "home": "Home",
     "chooseVilla": "Choose",
     "chooseCondominium": "Choose Villa",
+    "navChoosePlot": "Choose Plot",
     "polograph": "Polograph By Igavi",
     "aboutUs": "About Us",
     "news": "News",
@@ -209,6 +210,7 @@
     "viewOnPlan": "View on Site Plan",
     "choosePlot": "Choose a Plot",
     "changePlot": "Change Plot",
+    "downloadProject": "Villa Project (PDF)",
     "clearPlot": "Clear plot selection",
     "otherVillas": "Other villas",
     "clickToView": "Click to view details",
@@ -261,6 +263,7 @@
   },
   "plotMap": {
     "availableVillas": "Choose a Villa",
+    "availableLabel": "available",
     "calculate": "Calculate",
     "viewVilla": "View Villa",
     "priceSummary": "Price Summary",

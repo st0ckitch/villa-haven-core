@@ -28,9 +28,14 @@ export const Navbar = () => {
     { label: t("footer.equestrian"), to: "/ipodromi" },
   ];
 
+  // Two-item dropdown under the navbar's "Choose" entry:
+  //   1. Choose Plot     → /site-plan (the interactive plot map)
+  //   2. Choose Villa    → /villas    (new index page, client PDF Q1)
+  // Old layout duplicated /site-plan for both — client PDF 2026-05-31
+  // wants the second item to land on the villa-grid page instead.
   const villaSubLinks = [
-    { label: t("nav.chooseVilla"), to: "/site-plan" },
-    { label: t("nav.chooseCondominium"), to: "/site-plan" },
+    { label: t("nav.navChoosePlot"), to: "/site-plan" },
+    { label: t("nav.chooseCondominium"), to: "/villas" },
   ];
 
   const navLinks = [
