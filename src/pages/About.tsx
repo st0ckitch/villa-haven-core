@@ -5,7 +5,7 @@ import { SEO } from "@/components/SEO";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { ProjectHero } from "@/components/ProjectHero";
 import { TiltCard } from "@/components/TiltCard";
-import { Loader2, Compass, Telescope } from "lucide-react";
+import { Loader2, Compass, Telescope, Target, Building2 } from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 
 const ABOUT_KEYS = [
@@ -16,6 +16,13 @@ const ABOUT_KEYS = [
   "about_mission_text_ka", "about_mission_text_en", "about_mission_text_ru",
   "about_vision_title_ka", "about_vision_title_en", "about_vision_title_ru",
   "about_vision_text_ka", "about_vision_text_en", "about_vision_text_ru",
+  // Added per client PDF 2026-05-31: third "Goal" paragraph (next to
+  // Vision + Mission) and a "Reference" VR Holding section describing
+  // the parent developer.
+  "about_goal_title_ka", "about_goal_title_en", "about_goal_title_ru",
+  "about_goal_text_ka",  "about_goal_text_en",  "about_goal_text_ru",
+  "about_vr_title_ka",   "about_vr_title_en",   "about_vr_title_ru",
+  "about_vr_text_ka",    "about_vr_text_en",    "about_vr_text_ru",
   "about_team_image",
 ];
 
@@ -56,6 +63,12 @@ const About = () => {
   const missionText = pick("about_mission_text", "");
   const visionTitle = pick("about_vision_title", t("about.title1") + t("about.titleEm"));
   const visionText = pick("about_vision_text", "");
+  // Third paragraph + VR Holding reference — see migration
+  // 20260531180000_about_page_pdf_content for canonical copy.
+  const goalTitle = pick("about_goal_title", "");
+  const goalText = pick("about_goal_text", "");
+  const vrTitle = pick("about_vr_title", "VR Holding");
+  const vrText = pick("about_vr_text", "");
 
   return (
     <Layout>
@@ -211,6 +224,58 @@ const About = () => {
           </div>
         </div>
       </section>
+
+      {/* 3b. Goal paragraph (third of the Vision/Mission/Goal trio per
+          client PDF 2026-05-31). Rendered as a full-width editorial
+          block under the two side-by-side tilted cards so the trio
+          reads as one composition rather than a single missing card. */}
+      {goalText && (
+        <section className="container mx-auto px-6 pb-12 lg:pb-16 max-w-7xl">
+          <AnimatedSection>
+            <div className="grid lg:grid-cols-12 gap-10 lg:gap-12 items-start">
+              <div className="lg:col-span-7 relative">
+                <div className="inline-flex items-center gap-2 mb-4 px-3 py-1.5 rounded-full
+                  bg-white/80 backdrop-blur-xl border border-[hsl(130_55%_40%/0.25)]
+                  shadow-[0_2px_10px_rgba(45,143,67,0.1)]">
+                  <Target className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2} />
+                  <span className="font-sans text-sm font-semibold text-[hsl(130_55%_30%)]">
+                    {goalTitle}
+                  </span>
+                </div>
+                <p className="font-sans text-base md:text-lg text-foreground/80 leading-relaxed whitespace-pre-line max-w-2xl">
+                  {goalText}
+                </p>
+              </div>
+            </div>
+          </AnimatedSection>
+        </section>
+      )}
+
+      {/* 3c. VR Holding "Reference" section — describes the parent
+          developer. Plain editorial layout (no tilted card) per PDF
+          (it's reference material, not headline content). */}
+      {vrText && (
+        <section className="container mx-auto px-6 pb-12 lg:pb-16 max-w-5xl">
+          <AnimatedSection>
+            <div className="relative bg-white/55 backdrop-blur-xl border border-[hsl(130_55%_40%/0.15)] rounded-3xl p-8 md:p-10
+              shadow-[0_8px_32px_rgba(45,143,67,0.08)]">
+              <div className="inline-flex items-center gap-2 mb-5 px-3 py-1.5 rounded-full
+                bg-white/85 border border-[hsl(130_55%_40%/0.25)]">
+                <Building2 className="w-3 h-3 text-[hsl(130_55%_35%)]" strokeWidth={2} />
+                <span className="font-sans text-xs font-semibold text-[hsl(130_55%_30%)] uppercase tracking-wide">
+                  Reference
+                </span>
+              </div>
+              <h2 className="font-sans text-2xl md:text-3xl font-medium tracking-tight text-foreground mb-5">
+                {vrTitle}
+              </h2>
+              <div className="font-sans text-sm md:text-base text-foreground/80 leading-relaxed whitespace-pre-line max-w-3xl">
+                {vrText}
+              </div>
+            </div>
+          </AnimatedSection>
+        </section>
+      )}
 
       {/* 4. Team image with glass frame */}
       {c.about_team_image && (

@@ -8,7 +8,11 @@ import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 
 type Render = Record<string, any>;
 
-const categoryKeys = ["all", "exterior", "interior", "amenities", "landscape"] as const;
+// Categories relabeled per client 2026-05-31: project-by-project filtering
+// (Polograph / Olimpo / Ipodromi / Villas) instead of generic
+// exterior/interior/amenities/landscape buckets. Old DB rows get
+// recategorized by filename prefix in supabase/migrations/20260531_*.
+const categoryKeys = ["all", "polograph", "olimpo", "ipodromi", "villas"] as const;
 
 const Gallery = () => {
   const [renders, setRenders] = useState<Render[]>([]);

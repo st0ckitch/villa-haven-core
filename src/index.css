@@ -75,9 +75,12 @@
     --muted: 0 0% 94%;
     /* Body / subtitle copy. Client feedback 2026-05-31: keep neutral
        grey but darker tonality (was a light 40% lightness which read as
-       too faded next to headings). 28% is a solid mid-grey that still
-       reads as "muted" but holds up over the white-glass backdrops. */
-    --muted-foreground: 0 0% 28%;
+       too faded next to headings). Client feedback 2026-05-31 ("ფონტი
+       მკრთალია"): drop further to ~20% lightness — equivalent to #333.
+       That's still grey, but solid enough to read on white-glass without
+       feeling washed out. Applies to body copy, navbar links, captions,
+       form helper text, etc. */
+    --muted-foreground: 0 0% 20%;
 
     --accent: 130 55% 40%;
     --accent-foreground: 0 0% 100%;
