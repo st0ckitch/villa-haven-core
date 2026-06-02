@@ -162,9 +162,9 @@ const Polograph = () => {
       <div className="py-10">
         <div className="container mx-auto px-6">
           <AnimatedSection>
-            <div className="mb-6">
-              <SectionEyebrow align="center">{t("projects.multipleInfra")}</SectionEyebrow>
-            </div>
+            <h2 className="mb-6 font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-center text-[hsl(130_55%_30%)] leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
+              {t("projects.multipleInfra")}
+            </h2>
           </AnimatedSection>
         </div>
         <div className="relative py-6 overflow-hidden">

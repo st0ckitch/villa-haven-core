@@ -88,11 +88,15 @@ export const AmenitiesSection = () => {
       </div>
 
       <div className="container mx-auto px-6">
-        {/* Single thin-line heading above infrastructure marquee (client feedback slide 3) */}
+        {/* Big section-title heading above the infrastructure marquee.
+            Bumped from a SectionEyebrow chip → a full h2 per client
+            request 2026-06-01 ("write this in big letters, like a
+            title"). Keeps the brand green so it reads as a feature
+            heading rather than body. */}
         <AnimatedSection>
-          <div className="mb-6">
-            <SectionEyebrow align="center">{t("projects.multipleInfra")}</SectionEyebrow>
-          </div>
+          <h2 className="mb-6 font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-center text-[hsl(130_55%_30%)] leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
+            {t("projects.multipleInfra")}
+          </h2>
         </AnimatedSection>
 
       </div>
