@@ -11,6 +11,7 @@ import { BedDouble, Bath, Maximize, MapPin, X } from "lucide-react";
 import { useState } from "react";
 import { VillaContactForm } from "@/components/VillaContactForm";
 import { VillaPlotSummary } from "@/components/villa/VillaPlotSummary";
+import { VillaSwitcherStrip } from "@/components/villa/VillaSwitcherStrip";
 import { getZoneCategory } from "@/lib/zoneCategory";
 
 const statusColors: Record<string, string> = {
@@ -301,6 +302,11 @@ const VillaDetail = () => {
           </div>
         </div>
       </div>
+
+      {/* Other villas — horizontal switcher strip per PDF item 7.3.
+          Preserves the current ?plot=<id> on navigation so the visitor
+          keeps the plot they picked from the map while comparing villas. */}
+      <VillaSwitcherStrip currentVillaId={villa.id} />
 
       {lightboxOpen && galleryImages.length > 0 && (
         <Lightbox

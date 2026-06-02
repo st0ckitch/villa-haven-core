@@ -16,7 +16,11 @@ interface SEOProps {
   hrefLangs?: HrefLang[];
 }
 
-const SITE_NAME = "Igavi - იგავი";
+// Site brand renamed Igavi → Polograph (footer + meta) per client 2026-05-31
+// PDF. "Igavi Development" still appears in About-page body copy as the
+// developer / parent-company name, but the site itself is branded Polograph
+// (matches the polograph.ge domain).
+const SITE_NAME = "Polograph";
 
 export const SEO = ({
   title,
