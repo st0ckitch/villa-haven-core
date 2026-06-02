@@ -57,9 +57,9 @@ export const ServicesSection = () => {
                 <h3 className="text-white text-2xl md:text-3xl lg:text-4xl mb-3">
                   {services[0].title}
                 </h3>
-                <p className="text-white/80 text-sm leading-relaxed mb-6 max-w-md line-clamp-3">
-                  {services[0].description}
-                </p>
+                {/* Description removed per client 2026-06-01 — card now
+                    shows only title + CTA so all three cards in the row
+                    read as a clean editorial set. */}
                 <span className="inline-flex items-center gap-2 text-white text-sm font-medium bg-white/20 backdrop-blur-sm rounded-full px-5 py-2.5 w-fit group-hover:bg-white/30 transition-colors">
                   {services[0].cta}
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -80,12 +80,12 @@ export const ServicesSection = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="relative z-10 mt-auto p-6 lg:p-8">
-                <h3 className="text-white text-xl md:text-2xl mb-2">
+                {/* Title size matched to card 1 (Polograph) per client
+                    2026-06-01 so all three project cards read at the
+                    same hierarchy. Description removed below. */}
+                <h3 className="text-white text-2xl md:text-3xl lg:text-4xl mb-3">
                   {services[1].title}
                 </h3>
-                <p className="text-white/80 text-sm leading-relaxed mb-4 line-clamp-2">
-                  {services[1].description}
-                </p>
                 <span className="inline-flex items-center gap-2 text-white text-sm font-medium bg-white/20 backdrop-blur-sm rounded-full px-5 py-2.5 w-fit group-hover:bg-white/30 transition-colors">
                   {services[1].cta}
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
@@ -106,12 +106,9 @@ export const ServicesSection = () => {
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent" />
               <div className="relative z-10 mt-auto p-6 lg:p-8">
-                <h3 className="text-white text-xl md:text-2xl mb-2">
+                <h3 className="text-white text-2xl md:text-3xl lg:text-4xl mb-3">
                   {services[2].title}
                 </h3>
-                <p className="text-white/80 text-sm leading-relaxed mb-4 line-clamp-2">
-                  {services[2].description}
-                </p>
                 <span className="inline-flex items-center gap-2 text-white text-sm font-medium bg-white/20 backdrop-blur-sm rounded-full px-5 py-2.5 w-fit group-hover:bg-white/30 transition-colors">
                   {services[2].cta}
                   <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />
