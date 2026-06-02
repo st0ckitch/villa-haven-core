@@ -139,17 +139,10 @@ const About = () => {
                 )}
               </AnimatedSection>
 
-              {/* Edition-style metadata footer (bottom-left like the reference) */}
-              <AnimatedSection delay={400}>
-                <div className="mt-12 pt-6 border-t border-[hsl(130_55%_40%/0.15)] max-w-xs">
-                  <p className="font-sans text-sm font-semibold text-[hsl(130_55%_30%)] mb-1">
-                    Igavi · Est.
-                  </p>
-                  <p className="font-sans text-xs md:text-sm text-muted-foreground leading-snug">
-                    {t("about.tagline")}
-                  </p>
-                </div>
-              </AnimatedSection>
+              {/* "Igavi · Est." metadata block removed per client
+                  2026-06-01 — the section was decorative noise below
+                  the description and didn't add information that the
+                  hero / about copy doesn't already convey. */}
             </div>
 
             {/* Right: stacked, offset, tilted mission + vision cards */}

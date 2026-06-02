@@ -101,21 +101,32 @@ const PlotManager = () => {
     };
   };
 
+  // Polygon shape requires at least MIN_POLYGON_POINTS vertices before
+  // it can be closed. Client request 2026-06-01: bumped from 3 → 4 so
+  // accidental triangles aren't possible.
+  const MIN_POLYGON_POINTS = 4;
+
+  // "Snap-to-close" distance — in viewBox %. Smaller value = the user
+  // has to click closer to the first vertex to close the shape, which
+  // also makes the first-vertex hitbox feel smaller. Was 2; the new
+  // value matches the visual vertex radius below.
+  const SNAP_CLOSE_DIST = 1;
+
   const handleCanvasClick = (e: React.MouseEvent) => {
     if (!isDrawing) return;
     const coords = getRelativeCoords(e);
     if (!coords) return;
-    if (currentPoints.length >= 3) {
+    if (currentPoints.length >= MIN_POLYGON_POINTS) {
       const first = currentPoints[0];
       const dist = Math.sqrt((coords.x - first.x) ** 2 + (coords.y - first.y) ** 2);
-      if (dist < 2) { finishDrawing(); return; }
+      if (dist < SNAP_CLOSE_DIST) { finishDrawing(); return; }
     }
     setCurrentPoints((p) => [...p, coords]);
   };
 
   const handleCanvasDoubleClick = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (isDrawing && currentPoints.length >= 3) finishDrawing();
+    if (isDrawing && currentPoints.length >= MIN_POLYGON_POINTS) finishDrawing();
   };
 
   const finishDrawing = () => {
@@ -212,7 +223,7 @@ const PlotManager = () => {
         <div className="flex items-center gap-3 p-3 rounded-lg bg-primary/10 border border-primary/20">
           <MousePointer2 className="w-4 h-4 text-primary" />
           <span className="text-sm font-sans">
-            Click on the image to place vertices. {currentPoints.length >= 3 ? "Double-click or click near the first point to close the polygon." : `Place at least ${3 - currentPoints.length} more points.`}
+            Click on the image to place vertices. {currentPoints.length >= MIN_POLYGON_POINTS ? "Double-click or click near the first point to close the polygon." : `Place at least ${MIN_POLYGON_POINTS - currentPoints.length} more points.`}
           </span>
           <Button variant="ghost" size="sm" onClick={cancelDrawing}><X className="w-4 h-4" /></Button>
         </div>
@@ -256,7 +267,21 @@ const PlotManager = () => {
                 <>
                   <polyline points={pointsToSvg(currentPoints)} fill="none" stroke="hsl(var(--primary))" strokeWidth="0.3" strokeDasharray="1,0.5" />
                   {currentPoints.map((p, i) => (
-                    <circle key={i} cx={p.x} cy={p.y} r={i === 0 && currentPoints.length >= 3 ? "1" : "0.6"} fill={i === 0 ? "hsl(var(--primary))" : "hsl(var(--foreground))"} stroke="hsl(var(--background))" strokeWidth="0.2" />
+                    // Vertex visual: client request 2026-06-01 — shrink
+                    // the dots so they don't dominate the canvas, and
+                    // shrink the snap-to-close hit area accordingly.
+                    // First-vertex circle pulses larger only once the
+                    // polygon is closable to signal the snap target.
+                    <circle
+                      key={i}
+                      cx={p.x}
+                      cy={p.y}
+                      r={i === 0 && currentPoints.length >= MIN_POLYGON_POINTS ? "0.6" : "0.3"}
+                      fill={i === 0 ? "hsl(var(--primary))" : "hsl(var(--foreground))"}
+                      stroke="hsl(var(--background))"
+                      strokeWidth="0.12"
+                      style={{ pointerEvents: "none" }}
+                    />
                   ))}
                 </>
               )}

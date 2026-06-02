@@ -53,19 +53,10 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
       <div className="absolute inset-0 bg-gradient-to-t from-black/65 via-black/30 to-transparent" />
       <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-black/55 to-transparent" />
 
-      {/* Top-right "Projects" pill — kept but recoloured for a dark hero
-          (white text on translucent-dark instead of dark text on
-          translucent-white) so it matches the new editorial tone. */}
-      {badge && (
-        <div className="hidden md:flex absolute top-8 right-8 items-center gap-2 px-4 py-2 rounded-full
-          bg-black/35 backdrop-blur-md border border-white/15
-          shadow-[0_4px_24px_rgba(0,0,0,0.18)]">
-          <div className="w-1.5 h-1.5 rounded-full bg-[hsl(130_55%_55%)] animate-pulse" />
-          <span className="font-sans text-xs font-semibold tracking-wide text-white/90">
-            {badge}
-          </span>
-        </div>
-      )}
+      {/* Top-right "Projects" pill removed per client 2026-06-01 —
+          duplicated the nav breadcrumb and crowded the corner. The
+          `badge` prop is still accepted on the component for backward
+          compatibility with existing callers but no longer renders. */}
 
       {/* Title + subtitle — direct on photo, no card.
           A green accent bar on the left signals brand without painting a

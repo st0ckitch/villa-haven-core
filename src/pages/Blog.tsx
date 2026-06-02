@@ -114,18 +114,12 @@ const Blog = () => {
                             className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                             loading="lazy"
                           />
-                          {((((post as any).categories as string[]) || (post.category ? [post.category] : [])).length > 0) && (
-                            <div className="absolute top-3 left-3 flex flex-wrap gap-1.5 max-w-[75%]">
-                              {((((post as any).categories as string[]) || [post.category]).slice(0, 2)).map((slug: string) => {
-                                const cat = categories.find((c) => c.slug === slug);
-                                return (
-                                  <span key={slug} className="inline-flex items-center px-3 py-1.5 rounded-full bg-white/80 backdrop-blur-md border border-white/60 text-xs font-sans font-medium text-[hsl(130_55%_30%)] shadow-[0_4px_12px_rgba(0,0,0,0.08)]">
-                                    {cat ? getLocalizedField(cat as any, "name", language) : slug}
-                                  </span>
-                                );
-                              })}
-                            </div>
-                          )}
+                          {/* Category chips removed from the image per client
+                              2026-06-01 ("remove filter indicator from these
+                              blogposts — on the image itself"). The active
+                              filter is still visible in the pill row above
+                              the grid, so the chip overlay was redundant
+                              and visually cluttered the card image. */}
                         </div>
                       )}
                       <div className="p-5 text-card-foreground">
