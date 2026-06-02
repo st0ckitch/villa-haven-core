@@ -59,7 +59,7 @@ export const Footer = () => {
           {/* Brand */}
           <div>
             <Link to="/" className="font-serif text-2xl tracking-tight">
-              Igavi<span className="text-primary">–</span>
+              Polograph<span className="text-primary">.</span>
             </Link>
             <p className="mt-4 text-sm text-muted-foreground leading-relaxed">
               {t("footer.desc")}
@@ -176,7 +176,7 @@ export const Footer = () => {
             </Link>
           </div>
           <p className="text-xs text-muted-foreground/60">
-            © {new Date().getFullYear()} Igavi - იგავი. {t("footer.rights")}
+            © {new Date().getFullYear()} Polograph. {t("footer.rights")}
           </p>
         </div>
       </div>

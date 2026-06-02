@@ -73,7 +73,11 @@
     --secondary-foreground: 0 0% 10%;
 
     --muted: 0 0% 94%;
-    --muted-foreground: 0 0% 40%;
+    /* Body / subtitle copy. Client feedback 2026-05-31: keep neutral
+       grey but darker tonality (was a light 40% lightness which read as
+       too faded next to headings). 28% is a solid mid-grey that still
+       reads as "muted" but holds up over the white-glass backdrops. */
+    --muted-foreground: 0 0% 28%;
 
     --accent: 130 55% 40%;
     --accent-foreground: 0 0% 100%;
