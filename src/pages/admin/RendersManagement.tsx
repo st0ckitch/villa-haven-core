@@ -9,9 +9,27 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Search, Plus, Upload } from "lucide-react";
+import { Trash2, Search, Plus, Upload, Pencil } from "lucide-react";
 
 type Render = Tables<"renders">;
+
+// Category options offered in the admin dropdown. Client PDF 2026-05-31
+// renamed the public Gallery buckets — old values (exterior/interior/
+// amenities/landscape) are kept here so legacy rows still have a valid
+// option, but new uploads should land in one of the four project-named
+// buckets so the public gallery filter pills match the rest of the site.
+const CATEGORY_OPTIONS: { value: string; label: string }[] = [
+  // New project buckets — preferred
+  { value: "polograph", label: "Polograph" },
+  { value: "olimpo",    label: "Olimpo" },
+  { value: "ipodromi",  label: "Ipodromi" },
+  { value: "villas",    label: "Villas" },
+  // Legacy buckets — still selectable so existing rows aren't orphaned
+  { value: "exterior",  label: "Exterior (legacy)" },
+  { value: "interior",  label: "Interior (legacy)" },
+  { value: "amenities", label: "Amenities (legacy)" },
+  { value: "landscape", label: "Landscape (legacy)" },
+];
 
 const RendersManagement = () => {
   const [renders, setRenders] = useState<Render[]>([]);
@@ -24,10 +42,32 @@ const RendersManagement = () => {
   const [newTitleKa, setNewTitleKa] = useState("");
   const [newTitleEn, setNewTitleEn] = useState("");
   const [newTitleRu, setNewTitleRu] = useState("");
-  const [newCategory, setNewCategory] = useState("exterior");
+  // Default new uploads to "polograph" — the project gallery the client
+  // uses most. They can switch via the dropdown for each upload.
+  const [newCategory, setNewCategory] = useState("polograph");
   const [newSortOrder, setNewSortOrder] = useState(0);
   const [newFile, setNewFile] = useState<File | null>(null);
+  // Inline edit-category flow: clicking the small pencil on a render
+  // opens this dialog seeded with that row's current category. Saving
+  // PATCHes the renders row in place.
+  const [editing, setEditing] = useState<Render | null>(null);
+  const [editCategory, setEditCategory] = useState("");
   const { toast } = useToast();
+
+  const saveCategory = async () => {
+    if (!editing) return;
+    const { error } = await supabase
+      .from("renders")
+      .update({ category: editCategory })
+      .eq("id", editing.id);
+    if (error) {
+      toast({ title: "Error", description: error.message, variant: "destructive" });
+      return;
+    }
+    toast({ title: "Category updated" });
+    setEditing(null);
+    fetchRenders();
+  };
 
   const fetchRenders = async () => {
     const { data } = await supabase.from("renders").select("*").order("sort_order");
@@ -112,15 +152,42 @@ const RendersManagement = () => {
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
           {filtered.map((render) => (
             <div key={render.id} className="bg-card border border-border rounded-xl overflow-hidden">
-              <img src={render.image_url} alt={render.title} className="w-full h-40 object-cover" />
+              <img
+                src={render.image_url}
+                alt={render.title}
+                loading="lazy"
+                onError={(e) => {
+                  // Don't show the default broken-image icon — replace
+                  // with a muted placeholder block so the admin can still
+                  // see the row and delete or recategorize it.
+                  const img = e.currentTarget;
+                  img.style.display = "none";
+                  if (img.parentElement) {
+                    img.parentElement.style.background = "hsl(var(--muted))";
+                    img.parentElement.style.height = "10rem";
+                  }
+                }}
+                className="w-full h-40 object-cover"
+              />
               <div className="p-4 flex items-center justify-between">
                 <div>
-                  <h3 className="font-medium text-sm">{render.title}</h3>
+                  <h3 className="font-medium text-sm truncate max-w-[12rem]">{render.title || "(no title)"}</h3>
                   <p className="text-xs text-muted-foreground font-sans">{render.category}</p>
                 </div>
-                <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleting(render)}>
-                  <Trash2 className="w-3.5 h-3.5" />
-                </Button>
+                <div className="flex items-center gap-1">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => { setEditing(render); setEditCategory(render.category || "polograph"); }}
+                    title="Change category"
+                  >
+                    <Pencil className="w-3.5 h-3.5" />
+                  </Button>
+                  <Button variant="ghost" size="icon" className="h-8 w-8 text-destructive" onClick={() => setDeleting(render)}>
+                    <Trash2 className="w-3.5 h-3.5" />
+                  </Button>
+                </div>
               </div>
             </div>
           ))}
@@ -173,10 +240,9 @@ const RendersManagement = () => {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="exterior">Exterior</SelectItem>
-                  <SelectItem value="interior">Interior</SelectItem>
-                  <SelectItem value="amenities">Amenities</SelectItem>
-                  <SelectItem value="landscape">Landscape</SelectItem>
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -190,6 +256,39 @@ const RendersManagement = () => {
             <Button onClick={handleAdd} disabled={uploading} className="font-sans">
               {uploading ? "Uploading..." : "Add Image"}
             </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Edit-category dialog. Lets the client recategorize an existing
+          render without re-uploading the file. The category dropdown
+          reuses the same option list as the Add dialog so legacy values
+          are still selectable. */}
+      <Dialog open={!!editing} onOpenChange={(open) => !open && setEditing(null)}>
+        <DialogContent className="sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle className="font-serif">Change category</DialogTitle>
+          </DialogHeader>
+          {editing && (
+            <div className="space-y-3">
+              <div className="text-sm text-muted-foreground font-sans truncate">
+                {editing.title || "(no title)"}
+              </div>
+              <Select value={editCategory} onValueChange={setEditCategory}>
+                <SelectTrigger className="font-sans">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {CATEGORY_OPTIONS.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>{opt.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setEditing(null)} className="font-sans">Cancel</Button>
+            <Button onClick={saveCategory} className="font-sans">Save</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>

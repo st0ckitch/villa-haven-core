@@ -70,13 +70,19 @@ export const GallerySection = () => {
                 className="group relative aspect-[4/3] w-full rounded-2xl overflow-hidden cursor-pointer text-left
                   border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.04)]
                   hover:shadow-[0_12px_32px_rgba(45,143,67,0.18)] hover:border-[hsl(130_55%_40%/0.3)] hover:-translate-y-1
-                  transition-all duration-300"
+                  transition-all duration-300 bg-muted"
               >
                 <img
                   src={render.image_url}
                   alt={getLocalizedField(render, "title", language)}
                   loading="lazy"
                   className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                  onError={(e) => {
+                    // Broken render URL → hide the img, parent's bg-muted
+                    // keeps the slot visible without the default broken
+                    // icon. Beats a 404 outline in the grid.
+                    e.currentTarget.style.display = "none";
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute bottom-3 left-3 right-3">
