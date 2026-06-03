@@ -112,17 +112,20 @@ const Olimpo = () => {
     <Layout>
       <SEO title={`${titleText} — Igavi`} description={descriptionText.slice(0, 160)} />
 
-      {/* 1. Hero — breadcrumb uses short generic label to avoid duplicate with title (slide 11) */}
-      {c.olimpo_hero_image && (
-        <ProjectHero
-          image={c.olimpo_hero_image}
-          breadcrumb={t("footer.olimpo")}
-          title={titleText}
-          subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
-          badge={t("nav.projects")}
-          backLink={{ label: t("nav.home"), to: "/" }}
-        />
-      )}
+      {/* 1. Hero — breadcrumb uses short generic label to avoid duplicate with title (slide 11).
+          NOTE (2026-06-03): the admin-uploaded `olimpo_hero_image` in Supabase is only
+          500×321 px, so it looked badly blurred stretched across this full-bleed hero.
+          Pin the hero to the bundled 1920×1080 render so it stays sharp. To hand control
+          back to the admin panel, re-upload a full-res image under Site Settings → Olimpo
+          and restore `image={c.olimpo_hero_image}` (with the `c.olimpo_hero_image &&` guard). */}
+      <ProjectHero
+        image="/renders/olimpo/01-olimpo-hero.jpg"
+        breadcrumb={t("footer.olimpo")}
+        title={titleText}
+        subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
+        badge={t("nav.projects")}
+        backLink={{ label: t("nav.home"), to: "/" }}
+      />
 
       {/* 2. Gallery + Description (2-col layout).
           Apartment Types grid removed per client feedback (Apr 23, 2026):
