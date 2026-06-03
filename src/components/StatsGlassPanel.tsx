@@ -19,7 +19,7 @@ export const StatsGlassPanel = ({ stats, title, subtitle }: StatsGlassPanelProps
           {(title || subtitle) && (
             <div className="text-center mb-10">
               {subtitle && (
-                <p className="font-sans text-sm md:text-base font-medium text-[hsl(130_55%_32%)] mb-3">
+                <p className="font-mtavruli font-sans text-sm md:text-base font-medium text-[hsl(130_55%_32%)] mb-3">
                   {subtitle}
                 </p>
               )}

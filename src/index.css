@@ -143,6 +143,9 @@
     font-family: "FiraGO", system-ui, sans-serif;
     font-weight: 600; /* semibold — bolder than body, components with explicit
                          font-light / font-medium classes still override */
+    font-feature-settings: "case" 1; /* Georgian titles render as Mtavruli
+                                         (uniform cap-height); no-op for Latin/
+                                         Cyrillic beyond punctuation alignment */
   }
 }
 

@@ -26,7 +26,7 @@ export const SectionEyebrow = ({
 }: SectionEyebrowProps) => {
   return (
     <p
-      className={`font-sans text-sm md:text-base font-medium text-[hsl(130_55%_32%)] ${
+      className={`font-mtavruli font-sans text-sm md:text-base font-medium text-[hsl(130_55%_32%)] ${
         align === "center" ? "text-center" : ""
       } ${className}`}
     >
