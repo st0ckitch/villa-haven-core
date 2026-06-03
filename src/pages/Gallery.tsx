@@ -82,17 +82,7 @@ const Gallery = () => {
             <p className="text-muted-foreground font-sans">{t("gallery.noRenders")}</p>
           ) : (
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-5">
-              {filtered.map((render, i) => {
-                // i18n lookup: if the row's category isn't in our locale
-                // (legacy values like 'exterior' that we renamed), fall
-                // back to the raw category string instead of leaking the
-                // missing key (e.g. "gallery.exterior") into the chip.
-                const categoryLabel = (() => {
-                  const key = `gallery.${render.category}`;
-                  const translated = t(key);
-                  return translated === key ? render.category : translated;
-                })();
-                return (
+              {filtered.map((render, i) => (
                 <AnimatedSection key={render.id} delay={i * 50}>
                   <button
                     onClick={() => setLightboxIndex(i)}
@@ -108,26 +98,13 @@ const Gallery = () => {
                       loading="lazy"
                       onError={(e) => {
                         // Broken URL → hide the img so the card shows the
-                        // muted background and the title overlay only.
-                        // Beats the default broken-image icon.
+                        // muted background instead of a broken-image icon.
                         e.currentTarget.style.display = "none";
                       }}
                     />
-                    {/* Glass overlay on hover */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                      <div className="absolute bottom-4 left-4 right-4">
-                        {categoryLabel && (
-                          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-white/20 backdrop-blur-md border border-white/30 text-xs font-sans font-medium text-white mb-2">
-                            {categoryLabel}
-                          </span>
-                        )}
-                        <h3 className="text-white font-sans font-medium text-sm leading-tight">{getLocalizedField(render, "title", language)}</h3>
-                      </div>
-                    </div>
                   </button>
                 </AnimatedSection>
-                );
-              })}
+              ))}
             </div>
           )}
         </div>

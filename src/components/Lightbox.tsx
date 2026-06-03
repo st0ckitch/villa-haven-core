@@ -8,19 +8,6 @@ interface LightboxProps {
   onClose: () => void;
 }
 
-/**
- * Returns true for titles like "Render 07", "რენდერი 07", "Рендер 07" — the
- * auto-numbered captions seeded into public.renders. Client feedback
- * (2026-05-31) was that these add noise without informing the viewer. Real
- * human-written captions (e.g. "Polograph aerial", "120 ცხენზე გათვლილი თავლა")
- * still render normally.
- */
-const isGenericRenderTitle = (title: string): boolean => {
-  const t = title.trim();
-  if (!t) return true;
-  return /^(?:render|რენდერი|рендер)\s*\d+$/i.test(t);
-};
-
 export const Lightbox = ({ images, currentIndex, onClose }: LightboxProps) => {
   const [index, setIndex] = useState(currentIndex);
 
@@ -43,7 +30,6 @@ export const Lightbox = ({ images, currentIndex, onClose }: LightboxProps) => {
   }, []);
 
   const currentTitle = images[index].title;
-  const showTitle = !isGenericRenderTitle(currentTitle);
 
   // Portal to <body> so the fixed overlay isn't trapped inside an ancestor
   // with `transform` applied (e.g. AnimatedSection's translate-y animation),
@@ -98,11 +84,6 @@ export const Lightbox = ({ images, currentIndex, onClose }: LightboxProps) => {
           alt={currentTitle || "render"}
           className="w-full h-full sm:w-auto sm:h-auto sm:max-w-full sm:max-h-[85vh] object-contain rounded-none sm:rounded-lg"
         />
-        {showTitle && (
-          <p className="text-center text-background/80 text-sm font-sans mt-3 px-4">
-            {currentTitle}
-          </p>
-        )}
       </div>
     </div>,
     document.body
