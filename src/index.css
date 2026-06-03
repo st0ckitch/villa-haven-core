@@ -146,6 +146,15 @@
   }
 }
 
+/* FiraGO Mtavruli — Georgian title-case where every letter sits at the same
+   cap height. FiraGO ships these as ".case" glyphs reached through the OpenType
+   "case" feature (uni10D0 → uni10D0.case), not the Unicode Mtavruli block, so we
+   trigger it with font-feature-settings rather than text-transform: uppercase
+   (which would map to U+1C90.. codepoints the subset font has no glyphs for). */
+.font-mtavruli {
+  font-feature-settings: "case" 1;
+}
+
 /* View Transitions API — smooth page changes */
 ::view-transition-old(root),
 ::view-transition-new(root) {

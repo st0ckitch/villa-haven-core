@@ -68,7 +68,7 @@ export const Navbar = () => {
         <Link
           key={item.to + item.label}
           to={item.to}
-          className="block px-4 py-2.5 text-sm font-sans text-card-foreground hover:bg-muted transition-colors"
+          className="font-mtavruli block px-4 py-2.5 text-sm font-medium text-card-foreground hover:bg-muted transition-colors"
           onClick={() => { setProjectsOpen(false); setVillaOpen(false); }}
         >
           {item.label}
@@ -96,8 +96,8 @@ export const Navbar = () => {
                   onMouseLeave={() => { projectsTimeout.current = setTimeout(() => setProjectsOpen(false), 150); }}
                 >
                   <button
-                    className={`${navText} tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
-                      ["/polograph", "/olimpo", "/equestrian", "/ipodromi"].some((p) => location.pathname.startsWith(p)) ? "text-primary" : "text-muted-foreground"
+                    className={`font-mtavruli font-medium ${navText} tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
+                      ["/polograph", "/olimpo", "/equestrian", "/ipodromi"].some((p) => location.pathname.startsWith(p)) ? "text-primary" : "text-foreground"
                     }`}
                   >
                     {link.label}
@@ -118,8 +118,8 @@ export const Navbar = () => {
                 >
                   <Link
                     to={link.to}
-                    className={`${navText} tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
-                      location.pathname === "/site-plan" ? "text-primary" : "text-muted-foreground"
+                    className={`font-mtavruli font-medium ${navText} tracking-wide transition-colors hover:text-primary flex items-center gap-1 ${
+                      location.pathname === "/site-plan" ? "text-primary" : "text-foreground"
                     }`}
                   >
                     {link.label}
@@ -133,8 +133,8 @@ export const Navbar = () => {
               <Link
                 key={link.to}
                 to={link.to}
-                className={`${navText} tracking-wide transition-colors hover:text-primary ${
-                  location.pathname === link.to ? "text-primary" : "text-muted-foreground"
+                className={`font-mtavruli font-medium ${navText} tracking-wide transition-colors hover:text-primary ${
+                  location.pathname === link.to ? "text-primary" : "text-foreground"
                 }`}
               >
                 {link.label}
@@ -190,20 +190,20 @@ export const Navbar = () => {
       {isOpen && (
         <div className="lg:hidden bg-background/90 backdrop-blur-xl border border-border/30 rounded-2xl mt-2 mx-2 shadow-xl">
           <nav className="container mx-auto px-6 py-6 flex flex-col gap-4">
-            <Link to="/site-plan" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/site-plan" onClick={() => setIsOpen(false)} className="font-mtavruli font-medium text-base text-foreground hover:text-primary transition-colors">
               {t("nav.chooseVilla")}
             </Link>
 
             {/* Projects group */}
             <div className="pl-0">
-              <p className="text-base text-foreground mb-2">{t("nav.projects")}</p>
+              <p className="font-mtavruli font-medium text-base text-foreground mb-2">{t("nav.projects")}</p>
               <div className="pl-4 flex flex-col gap-2">
                 {projectSubLinks.map((sub) => (
                   <Link
                     key={sub.to + sub.label}
                     to={sub.to}
                     onClick={() => setIsOpen(false)}
-                    className="text-sm text-muted-foreground hover:text-primary transition-colors"
+                    className="font-mtavruli text-sm font-medium text-foreground hover:text-primary transition-colors"
                   >
                     {sub.label}
                   </Link>
@@ -211,16 +211,16 @@ export const Navbar = () => {
               </div>
             </div>
 
-            <Link to="/about" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/about" onClick={() => setIsOpen(false)} className="font-mtavruli font-medium text-base text-foreground hover:text-primary transition-colors">
               {t("nav.aboutUs")}
             </Link>
-            <Link to="/blog" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/blog" onClick={() => setIsOpen(false)} className="font-mtavruli font-medium text-base text-foreground hover:text-primary transition-colors">
               {t("nav.news")}
             </Link>
-            <Link to="/gallery" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/gallery" onClick={() => setIsOpen(false)} className="font-mtavruli font-medium text-base text-foreground hover:text-primary transition-colors">
               {t("nav.gallery")}
             </Link>
-            <Link to="/contact" onClick={() => setIsOpen(false)} className="text-base text-foreground hover:text-primary transition-colors">
+            <Link to="/contact" onClick={() => setIsOpen(false)} className="font-mtavruli font-medium text-base text-foreground hover:text-primary transition-colors">
               {t("nav.contact")}
             </Link>
 
