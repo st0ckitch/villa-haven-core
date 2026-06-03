@@ -564,12 +564,8 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
                     {t("plotMap.availableVillas")}
                   </Button>
                 </a>
-                {/* Lightweight reassurance below the CTA so the visitor
-                    knows what they're about to see. Keeps the popup from
-                    feeling empty. */}
-                <p className="text-xs text-muted-foreground font-sans text-center mt-2">
-                  {allVillas.length} {allVillas.length === 1 ? "villa" : "villas"} {t("plotMap.availableLabel")}
-                </p>
+                {/* "N villas available" reassurance line removed per client
+                    2026-06-03 — they didn't want the villa count shown here. */}
               </div>
             </div>
           </div>
