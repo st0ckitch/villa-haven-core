@@ -84,13 +84,6 @@ export const GallerySection = () => {
                     e.currentTarget.style.display = "none";
                   }}
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/0 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute bottom-3 left-3 right-3">
-                    <h3 className="text-white font-sans font-medium text-sm leading-tight">
-                      {getLocalizedField(render, "title", language)}
-                    </h3>
-                  </div>
-                </div>
               </button>
             ))}
           </div>
