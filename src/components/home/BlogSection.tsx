@@ -62,10 +62,10 @@ export const BlogSection = () => {
                   </div>
                 )}
                 <div className="p-5">
-                  <span className="text-sm font-sans font-medium text-primary">
-                    {post.category}
-                  </span>
-                  <h3 className="font-serif text-lg mt-1.5 mb-2 text-card-foreground group-hover:text-primary transition-colors">
+                  {/* Category label above the title removed per client 2026-06-03
+                      (matches the same removal already done on the /blog listing
+                      cards). The redundant "polograph" tag cluttered the card. */}
+                  <h3 className="font-serif text-lg mb-2 text-card-foreground group-hover:text-primary transition-colors">
                     {getLocalizedField(post, "title", language)}
                   </h3>
                   <p className="text-sm text-muted-foreground font-sans line-clamp-2 mb-3">
