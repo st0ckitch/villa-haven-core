@@ -45,6 +45,10 @@ const getEmbedUrl = (url: string): { type: "iframe" | "video"; src: string } => 
 
 export const HeroSection = () => {
   const [activeSlide, setActiveSlide] = useState(0);
+  // Tracks whether the first hero image has painted. Until then we show a
+  // neutral backdrop + spinner instead of the old green gradient flash
+  // (client 2026-06-03: the green pre-load background looked ugly).
+  const [firstImageLoaded, setFirstImageLoaded] = useState(false);
 
   // Read the previous session's slides synchronously on first render so we
   // can paint immediately. Stable across renders, not reactive.
@@ -197,7 +201,14 @@ export const HeroSection = () => {
 
   // Slider mode (default). Two GPU-composited parallax layers only.
   return (
-    <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden bg-gradient-to-br from-[hsl(130_30%_15%)] via-[hsl(130_25%_20%)] to-[hsl(130_20%_12%)]">
+    <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden bg-neutral-900">
+      {/* Loading indicator — shown until the first slide image paints, so the
+          hero never flashes a flat coloured background while the photo loads. */}
+      {!firstImageLoaded && (
+        <div className="absolute inset-0 z-[5] flex items-center justify-center pointer-events-none">
+          <div className="animate-spin rounded-full h-9 w-9 border-2 border-white/25 border-t-white/80" />
+        </div>
+      )}
       {/* Layer 1: Parallax image. The hero is always above the fold, so
           every slide loads eagerly — `loading="lazy"` previously delayed
           loading until each slide entered the viewport, causing a fetch
@@ -220,6 +231,8 @@ export const HeroSection = () => {
               className="absolute inset-0 w-full h-full object-cover"
               loading="eager"
               decoding="async"
+              onLoad={() => setFirstImageLoaded(true)}
+              onError={() => setFirstImageLoaded(true)}
             />
           </AnimatePresence>
         </motion.div>
