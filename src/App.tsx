@@ -16,7 +16,6 @@ import { ScrollProgress } from "@/components/ScrollProgress";
 import { ScrollToTop } from "@/components/ScrollToTop";
 import { ChunkErrorBoundary } from "@/components/ChunkErrorBoundary";
 import { NoiseOverlay } from "@/components/NoiseOverlay";
-import { Cursor } from "@/components/Cursor";
 import { lazyWithRetry } from "@/lib/lazyWithRetry";
 
 // Routes are code-split via React.lazy → dynamic import(). Wrapped in
@@ -95,7 +94,6 @@ const App = () => (
                 <ScrollToTop />
                 <ScrollProgress />
                 <NoiseOverlay />
-                <Cursor />
                 <Analytics />
                 <CookieBanner />
                 <ChunkErrorBoundary fallback={<PageLoader />}>

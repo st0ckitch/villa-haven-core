@@ -8,6 +8,8 @@ import { z } from "zod";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { PhoneInput } from "@/components/PhoneInput";
 import { submitLeadToBitrix } from "@/lib/bitrix";
+// TEMPORARY: aerial render shown in place of the Google Map embed.
+import contactLocationAerial from "@/assets/contact-location-aerial.jpg";
 
 const contactSchema = z.object({
   first_name: z.string().trim().min(1).max(50),
@@ -170,16 +172,13 @@ export const ContactSection = () => {
                 </Button>
               </form>
 
-              {/* Right Column — Glassmorphic Map */}
+              {/* Right Column — TEMPORARY: aerial render shown in place of the Google Map embed. */}
               <div className="relative rounded-2xl overflow-hidden bg-white/15 backdrop-blur-xl border border-white/20 shadow-2xl min-h-[320px] lg:min-h-0">
-                <iframe
-                  src="https://www.google.com/maps/embed?pb=!1m17!1m12!1m3!1d24000!2d44.982456!3d41.51629!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m2!1m1!1zNDHCsDMwJzU4LjYiTiA0NMKwNTgnNTYuOCJF!5e0!3m2!1sen!2sge!4v1700000000000"
-                  className="w-full h-full absolute inset-0"
-                  style={{ border: 0, filter: "grayscale(0.3) contrast(1.05)" }}
-                  allowFullScreen
+                <img
+                  src={contactLocationAerial}
+                  alt="Aerial view of the Igavi development"
+                  className="w-full h-full absolute inset-0 object-cover"
                   loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  title="Igavi Development Location"
                 />
                 {/* Frosted edge overlay */}
                 <div className="absolute inset-0 pointer-events-none rounded-2xl ring-1 ring-inset ring-white/25" />
