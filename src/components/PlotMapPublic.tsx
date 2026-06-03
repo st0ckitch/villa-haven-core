@@ -337,11 +337,13 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
           minScale={ZOOM_MIN}
           maxScale={ZOOM_MAX}
           doubleClick={{ mode: "toggle", step: 1.2 }}
-          // Client request 2026-05-31: zoom only via the +/-/reset buttons,
-          // not wheel/trackpad/pinch — which kept accidentally zooming when
-          // users tried to scroll the page.
+          // Wheel/trackpad zoom stays OFF (client 2026-05-31: it kept
+          // accidentally zooming while users scrolled the page).
+          // Pinch-to-zoom is ON (client 2026-06-03): on mobile the +/- buttons
+          // alone made the small plots hard to select, and a two-finger pinch
+          // is a deliberate gesture that won't fire while scrolling.
           wheel={{ disabled: true }}
-          pinch={{ disabled: true }}
+          pinch={{ disabled: false, step: 5 }}
           panning={{ velocityDisabled: true }}
           centerOnInit
         >
