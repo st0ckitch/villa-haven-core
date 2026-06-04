@@ -5,6 +5,7 @@ import { SEO } from "@/components/SEO";
 import { AnimatedSection } from "@/components/AnimatedSection";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
+import { normalizeRenderUrl } from "@/lib/renderUrl";
 
 type Render = Record<string, any>;
 
@@ -19,16 +20,24 @@ const Gallery = () => {
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState("all");
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+  // URLs whose <img> fired onError — dropped entirely so the grid never shows
+  // an empty/broken tile (was leaving a grey box). Client 2026-06-04.
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
+  const markFailed = (url: string) =>
+    setFailedUrls((prev) => (prev.has(url) ? prev : new Set(prev).add(url)));
   const { language, t } = useLanguage();
 
   useEffect(() => {
     supabase.from("renders").select("*").order("sort_order").then(({ data }) => {
-      setRenders(data || []);
+      // Correct wrong-extension URLs (.jpeg/.png → .jpg) so seeded rows still
+      // resolve to the real bundled file (e.g. gallery-43.png → .jpg).
+      setRenders((data || []).map((r) => ({ ...r, image_url: normalizeRenderUrl(r.image_url) })));
       setLoading(false);
     });
   }, []);
 
-  const filtered = filter === "all" ? renders : renders.filter((r) => r.category === filter);
+  const visible = renders.filter((r) => !failedUrls.has(r.image_url));
+  const filtered = filter === "all" ? visible : visible.filter((r) => r.category === filter);
   const lightboxImages = filtered.map((r) => ({
     url: r.image_url,
     title: getLocalizedField(r, "title", language),
@@ -96,11 +105,7 @@ const Gallery = () => {
                       alt={getLocalizedField(render, "title", language)}
                       className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
                       loading="lazy"
-                      onError={(e) => {
-                        // Broken URL → hide the img so the card shows the
-                        // muted background instead of a broken-image icon.
-                        e.currentTarget.style.display = "none";
-                      }}
+                      onError={() => markFailed(render.image_url)}
                     />
                   </button>
                 </AnimatedSection>
