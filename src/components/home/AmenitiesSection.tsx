@@ -94,7 +94,7 @@ export const AmenitiesSection = () => {
             title"). Keeps the brand green so it reads as a feature
             heading rather than body. */}
         <AnimatedSection>
-          <h2 className="mb-6 font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-center text-[hsl(130_55%_30%)] leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
+          <h2 className="mb-6 font-mtavruli font-sans text-sm md:text-base font-medium tracking-tight text-center text-[hsl(130_55%_32%)]">
             {t("projects.multipleInfra")}
           </h2>
         </AnimatedSection>
