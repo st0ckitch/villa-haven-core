@@ -2,6 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useState } from "react";
 import { Lightbox } from "@/components/Lightbox";
+import { normalizeRenderUrl } from "@/lib/renderUrl";
 
 /**
  * Local placeholder renders (in `public/renders/`) used when the
@@ -40,6 +41,12 @@ export const RenderGalleryWithDescription = ({
 }: RenderGalleryWithDescriptionProps) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [lightboxOpen, setLightboxOpen] = useState(false);
+  // URLs whose <img> fired onError (dead/404 render). We drop these from the
+  // gallery entirely so the page never shows a broken-image icon or an empty
+  // tile — the bad render just disappears. Client 2026-06-04.
+  const [failedUrls, setFailedUrls] = useState<Set<string>>(new Set());
+  const markFailed = (url: string) =>
+    setFailedUrls((prev) => (prev.has(url) ? prev : new Set(prev).add(url)));
 
   const { data: dbRenders = [] } = useQuery({
     queryKey: ["project-renders", project],
@@ -54,8 +61,13 @@ export const RenderGalleryWithDescription = ({
   });
 
   // DB rows take precedence; otherwise fall back to bundled placeholder images.
-  const renders: { id: string; image_url: string; title: string | null }[] =
-    dbRenders.length > 0 ? dbRenders : (PLACEHOLDER_RENDERS[project] || []);
+  // Correct any wrong-extension render URL (.jpeg/.png → .jpg) so seeded rows
+  // with a bad extension still resolve to the real bundled file.
+  const allRenders: { id: string; image_url: string; title: string | null }[] = (
+    dbRenders.length > 0 ? dbRenders : (PLACEHOLDER_RENDERS[project] || [])
+  ).map((r) => ({ ...r, image_url: normalizeRenderUrl(r.image_url) }));
+  // Exclude any render whose image still failed to load (see markFailed/onError).
+  const renders = allRenders.filter((r) => !failedUrls.has(r.image_url));
 
   if (renders.length === 0) {
     return (
@@ -96,6 +108,7 @@ export const RenderGalleryWithDescription = ({
               src={main.image_url}
               alt={main.title || project}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+              onError={() => markFailed(main.image_url)}
             />
             <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
           </div>
@@ -115,6 +128,7 @@ export const RenderGalleryWithDescription = ({
                       src={img.image_url}
                       alt={img.title || `render-${idx}`}
                       className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                      onError={() => markFailed(img.image_url)}
                     />
                   </button>
                 );
