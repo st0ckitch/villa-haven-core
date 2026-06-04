@@ -119,7 +119,7 @@ const Olimpo = () => {
           back to the admin panel, re-upload a full-res image under Site Settings → Olimpo
           and restore `image={c.olimpo_hero_image}` (with the `c.olimpo_hero_image &&` guard). */}
       <ProjectHero
-        image="/renders/olimpo/01-olimpo-hero.jpg"
+        image="/renders/olimpo/olimpo-hero-main.jpg"
         breadcrumb={t("footer.olimpo")}
         title={titleText}
         subtitle={descriptionText.split("\n")[0]?.slice(0, 140) || ""}
