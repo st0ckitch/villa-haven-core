@@ -243,16 +243,6 @@ const VillaDetail = () => {
               </div>
             )}
 
-            {/* Plot Zone Price Summary (from ?plot= param) */}
-            {plotZone && (
-              <VillaPlotSummary
-                villa={villa}
-                plotZone={plotZone}
-                villaImage={heroImage?.image_url ?? null}
-                villaBedrooms={villa.bedrooms ?? null}
-              />
-            )}
-
             {galleryImages.length > 1 && (
               <div>
                 <h2 className="font-sans text-xl font-medium mb-4 text-foreground">{t("villa.gallery")}</h2>
@@ -272,18 +262,40 @@ const VillaDetail = () => {
                 </div>
               </div>
             )}
+
+            {/* Inquiry form — the single contact form on the page, always
+                shown below the villa content (client 2026-06-04: the
+                duplicate sidebar form was removed). With a plot selected it
+                shows the Selected villa + Selected plot summary and price;
+                otherwise a plain "Request more information" form. */}
+            {plotZone ? (
+              <VillaPlotSummary
+                villa={villa}
+                plotZone={plotZone}
+                villaImage={heroImage?.image_url ?? null}
+                villaBedrooms={villa.bedrooms ?? null}
+              />
+            ) : (
+              <div className="relative bg-white/60 backdrop-blur-md border border-[hsl(130_55%_40%/0.12)] rounded-2xl p-6 md:p-8 shadow-[0_2px_16px_rgba(0,0,0,0.04)]">
+                <p className="text-xs font-sans font-semibold text-[hsl(130_55%_30%)] mb-1">{t("villa.inquire")}</p>
+                <h2 className="font-sans text-xl font-medium text-foreground mb-1">{t("villa.inquireTitle")}</h2>
+                <p className="text-sm text-muted-foreground font-sans mb-4">{t("villa.inquireDesc")}</p>
+                <VillaContactForm villaName={villa.name} villaSqm={villa.size_sqm ?? null} />
+              </div>
+            )}
           </div>
 
           {/* Glass sidebar */}
           <div className="lg:col-span-1">
             <div className="sticky top-28 bg-white/60 backdrop-blur-xl border border-[hsl(130_55%_40%/0.15)] rounded-3xl p-6 space-y-6 text-card-foreground shadow-[0_8px_32px_rgba(0,0,0,0.04)]">
-              {/* Replaces the previous "Request more information" intro
-                  block per client PDF 2026-05-31. Two new elements:
-                  - 4-up villa-photo mini grid (one cell enlarges on
-                    hover via scale)
+              {/* Sidebar holds only the villa media + plot CTA now — the
+                  contact form was removed per client 2026-06-04 (it
+                  duplicated the inquiry form below the villa content; one
+                  form per page). Elements:
+                  - 4-up villa-photo mini grid (enlarges on hover)
                   - "Download villa project (PDF)" button when the villa
-                    has a project_pdf_url. Hidden when empty so unconfigured
-                    villas degrade gracefully. */}
+                    has a project_pdf_url (hidden when empty)
+                  - Choose / Change plot button. */}
               {galleryImages.length > 0 && (
                 <div className="grid grid-cols-2 gap-2">
                   {galleryImages.slice(0, 4).map((img, i) => (
@@ -322,12 +334,6 @@ const VillaDetail = () => {
                   </Button>
                 </a>
               )}
-              <VillaContactForm
-                villaName={plotLabel ? `${villa.name} — ${plotLabel.full}` : villa.name}
-                plotCode={plotZone?.code || null}
-                plotSqm={plotZone?.size_sqm ?? null}
-                villaSqm={villa.size_sqm ?? null}
-              />
               {/* Choose / Change plot — sends the visitor to the dedicated
                   plot-map page (not the Polograph project page), so they
                   land directly on the picker instead of having to scroll.
