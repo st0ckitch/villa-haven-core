@@ -201,12 +201,13 @@ export const HeroSection = () => {
 
   // Slider mode (default). Two GPU-composited parallax layers only.
   return (
-    <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden bg-neutral-900">
-      {/* Loading indicator — shown until the first slide image paints, so the
-          hero never flashes a flat coloured background while the photo loads. */}
+    <section ref={heroRef} className="relative h-[60vh] md:h-[85vh] min-h-[400px] md:min-h-[600px] flex items-center overflow-hidden bg-gradient-to-b from-[hsl(130_42%_96%)] via-[hsl(132_45%_93%)] to-[hsl(134_47%_89%)]">
+      {/* Loading indicator — shown until the first slide image paints. Backdrop
+          is the site's light-mint green tint (client 2026-06-04, was black);
+          spinner is green so it stays visible on the light background. */}
       {!firstImageLoaded && (
         <div className="absolute inset-0 z-[5] flex items-center justify-center pointer-events-none">
-          <div className="animate-spin rounded-full h-9 w-9 border-2 border-white/25 border-t-white/80" />
+          <div className="animate-spin rounded-full h-9 w-9 border-2 border-[hsl(130_40%_82%)] border-t-[hsl(130_55%_40%)]" />
         </div>
       )}
       {/* Layer 1: Parallax image. The hero is always above the fold, so
