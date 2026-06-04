@@ -186,6 +186,7 @@
   "sitePlan": {
     "title": "Choose Your Villa",
     "subtitle": "Tap on a plot for detailed information",
+    "mapHeading": "Tap the relevant plot for detailed information",
     "instruction": "Choose your future home in Polograph. Browse the free land plots and pick your dream villa.",
     "all": "All",
     "available": "Free",

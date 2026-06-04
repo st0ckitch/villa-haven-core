@@ -135,12 +135,9 @@ const Villas = () => {
           )}
 
           <AnimatedSection>
-            <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-3 leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
-              {t("sitePlan.title")}
+            <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-10 leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
+              {t("sitePlan.mapHeading")}
             </h1>
-            <p className="font-sans text-base text-muted-foreground mb-10 max-w-2xl">
-              {t("sitePlan.subtitle")}
-            </p>
           </AnimatedSection>
 
           {loading ? (

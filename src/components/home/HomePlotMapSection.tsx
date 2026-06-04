@@ -52,11 +52,8 @@ export const HomePlotMapSection = () => {
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
               <h2 className="font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground">
-                {t("sitePlan.title")}
+                {t("sitePlan.mapHeading")}
               </h2>
-              <p className="font-sans text-base text-muted-foreground mt-2 max-w-2xl">
-                {t("sitePlan.subtitle")}
-              </p>
             </div>
             <Link to="/site-plan" className="shrink-0">
               <Button variant="outline" className="rounded-full font-sans gap-2 hidden md:inline-flex">
