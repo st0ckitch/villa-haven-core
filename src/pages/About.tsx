@@ -56,8 +56,28 @@ const About = () => {
     const v = c[`${key}_${language}`];
     return v && v.trim().length > 0 ? v : fallback;
   };
-  const pageTitle = pick("about_title", t("about.title1") + t("about.titleEm"));
+  // Drop a trailing "- About Us"-style suffix from the admin-entered title so
+  // the heading reads as the brand name only (client 2026-06-04: turn
+  // "იგავი დეველოპმენტი - ჩვენ შესახებ" into "იგავი დეველოპმენტი"). Only
+  // strips when the suffix follows a dash, so plain "About Us" / "О нашем
+  // проекте" defaults are left untouched.
+  const pageTitle = pick("about_title", t("about.title1") + t("about.titleEm"))
+    .replace(/\s*[-–—]\s*(ჩვენ\s*შესახებ|About\s*Us|О\s*нас)\s*$/iu, "")
+    .trim();
   const description = pick("about_description", "");
+  // The About description is authored as "<Vision label>:\n\n<body>".
+  // Promote that leading label line ("ჩვენი ხედვა:" / "Our Vision:" /
+  // "Наше видение:") to a heading so it matches the Mission / Objective
+  // headings below (client 2026-06-04). Locale-independent.
+  let visionHeading = "";
+  let descBody = description;
+  {
+    const parts = description.split(/\n{2,}/);
+    if (parts.length > 1 && /[:：]\s*$/.test(parts[0].trim())) {
+      visionHeading = parts[0].trim().replace(/[:：]\s*$/, "");
+      descBody = parts.slice(1).join("\n\n");
+    }
+  }
   const missionTitle = pick("about_mission_title", t("projects.mainDirections"));
   const missionText = pick("about_mission_text", "");
   const visionTitle = pick("about_vision_title", t("about.title1") + t("about.titleEm"));
@@ -101,10 +121,19 @@ const About = () => {
           )}
 
           <div className="space-y-10">
-            {description && (
-              <p className="font-sans text-foreground/80 leading-relaxed text-base md:text-lg whitespace-pre-line">
-                {description}
-              </p>
+            {(visionHeading || descBody) && (
+              <div>
+                {visionHeading && (
+                  <h2 className="font-sans text-xl md:text-2xl font-medium tracking-tight text-foreground mb-3">
+                    {visionHeading}
+                  </h2>
+                )}
+                {descBody && (
+                  <p className="font-sans text-base md:text-lg text-muted-foreground leading-relaxed whitespace-pre-line">
+                    {descBody}
+                  </p>
+                )}
+              </div>
             )}
 
             {missionText && (
