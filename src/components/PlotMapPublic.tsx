@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
-import { Calculator, X, Plus, Minus, RotateCcw } from "lucide-react";
+import { Calculator, X, Plus, Minus, RotateCcw, Maximize2 } from "lucide-react";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 import { PlotPriceDialog } from "@/components/PlotPriceDialog";
 import { getZoneCategory } from "@/lib/zoneCategory";
@@ -147,6 +147,22 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   const [hoveredZoneId, setHoveredZoneId] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
   const [priceDialog, setPriceDialog] = useState<{ open: boolean; villa: AssignedVilla | null; zone: PlotZone | null }>({ open: false, villa: null, zone: null });
+  // Full-screen map mode (client #9) — on mobile the framed map is small and
+  // the plots hard to tap; this blows the map up to fill the whole screen.
+  const [isFullscreen, setIsFullscreen] = useState(false);
+
+  // While full-screen: lock page scroll and let Escape close it.
+  useEffect(() => {
+    if (!isFullscreen) return;
+    const prevOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") setIsFullscreen(false); };
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.body.style.overflow = prevOverflow;
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [isFullscreen]);
   const containerRef = useRef<HTMLDivElement>(null);
   const { language, t } = useLanguage();
 
@@ -328,8 +344,23 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
     <>
       <div
         ref={containerRef}
-        className="relative w-full rounded-xl overflow-hidden border border-border bg-muted select-none touch-none"
+        className={`relative select-none touch-none ${
+          isFullscreen
+            ? "fixed inset-0 z-[80] bg-background flex items-center overflow-hidden"
+            : "w-full rounded-xl overflow-hidden border border-border bg-muted"
+        }`}
       >
+        {/* Full-screen toggle (client #9) — blow the map up to the whole
+            screen so plots are big and easy to tap on mobile. */}
+        <button
+          type="button"
+          onClick={() => setIsFullscreen((v) => !v)}
+          aria-label={isFullscreen ? "Close full screen" : "Open full screen"}
+          className="absolute left-3 top-3 z-40 grid place-items-center h-10 w-10 rounded-full bg-card/95 backdrop-blur-sm border border-border shadow-lg hover:bg-muted transition-colors"
+        >
+          {isFullscreen ? <X className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
+        </button>
+        <div className="w-full">
         <TransformWrapper
           // On mobile the map frame is ~320px wide; starting at 1.4x makes
           // small zones tappable without forcing the user to pinch first.
@@ -449,6 +480,7 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
             </>
           )}
         </TransformWrapper>
+        </div>
 
         {/* The corner status legend was removed 2026-05-31 — the same
             information already lives in the AvailabilityPanel above the
