@@ -136,7 +136,7 @@ const Villas = () => {
 
           <AnimatedSection>
             <h1 className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-10 leading-[1.3] md:leading-[1.3] lg:leading-[1.3]">
-              {t("sitePlan.mapHeading")}
+              {t("sitePlan.title")}
             </h1>
           </AnimatedSection>
 
