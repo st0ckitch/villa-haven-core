@@ -345,7 +345,7 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
         ref={containerRef}
         className={`select-none touch-none ${
           isFullscreen
-            ? "fixed inset-0 z-[80] bg-neutral-900/95 backdrop-blur-sm flex items-center overflow-hidden"
+            ? "fixed inset-0 z-[80] bg-neutral-900/95 backdrop-blur-sm overflow-hidden"
             : "relative w-full rounded-xl overflow-hidden border border-border bg-muted"
         }`}
       >
@@ -359,12 +359,12 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
         >
           {isFullscreen ? <X className="h-5 w-5" /> : <Maximize2 className="h-5 w-5" />}
         </button>
-        <div className="w-full">
+        <div className={isFullscreen ? "w-full h-full" : "w-full"}>
         <TransformWrapper
           // Full-screen opens zoomed-in (2x) so plots are big and tappable and
           // the map fills the portrait screen instead of leaving white space.
           // Otherwise on mobile start at 1.4x (the framed map is ~320px wide).
-          initialScale={isFullscreen ? 2 : (typeof window !== "undefined" && window.innerWidth < 640 ? 1.4 : 1)}
+          initialScale={isFullscreen ? 3 : (typeof window !== "undefined" && window.innerWidth < 640 ? 1.4 : 1)}
           minScale={ZOOM_MIN}
           maxScale={ZOOM_MAX}
           doubleClick={{ mode: "toggle", step: 1.2 }}
@@ -381,7 +381,7 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
           {({ zoomIn, zoomOut, resetTransform }) => (
           <>
               <TransformComponent
-                wrapperStyle={{ width: "100%", height: "auto" }}
+                wrapperStyle={{ width: "100%", height: isFullscreen ? "100%" : "auto" }}
                 contentStyle={{ width: "100%", height: "auto" }}
               >
                 <div className="relative w-full">
