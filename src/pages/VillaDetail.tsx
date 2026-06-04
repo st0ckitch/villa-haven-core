@@ -7,7 +7,7 @@ import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lightbox } from "@/components/Lightbox";
-import { BedDouble, Bath, Maximize, MapPin, X, FileDown } from "lucide-react";
+import { BedDouble, Bath, Maximize, MapPin, X, FileDown, ZoomIn } from "lucide-react";
 import { useState } from "react";
 import { VillaContactForm } from "@/components/VillaContactForm";
 import { VillaPlotSummary } from "@/components/villa/VillaPlotSummary";
@@ -244,15 +244,29 @@ const VillaDetail = () => {
             )}
 
             {/* Plot Zone Price Summary (from ?plot= param) */}
-            {plotZone && <VillaPlotSummary villa={villa} plotZone={plotZone} />}
+            {plotZone && (
+              <VillaPlotSummary
+                villa={villa}
+                plotZone={plotZone}
+                villaImage={heroImage?.image_url ?? null}
+                villaBedrooms={villa.bedrooms ?? null}
+              />
+            )}
 
             {galleryImages.length > 1 && (
               <div>
                 <h2 className="font-sans text-xl font-medium mb-4 text-foreground">{t("villa.gallery")}</h2>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                   {galleryImages.map((img, i) => (
-                    <div key={img.id} className="aspect-[4/3] rounded-2xl overflow-hidden cursor-pointer border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_8px_24px_rgba(45,143,67,0.12)] hover:border-[hsl(130_55%_40%/0.3)] hover:-translate-y-0.5 transition-all duration-300 group" onClick={() => openLightbox(i)}>
+                    <div key={img.id} className="relative aspect-[4/3] rounded-2xl overflow-hidden cursor-zoom-in border border-white/40 shadow-[0_2px_12px_rgba(0,0,0,0.04)] hover:shadow-[0_16px_40px_rgba(45,143,67,0.22)] hover:border-[hsl(130_55%_40%/0.4)] hover:scale-[1.06] hover:z-10 transition-transform duration-300 group" onClick={() => openLightbox(i)}>
                       <img src={img.image_url} alt={`${villa.name} ${i + 1}`} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" loading="lazy" />
+                      {/* Zoom affordance — fades in on hover so it's clear the
+                          photo enlarges / opens full-screen (client PDF #6). */}
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/15 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <span className="flex items-center justify-center w-9 h-9 rounded-full bg-white/85 text-foreground shadow-md">
+                          <ZoomIn className="w-4 h-4" />
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
@@ -276,7 +290,7 @@ const VillaDetail = () => {
                     <button
                       key={img.id}
                       onClick={() => openLightbox(i)}
-                      className={`relative overflow-hidden rounded-xl aspect-[4/3] group
+                      className={`relative overflow-hidden rounded-xl aspect-[4/3] group cursor-zoom-in
                         border border-white/40 shadow-[0_2px_8px_rgba(0,0,0,0.04)]
                         ${i === 0 ? "col-span-2 aspect-[16/9]" : ""}`}
                     >
@@ -286,6 +300,11 @@ const VillaDetail = () => {
                         loading="lazy"
                         className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
+                      <div className="absolute inset-0 flex items-center justify-center bg-black/0 group-hover:bg-black/15 opacity-0 group-hover:opacity-100 transition-all duration-300">
+                        <span className="flex items-center justify-center w-8 h-8 rounded-full bg-white/85 text-foreground shadow">
+                          <ZoomIn className="w-4 h-4" />
+                        </span>
+                      </div>
                     </button>
                   ))}
                 </div>

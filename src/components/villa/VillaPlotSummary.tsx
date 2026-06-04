@@ -11,9 +11,13 @@ interface VillaPlotSummaryProps {
     length_m?: number | null;
     width_m?: number | null;
   };
+  /** Villa hero photo + bed count so the summary can show the *selected
+   *  villa* (photo + info), not just the plot — client PDF #5/#35. */
+  villaImage?: string | null;
+  villaBedrooms?: number | null;
 }
 
-export const VillaPlotSummary = ({ villa, plotZone }: VillaPlotSummaryProps) => {
+export const VillaPlotSummary = ({ villa, plotZone, villaImage, villaBedrooms }: VillaPlotSummaryProps) => {
   const { t } = useLanguage();
 
   const hasBothPrices = villa.price != null && plotZone.price != null;
@@ -27,12 +31,36 @@ export const VillaPlotSummary = ({ villa, plotZone }: VillaPlotSummaryProps) => 
 
   return (
     <div className="space-y-4">
-      <h2 className="text-xl">{t("villa.selectedPlot") || "Selected Plot"}</h2>
-
       <div className="rounded-xl border border-primary/20 bg-primary/5 p-5 space-y-4 font-sans">
-        {/* Plot summary — code, dimensions, area in one row so the visitor sees
-            what the sales team will see in Bitrix. */}
-        <div className="space-y-1">
+        {/* Selected villa — photo + name + key specs (client PDF #5/#35). */}
+        <div>
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-primary mb-2">
+            {t("villa.selectedVilla") || "Selected villa"}
+          </p>
+          <div className="flex items-center gap-3">
+            {villaImage && (
+              <img
+                src={villaImage}
+                alt={villa.name}
+                loading="lazy"
+                className="w-16 h-16 rounded-lg object-cover border border-primary/20 shrink-0"
+              />
+            )}
+            <div className="min-w-0">
+              <p className="text-sm font-semibold text-foreground truncate">{villa.name}</p>
+              <p className="text-xs text-muted-foreground">
+                {villa.size_sqm ? `${villa.size_sqm} m²` : ""}
+                {villaBedrooms != null ? ` · ${villaBedrooms} ${t("villa.bedrooms")}` : ""}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Selected plot — code, dimensions, area. */}
+        <div className="border-t border-primary/20 pt-4">
+          <p className="text-[11px] font-semibold uppercase tracking-wide text-primary mb-2">
+            {t("villa.selectedPlot") || "Selected plot"}
+          </p>
           <div className="flex items-center justify-between">
             <span className="text-sm font-semibold text-foreground">{plotIdent}</span>
             {plotZone.size_sqm && <span className="text-sm text-foreground">{plotZone.size_sqm} m²</span>}
@@ -40,7 +68,6 @@ export const VillaPlotSummary = ({ villa, plotZone }: VillaPlotSummaryProps) => 
           {plotZone.length_m && plotZone.width_m && (
             <p className="text-xs text-muted-foreground">{plotZone.length_m} × {plotZone.width_m} m</p>
           )}
-          <p className="text-xs text-muted-foreground">{plotSize} + {villaSize}</p>
         </div>
 
         {hasBothPrices && (
