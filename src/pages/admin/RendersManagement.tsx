@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
@@ -66,10 +66,58 @@ const RendersManagement = () => {
   const rendersRef = useRef<Render[]>([]);
   rendersRef.current = renders;
 
+  // ---- Edge auto-scroll during drag -------------------------------------
+  // Native HTML5 DnD doesn't scroll the page when you drag near the top/
+  // bottom edge, which made it impossible to drag across a long grid. We
+  // track the pointer Y on a document-level dragover and, while near an
+  // edge, scroll toward it each animation frame. Lenis (smooth scroll)
+  // owns the window scroll position, so we steer it via __lenis.scrollTo;
+  // fall back to window.scrollBy when Lenis isn't running.
+  const pointerYRef = useRef(0);
+  const autoScrollRafRef = useRef<number | null>(null);
+
+  const onDocDragOver = useCallback((e: DragEvent) => {
+    pointerYRef.current = e.clientY;
+  }, []);
+
+  const stopAutoScroll = useCallback(() => {
+    if (autoScrollRafRef.current !== null) {
+      cancelAnimationFrame(autoScrollRafRef.current);
+      autoScrollRafRef.current = null;
+    }
+    document.removeEventListener("dragover", onDocDragOver);
+  }, [onDocDragOver]);
+
+  const startAutoScroll = useCallback(() => {
+    if (autoScrollRafRef.current !== null) return;
+    document.addEventListener("dragover", onDocDragOver);
+    const EDGE = 110;      // px from a viewport edge where scrolling kicks in
+    const MAX_SPEED = 22;  // px per frame at the very edge
+    const step = () => {
+      const y = pointerYRef.current;
+      const vh = window.innerHeight;
+      let delta = 0;
+      if (y < EDGE) delta = -MAX_SPEED * (1 - y / EDGE);
+      else if (y > vh - EDGE) delta = MAX_SPEED * (1 - (vh - y) / EDGE);
+      if (delta !== 0) {
+        const lenis = window.__lenis;
+        if (lenis) lenis.scrollTo(lenis.scroll + delta, { immediate: true, force: true });
+        else window.scrollBy(0, delta);
+      }
+      autoScrollRafRef.current = requestAnimationFrame(step);
+    };
+    autoScrollRafRef.current = requestAnimationFrame(step);
+  }, [onDocDragOver]);
+
+  // Safety net: stop the loop / remove the listener if we unmount mid-drag.
+  useEffect(() => stopAutoScroll, [stopAutoScroll]);
+
   const handleDragStart = (e: React.DragEvent, index: number) => {
     e.dataTransfer.effectAllowed = "move";
     dragIndexRef.current = index;
     setDragIndex(index);
+    pointerYRef.current = e.clientY;
+    startAutoScroll();
   };
 
   const handleDragOver = (e: React.DragEvent, overIndex: number) => {
@@ -87,6 +135,7 @@ const RendersManagement = () => {
   };
 
   const handleDragEnd = () => {
+    stopAutoScroll();
     dragIndexRef.current = null;
     setDragIndex(null);
     persistOrder();
