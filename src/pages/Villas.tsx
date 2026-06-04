@@ -3,7 +3,6 @@ import { Link, useSearchParams } from "react-router-dom";
 import { Layout } from "@/components/Layout";
 import { SEO } from "@/components/SEO";
 import { AnimatedSection } from "@/components/AnimatedSection";
-import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { MapPin, Maximize, BedDouble } from "lucide-react";
@@ -27,12 +26,6 @@ type PlotZone = {
   size_sqm: number | null;
   length_m: number | null;
   width_m: number | null;
-};
-
-const statusBadge: Record<string, string> = {
-  available: "bg-villa-available/15 text-villa-available border-villa-available/30",
-  reserved: "bg-villa-reserved/15 text-villa-reserved border-villa-reserved/30",
-  sold: "bg-villa-sold/15 text-villa-sold border-villa-sold/30",
 };
 
 /**
@@ -172,12 +165,6 @@ const Villas = () => {
                           {t("villa.noImage")}
                         </div>
                       )}
-                      <Badge
-                        variant="outline"
-                        className={`absolute top-3 right-3 font-sans text-[10px] border ${statusBadge[villa.status]}`}
-                      >
-                        {t(`sitePlan.${villa.status}`)}
-                      </Badge>
                     </div>
                     <div className="p-4">
                       <h3 className="font-sans text-base font-medium text-foreground mb-2 truncate">
