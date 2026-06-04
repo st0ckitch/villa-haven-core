@@ -59,8 +59,10 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
             )}
 
             <div className="relative">
-              {/* Header */}
-              <div className="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+              {/* Header — centered (client 2026-06-04): title + button stacked
+                  and centered instead of the old left-title / right-button split,
+                  which looked unbalanced with no services row. */}
+              <div className="flex flex-col items-center text-center gap-6 mb-10">
                 <div className="max-w-2xl">
                   {/* "Services for club members" badge removed per client request */}
                   <h2 className={`font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight mb-3 leading-tight ${
