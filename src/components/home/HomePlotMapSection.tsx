@@ -51,7 +51,7 @@ export const HomePlotMapSection = () => {
         <AnimatedSection>
           <div className="flex flex-col md:flex-row md:items-end justify-between gap-4 mb-8">
             <div>
-              <h2 className="font-sans text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground">
+              <h2 className="font-sans text-lg md:text-xl lg:text-2xl font-light tracking-tight text-foreground max-w-3xl">
                 {t("sitePlan.mapHeading")}
               </h2>
             </div>
