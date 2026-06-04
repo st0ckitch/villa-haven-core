@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Tables } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 import { useToast } from "@/hooks/use-toast";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Trash2, Search, Plus, Upload, Pencil } from "lucide-react";
+import { Trash2, Search, Plus, Upload, Pencil, GripVertical } from "lucide-react";
 
 type Render = Tables<"renders">;
 
@@ -53,6 +53,68 @@ const RendersManagement = () => {
   const [editing, setEditing] = useState<Render | null>(null);
   const [editCategory, setEditCategory] = useState("");
   const { toast } = useToast();
+
+  // ---- Drag-to-reorder (native HTML5 DnD; no extra dependency) ----------
+  // `dragIndex` is mirrored in a ref so the live-reorder logic reads the
+  // current position synchronously across rapid dragOver events; `renders`
+  // is mirrored so the drop handler persists the final order without a
+  // stale closure. On drop we write each row's new array index to its
+  // sort_order column (only the rows that actually moved).
+  const [dragIndex, setDragIndex] = useState<number | null>(null);
+  const [savingOrder, setSavingOrder] = useState(false);
+  const dragIndexRef = useRef<number | null>(null);
+  const rendersRef = useRef<Render[]>([]);
+  rendersRef.current = renders;
+
+  const handleDragStart = (e: React.DragEvent, index: number) => {
+    e.dataTransfer.effectAllowed = "move";
+    dragIndexRef.current = index;
+    setDragIndex(index);
+  };
+
+  const handleDragOver = (e: React.DragEvent, overIndex: number) => {
+    e.preventDefault();
+    const from = dragIndexRef.current;
+    if (from === null || from === overIndex) return;
+    setRenders((prev) => {
+      const next = [...prev];
+      const [moved] = next.splice(from, 1);
+      next.splice(overIndex, 0, moved);
+      return next;
+    });
+    dragIndexRef.current = overIndex;
+    setDragIndex(overIndex);
+  };
+
+  const handleDragEnd = () => {
+    dragIndexRef.current = null;
+    setDragIndex(null);
+    persistOrder();
+  };
+
+  const persistOrder = async () => {
+    // Only write rows whose position (index) differs from their stored
+    // sort_order — keeps the round-trip small and the diff obvious.
+    const changed = rendersRef.current
+      .map((r, i) => ({ r, i }))
+      .filter(({ r, i }) => r.sort_order !== i);
+    if (changed.length === 0) return;
+    setSavingOrder(true);
+    const results = await Promise.all(
+      changed.map(({ r, i }) =>
+        supabase.from("renders").update({ sort_order: i }).eq("id", r.id)
+      )
+    );
+    const failed = results.find((x) => x.error);
+    if (failed?.error) {
+      toast({ title: "Couldn't save order", description: failed.error.message, variant: "destructive" });
+      fetchRenders(); // resync to the DB's truth so the UI doesn't lie
+    } else {
+      setRenders((prev) => prev.map((r, i) => ({ ...r, sort_order: i })));
+      toast({ title: "Order saved" });
+    }
+    setSavingOrder(false);
+  };
 
   const saveCategory = async () => {
     if (!editing) return;
@@ -127,6 +189,9 @@ const RendersManagement = () => {
   };
 
   const filtered = renders.filter((r) => r.title.toLowerCase().includes(search.toLowerCase()));
+  // Reordering only makes sense on the full, unfiltered list — the visible
+  // subset under a search wouldn't map cleanly onto the global sort_order.
+  const isSearching = search.trim().length > 0;
 
   return (
     <div className="p-6 lg:p-8">
@@ -142,6 +207,23 @@ const RendersManagement = () => {
         <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search gallery images..." className="pl-9 font-sans" />
       </div>
 
+      {/* Reorder hint / status */}
+      {!loading && filtered.length > 0 && (
+        <p className="text-xs text-muted-foreground font-sans mb-3 flex items-center gap-1.5">
+          {savingOrder ? (
+            <>
+              <span className="animate-spin rounded-full h-3 w-3 border-b-2 border-primary" /> Saving order…
+            </>
+          ) : isSearching ? (
+            <>Clear the search to drag images and change their order.</>
+          ) : (
+            <>
+              <GripVertical className="w-3.5 h-3.5" /> Drag images to change their order.
+            </>
+          )}
+        </p>
+      )}
+
       {loading ? (
         <div className="flex items-center gap-2 text-muted-foreground font-sans text-sm">
           <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary" /> Loading...
@@ -150,12 +232,29 @@ const RendersManagement = () => {
         <p className="text-muted-foreground font-sans">No gallery images found.</p>
       ) : (
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filtered.map((render) => (
-            <div key={render.id} className="bg-card border border-border rounded-xl overflow-hidden">
+          {filtered.map((render, index) => (
+            <div
+              key={render.id}
+              draggable={!isSearching}
+              onDragStart={(e) => handleDragStart(e, index)}
+              onDragOver={(e) => handleDragOver(e, index)}
+              onDragEnd={handleDragEnd}
+              className={`relative bg-card border rounded-xl overflow-hidden transition-shadow ${
+                dragIndex === index ? "border-primary ring-2 ring-primary opacity-60" : "border-border"
+              } ${isSearching ? "" : "cursor-move"}`}
+            >
+              {/* Drag handle badge (visual affordance only — the whole card
+                  is draggable). Hidden while searching since drag is off. */}
+              {!isSearching && (
+                <div className="absolute top-2 left-2 z-10 flex items-center justify-center w-7 h-7 rounded-md bg-black/45 text-white pointer-events-none">
+                  <GripVertical className="w-4 h-4" />
+                </div>
+              )}
               <img
                 src={render.image_url}
                 alt={render.title}
                 loading="lazy"
+                draggable={false}
                 onError={(e) => {
                   // Don't show the default broken-image icon — replace
                   // with a muted placeholder block so the admin can still
