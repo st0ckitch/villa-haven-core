@@ -340,14 +340,13 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
   // their preferred villa, and the selected plot rides along via ?plot=<id>.
   const zoneVillas = selectedZone ? allVillas : [];
 
-  return (
-    <>
+  const mapContent = (
       <div
         ref={containerRef}
-        className={`relative select-none touch-none ${
+        className={`select-none touch-none ${
           isFullscreen
-            ? "fixed inset-0 z-[80] bg-background flex items-center overflow-hidden"
-            : "w-full rounded-xl overflow-hidden border border-border bg-muted"
+            ? "fixed inset-0 z-[80] bg-neutral-900/95 backdrop-blur-sm flex items-center overflow-hidden"
+            : "relative w-full rounded-xl overflow-hidden border border-border bg-muted"
         }`}
       >
         {/* Full-screen toggle (client #9) — blow the map up to the whole
@@ -362,9 +361,10 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
         </button>
         <div className="w-full">
         <TransformWrapper
-          // On mobile the map frame is ~320px wide; starting at 1.4x makes
-          // small zones tappable without forcing the user to pinch first.
-          initialScale={typeof window !== "undefined" && window.innerWidth < 640 ? 1.4 : 1}
+          // Full-screen opens zoomed-in (2x) so plots are big and tappable and
+          // the map fills the portrait screen instead of leaving white space.
+          // Otherwise on mobile start at 1.4x (the framed map is ~320px wide).
+          initialScale={isFullscreen ? 2 : (typeof window !== "undefined" && window.innerWidth < 640 ? 1.4 : 1)}
           minScale={ZOOM_MIN}
           maxScale={ZOOM_MAX}
           doubleClick={{ mode: "toggle", step: 1.2 }}
@@ -487,6 +487,15 @@ export const PlotMapPublic = ({ statusFilter, sizeFilter, onCounts }: PlotMapPub
             map (with live counts), and the client flagged the duplicate
             as visual noise. */}
       </div>
+  );
+
+  return (
+    <>
+      {/* In full-screen we portal the map to <body> so its `fixed inset-0`
+          anchors to the viewport. Inline it'd be trapped inside the
+          AnimatedSection's translate-y transform (same reason the popup
+          below is portaled) and appear to do nothing on click. */}
+      {isFullscreen ? createPortal(mapContent, document.body) : mapContent}
 
       {/* Zone Detail Popup — top sheet on desktop, bottom sheet on mobile.
           Portaled to <body> so the `fixed` overlay anchors to the viewport
