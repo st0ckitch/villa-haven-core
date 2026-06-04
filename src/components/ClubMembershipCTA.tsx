@@ -36,7 +36,7 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
           <div className={`relative rounded-3xl p-8 md:p-12 lg:p-16 overflow-hidden shadow-[0_20px_60px_rgba(45,143,67,0.12)] ${
             isEquestrian
               ? "border border-white/20"
-              : "bg-white/55 backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)]"
+              : "bg-gradient-to-br from-white/85 via-[hsl(130_45%_97%/0.7)] to-[hsl(130_50%_93%/0.8)] backdrop-blur-xl border border-[hsl(130_55%_40%/0.2)]"
           }`}>
             {/* Equestrian: horse photo background with dark gradient overlay */}
             {isEquestrian && (
@@ -53,9 +53,16 @@ export const ClubMembershipCTA = ({ project, joinTitle, joinDescription, service
               </>
             )}
 
-            {/* Inner decorative orb (light variant only) */}
+            {/* Soft light effects (light variant only) — layered radial glows
+                so the card reads as lit glass instead of flat white. */}
             {!isEquestrian && (
-              <div className="absolute -top-32 -right-32 w-96 h-96 rounded-full bg-[radial-gradient(circle,hsl(130_55%_40%/0.15)_0%,transparent_70%)] pointer-events-none" />
+              <>
+                <div className="absolute -top-28 -right-24 w-[26rem] h-[26rem] rounded-full bg-[radial-gradient(circle,hsl(130_60%_45%/0.20)_0%,transparent_70%)] pointer-events-none" />
+                <div className="absolute -bottom-32 -left-20 w-[30rem] h-[30rem] rounded-full bg-[radial-gradient(circle,hsl(150_65%_50%/0.14)_0%,transparent_70%)] pointer-events-none" />
+                <div className="absolute top-1/2 left-1/4 w-72 h-72 -translate-y-1/2 rounded-full bg-[radial-gradient(circle,hsl(95_60%_55%/0.10)_0%,transparent_70%)] pointer-events-none" />
+                {/* Crisp highlight along the top edge for a glassy sheen */}
+                <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/80 to-transparent pointer-events-none" />
+              </>
             )}
 
             <div className="relative">
