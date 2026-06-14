@@ -24,8 +24,8 @@ export default {
         // map to it so the existing Tailwind utility usage (font-serif on
         // headings, font-sans on body copy) keeps working without a global
         // search-and-replace.
-        sans:  ['"FiraGO"', "system-ui", "sans-serif"],
-        serif: ['"FiraGO"', "Georgia", "serif"],
+        sans:  ['"Arial GEO"', '"FiraGO"', "system-ui", "sans-serif"],
+        serif: ['"Arial GEO"', '"FiraGO"', "Georgia", "serif"],
       },
       colors: {
         border: "hsl(var(--border))",

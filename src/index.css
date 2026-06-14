@@ -55,6 +55,35 @@
   font-display: swap;
 }
 
+/* Client-supplied Georgian fonts (2026-06-14). BPG Mrgvlovani Caps renders
+   Georgian natively as uniform Mtavruli capitals — no OpenType `case` feature
+   needed — which is the reliable cross-device fix for the "zigzag" headings.
+   Arial GEO is the regular body face. Both cover Latin + Cyrillic + Georgian;
+   FiraGO stays as the last-resort fallback for stray glyphs (₾, Greek). */
+@font-face {
+  font-family: 'Arial GEO';
+  src: url('/fonts/bpg/arial-geo-400.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Arial GEO';
+  src: url('/fonts/bpg/arial-geo-700.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'BPG Mrgvlovani Caps';
+  src: url('/fonts/bpg/mrgvlovani-caps.woff2') format('woff2');
+  /* Single static weight; claim the whole range so heavier headings still
+     use this face (browser synthesises the bolder weight). */
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
 @layer base {
   :root {
     --background: 0 0% 99%;
@@ -123,8 +152,8 @@
 
   body {
     @apply bg-background text-foreground antialiased;
-    font-family: "FiraGO", system-ui, sans-serif;
-    font-weight: 300; /* light — paragraphs feel airy by default */
+    font-family: "Arial GEO", "FiraGO", system-ui, sans-serif;
+    font-weight: 400; /* Arial GEO regular — the client's body face */
   }
 
   body::before {
@@ -139,23 +168,21 @@
     z-index: -1;
   }
 
+  /* All headings use BPG Mrgvlovani Caps — Georgian renders as uniform
+     Mtavruli capitals natively (no `case` feature, so it's consistent on
+     every device/browser). `!important` so it wins over the `font-sans` /
+     `font-serif` utilities most headings carry. */
   h1, h2, h3, h4, h5, h6 {
-    font-family: "FiraGO", system-ui, sans-serif;
-    font-weight: 600; /* semibold — bolder than body, components with explicit
-                         font-light / font-medium classes still override */
-    font-feature-settings: "case" 1; /* Georgian titles render as Mtavruli
-                                         (uniform cap-height); no-op for Latin/
-                                         Cyrillic beyond punctuation alignment */
+    font-family: "BPG Mrgvlovani Caps", "Arial GEO", "FiraGO", system-ui, sans-serif !important;
+    font-weight: 600;
   }
 }
 
-/* FiraGO Mtavruli — Georgian title-case where every letter sits at the same
-   cap height. FiraGO ships these as ".case" glyphs reached through the OpenType
-   "case" feature (uni10D0 → uni10D0.case), not the Unicode Mtavruli block, so we
-   trigger it with font-feature-settings rather than text-transform: uppercase
-   (which would map to U+1C90.. codepoints the subset font has no glyphs for). */
+/* Mtavruli (uniform Georgian caps) — now provided natively by BPG Mrgvlovani
+   Caps rather than the FiraGO `case` OpenType feature (which wasn't honoured
+   on every device). */
 .font-mtavruli {
-  font-feature-settings: "case" 1;
+  font-family: "BPG Mrgvlovani Caps", "Arial GEO", "FiraGO", system-ui, sans-serif;
 }
 
 /* View Transitions API — smooth page changes */
