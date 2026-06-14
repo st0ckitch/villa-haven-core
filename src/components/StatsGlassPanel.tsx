@@ -41,7 +41,7 @@ export const StatsGlassPanel = ({ stats, title, subtitle }: StatsGlassPanelProps
                   {i > 0 && (
                     <div className="hidden lg:block absolute left-0 top-1/2 -translate-y-1/2 w-px h-16 bg-gradient-to-b from-transparent via-[hsl(130_55%_40%/0.15)] to-transparent" />
                   )}
-                  <div className="font-sans text-3xl md:text-4xl lg:text-5xl font-light tracking-tight text-foreground mb-2">
+                  <div className="font-sans text-3xl md:text-4xl lg:text-5xl font-extrabold tracking-tight text-[hsl(130_55%_28%)] mb-2">
                     {stat.value}
                   </div>
                   <p className="font-sans text-xs md:text-sm font-medium text-muted-foreground/80">
