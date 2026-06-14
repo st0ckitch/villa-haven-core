@@ -49,7 +49,7 @@ export const GallerySection = () => {
       <div className="container mx-auto px-6">
         <AnimatedSection>
           <div className="flex items-end justify-between mb-8">
-            <h2 className="text-2xl md:text-3xl lg:text-4xl font-light tracking-tight text-foreground">
+            <h2 className="text-2xl md:text-3xl lg:text-4xl tracking-tight text-foreground">
               {t("gallery.title")}
             </h2>
             <Link to="/gallery">

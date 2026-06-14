@@ -7,7 +7,7 @@ import { useLanguage, getLocalizedField } from "@/contexts/LanguageContext";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Lightbox } from "@/components/Lightbox";
-import { BedDouble, Bath, Maximize, MapPin, X, FileDown, ZoomIn } from "lucide-react";
+import { BedDouble, Bath, Maximize, MapPin, X, FileDown, ZoomIn, ChevronLeft, ChevronRight } from "lucide-react";
 import { useState } from "react";
 import { VillaContactForm } from "@/components/VillaContactForm";
 import { VillaPlotSummary } from "@/components/villa/VillaPlotSummary";
@@ -27,6 +27,7 @@ const VillaDetail = () => {
   const { t, language } = useLanguage();
   const [lightboxOpen, setLightboxOpen] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState(0);
+  const [heroIndex, setHeroIndex] = useState(0); // villa hero slider position (client #11)
 
   const { data: villa, isLoading } = useQuery({
     queryKey: ["villa", slug],
@@ -122,17 +123,59 @@ const VillaDetail = () => {
       </div>
 
       <div className="container mx-auto px-6 pt-28 lg:pt-32 pb-10 lg:pb-16">
-        {/* Hero image with glass frame */}
-        {heroImage && (
-          <div className="relative mb-10">
-            <div className="absolute -inset-3 bg-gradient-to-r from-[hsl(130_55%_40%/0.12)] via-[hsl(130_55%_50%/0.18)] to-[hsl(130_55%_40%/0.12)] rounded-[28px] blur-2xl -z-10 opacity-50" />
-            <div className="p-1.5 rounded-[20px] bg-gradient-to-br from-[hsl(130_55%_40%/0.2)] via-white/40 to-[hsl(130_55%_40%/0.1)] backdrop-blur-md shadow-[0_16px_48px_rgba(45,143,67,0.1)]">
-              <div className="aspect-[16/9] rounded-2xl overflow-hidden cursor-pointer group" onClick={() => openLightbox(galleryImages.findIndex(i => i.id === heroImage.id))}>
-                <img src={heroImage.image_url} alt={villa.name} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+        {/* Hero slider — multiple villa photos with arrows + dots (client #11).
+            Falls back to a single static image when only one photo exists. */}
+        {galleryImages.length > 0 && (() => {
+          const slides = galleryImages;
+          const idx = Math.min(heroIndex, slides.length - 1);
+          const cur = slides[idx];
+          return (
+            <div className="relative mb-10">
+              <div className="absolute -inset-3 bg-gradient-to-r from-[hsl(130_55%_40%/0.12)] via-[hsl(130_55%_50%/0.18)] to-[hsl(130_55%_40%/0.12)] rounded-[28px] blur-2xl -z-10 opacity-50" />
+              <div className="p-1.5 rounded-[20px] bg-gradient-to-br from-[hsl(130_55%_40%/0.2)] via-white/40 to-[hsl(130_55%_40%/0.1)] backdrop-blur-md shadow-[0_16px_48px_rgba(45,143,67,0.1)]">
+                <div className="relative aspect-[16/9] rounded-2xl overflow-hidden group">
+                  <img
+                    src={cur.image_url}
+                    alt={villa.name}
+                    onClick={() => openLightbox(idx)}
+                    className="w-full h-full object-cover cursor-zoom-in transition-transform duration-500"
+                  />
+                  {slides.length > 1 && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setHeroIndex((idx - 1 + slides.length) % slides.length)}
+                        aria-label="Previous photo"
+                        className="absolute left-3 top-1/2 -translate-y-1/2 grid place-items-center w-10 h-10 rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setHeroIndex((idx + 1) % slides.length)}
+                        aria-label="Next photo"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 grid place-items-center w-10 h-10 rounded-full bg-black/40 text-white backdrop-blur-sm hover:bg-black/60 transition-colors"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                      <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                        {slides.map((_, i) => (
+                          <button
+                            key={i}
+                            type="button"
+                            onClick={() => setHeroIndex(i)}
+                            aria-label={`Photo ${i + 1}`}
+                            className={`h-2 rounded-full transition-all duration-300 ${i === idx ? "w-6 bg-white" : "w-2 bg-white/50 hover:bg-white/80"}`}
+                          />
+                        ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
-          </div>
-        )}
+          );
+        })()}
 
         <div className="grid lg:grid-cols-3 gap-8 lg:gap-10">
           <div className="lg:col-span-2 space-y-8">

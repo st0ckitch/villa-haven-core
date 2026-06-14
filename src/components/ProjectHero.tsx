@@ -58,30 +58,22 @@ export const ProjectHero = ({ image, title, subtitle, badge }: ProjectHeroProps)
           `badge` prop is still accepted on the component for backward
           compatibility with existing callers but no longer renders. */}
 
-      {/* Title + subtitle — direct on photo, no card.
-          A green accent bar on the left signals brand without painting a
-          background. Drop-shadow on the text gives it just enough lift to
-          stay legible on lighter photo regions. */}
-      <div className="absolute bottom-6 left-4 right-4 md:bottom-12 md:left-12 md:right-12 md:max-w-3xl">
-        <div className="flex gap-4 md:gap-5">
-          <div className="w-[3px] md:w-1 self-stretch bg-gradient-to-b from-[hsl(130_55%_55%)] via-[hsl(130_55%_45%)] to-transparent rounded-full" />
-          <div>
-            {/* leading-[1.4]: SplitText pads each char wrapper to keep
-                Georgian descenders (გ, ფ, ც, ჯ) from being clipped, but the
-                parent line-box still needs breathing room so descenders
-                don't touch the next line. */}
-            <h1
-              className="font-sans text-3xl md:text-5xl lg:text-6xl font-light tracking-tight text-white leading-[1.35] md:leading-[1.35] lg:leading-[1.35] pb-1 mb-3 [text-shadow:0_2px_24px_rgba(0,0,0,0.45)]"
-            >
-              <SplitText text={title} split="char" stagger={0.03} as="span" />
-            </h1>
+      {/* Title on a frosted "label" panel — vr.ge style (client #9, variant b).
+          The title sits on a translucent blurred block so it stands out from
+          the photo. Kept bottom-left per the client. */}
+      <div className="absolute bottom-6 left-4 right-4 md:bottom-12 md:left-12 md:right-auto md:max-w-2xl">
+        <div className="inline-block max-w-full bg-black/30 backdrop-blur-xl border border-white/20 rounded-2xl px-6 py-5 md:px-9 md:py-6 shadow-[0_8px_40px_rgba(0,0,0,0.35)]">
+          <h1
+            className="font-sans text-3xl md:text-5xl lg:text-6xl font-semibold tracking-tight text-white leading-[1.2] md:leading-[1.2] lg:leading-[1.2] pb-1 [text-shadow:0_2px_18px_rgba(0,0,0,0.5)]"
+          >
+            <SplitText text={title} split="char" stagger={0.03} as="span" />
+          </h1>
 
-            {subtitle && (
-              <p className="font-sans text-sm md:text-base lg:text-lg text-white/85 leading-relaxed max-w-2xl [text-shadow:0_1px_12px_rgba(0,0,0,0.55)]">
-                {subtitle}
-              </p>
-            )}
-          </div>
+          {subtitle && (
+            <p className="font-sans text-sm md:text-base lg:text-lg text-white/90 leading-relaxed max-w-2xl mt-3 [text-shadow:0_1px_10px_rgba(0,0,0,0.5)]">
+              {subtitle}
+            </p>
+          )}
         </div>
       </div>
     </section>
