@@ -16,6 +16,7 @@ type VillaImage = Tables<"villa_images">;
 
 interface VillaForm {
   name: string; slug: string; section: string; size_sqm: string; bedrooms: string; bathrooms: string;
+  master_bedroom: string;
   price: string; status: string; description: string; description_ka: string; description_ru: string;
   view_type: string; sector: string; cadastral_codes: string; ceiling_height: string;
   plot_area: string; total_area: string; living_area: string; balcony_area: string; yard_area: string;
@@ -34,6 +35,7 @@ interface VillaForm {
 
 const emptyForm: VillaForm = {
   name: "", slug: "", section: "a-section", size_sqm: "", bedrooms: "", bathrooms: "",
+  master_bedroom: "",
   price: "", status: "available", description: "", description_ka: "", description_ru: "",
   view_type: "", sector: "", cadastral_codes: "", ceiling_height: "",
   plot_area: "", total_area: "", living_area: "", balcony_area: "", yard_area: "",
@@ -89,6 +91,7 @@ const VillaManagement = () => {
     setForm({
       name: villa.name, slug: villa.slug || "", section: villa.section || "a-section",
       size_sqm: String(villa.size_sqm), bedrooms: String(villa.bedrooms), bathrooms: String(villa.bathrooms),
+      master_bedroom: v.master_bedroom || "",
       price: villa.price ? String(villa.price) : "", status: villa.status,
       description: villa.description || "", description_ka: villa.description_ka || "", description_ru: villa.description_ru || "",
       view_type: v.view_type || "", sector: v.sector || "",
@@ -145,6 +148,7 @@ const VillaManagement = () => {
     const payload: any = {
       name: form.name, slug: form.slug || slugify(form.name), section: form.section,
       size_sqm: Number(form.size_sqm), bedrooms: Number(form.bedrooms), bathrooms: Number(form.bathrooms),
+      master_bedroom: form.master_bedroom || null,
       price: form.price ? Number(form.price) : null,
       status: form.status as Villa["status"],
       description: form.description || null, description_ka: form.description_ka || null, description_ru: form.description_ru || null,
@@ -339,6 +343,10 @@ const VillaManagement = () => {
             <div>
               <label className="text-sm font-medium font-sans">Bathrooms *</label>
               <Input type="number" value={form.bathrooms} onChange={(e) => setForm((f) => ({ ...f, bathrooms: e.target.value }))} className="font-sans mt-1" />
+            </div>
+            <div>
+              <label className="text-sm font-medium font-sans">Master bedroom</label>
+              <Input value={form.master_bedroom} onChange={(e) => setForm((f) => ({ ...f, master_bedroom: e.target.value }))} placeholder='e.g. "yes", "1", "25 m²"' className="font-sans mt-1" />
             </div>
             <div>
               <label className="text-sm font-medium font-sans">Price</label>

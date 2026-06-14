@@ -199,6 +199,7 @@ const VillaDetail = () => {
                 // Room counts
                 { label: t("villa.roomsCount"), value: v.rooms_count },
                 { label: t("villa.bedroomsCount"), value: v.bedroom_count },
+                { label: t("villa.masterBedroom"), value: v.master_bedroom },
                 { label: t("villa.livingRoom"), value: v.living_room },
                 { label: t("villa.diningRoom"), value: v.dining_room },
                 { label: t("villa.studyRoom"), value: v.study_room },
