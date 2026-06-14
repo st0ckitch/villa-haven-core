@@ -208,8 +208,7 @@ const Olimpo = () => {
             </h2>
           </AnimatedSection>
         </div>
-        <div className="relative py-6 overflow-hidden">
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[hsl(130_55%_40%/0.05)] via-[hsl(130_55%_50%/0.12)] to-[hsl(130_55%_40%/0.05)]" />
+        <div className="relative py-6 overflow-hidden bg-white border-y-2 border-[hsl(130_55%_40%/0.45)]">
           <InfrastructureTicker />
         </div>
       </div>

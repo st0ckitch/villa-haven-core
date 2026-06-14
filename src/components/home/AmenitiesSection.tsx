@@ -103,8 +103,7 @@ export const AmenitiesSection = () => {
 
       {/* Amenity marquee — full bleed with green gradient backdrop */}
       <AnimatedSection delay={100}>
-        <div className="relative py-10 md:py-14 my-8 overflow-hidden">
-          <div className="absolute inset-0 -z-10 bg-gradient-to-r from-[hsl(130_55%_40%/0.05)] via-[hsl(130_55%_50%/0.12)] to-[hsl(130_55%_40%/0.05)]" />
+        <div className="relative py-10 md:py-14 my-8 overflow-hidden bg-white border-y-2 border-[hsl(130_55%_40%/0.45)]">
           <InfrastructureTicker />
         </div>
       </AnimatedSection>

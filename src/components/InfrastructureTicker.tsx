@@ -44,17 +44,16 @@ const Chip = ({ item, t }: { item: AmenityItem; t: (k: string) => string }) => {
   return (
     <div
       className="group/chip inline-flex items-center gap-2.5 px-5 py-3 rounded-full
-        bg-white border border-[hsl(130_55%_40%/0.12)]
-        shadow-[0_2px_12px_rgba(0,0,0,0.04)]
-        hover:shadow-[0_8px_24px_rgba(45,143,67,0.18)] hover:border-[hsl(130_55%_40%/0.3)]
+        bg-[hsl(130_50%_33%)] border border-[hsl(130_55%_27%)]
+        shadow-[0_2px_12px_rgba(45,143,67,0.18)]
+        hover:shadow-[0_8px_24px_rgba(45,143,67,0.32)] hover:bg-[hsl(130_55%_28%)]
         hover:scale-[1.05] hover:-translate-y-0.5
         transition-all duration-300 cursor-default select-none shrink-0"
     >
-      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(130_55%_40%/0.12)] to-[hsl(130_55%_40%/0.04)]
-        group-hover/chip:from-[hsl(130_55%_40%/0.2)] group-hover/chip:to-[hsl(130_55%_40%/0.08)] flex items-center justify-center transition-all duration-300">
-        <Icon className="w-4 h-4 text-[hsl(130_55%_35%)] group-hover/chip:text-[hsl(130_55%_30%)] transition-colors duration-300" strokeWidth={1.8} />
+      <div className="w-8 h-8 rounded-full bg-white/15 group-hover/chip:bg-white/25 flex items-center justify-center transition-all duration-300">
+        <Icon className="w-4 h-4 text-white" strokeWidth={1.8} />
       </div>
-      <span className="text-sm font-sans font-medium text-foreground/70 group-hover/chip:text-foreground transition-colors duration-300 whitespace-nowrap">
+      <span className="text-sm font-sans font-medium text-white whitespace-nowrap">
         {t(`amenities.${item.key}`)}
       </span>
     </div>
@@ -70,9 +69,9 @@ export const InfrastructureTicker = () => {
 
   return (
     <div className="relative">
-      {/* Edge fade masks */}
-      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-background to-transparent z-10" />
-      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-background to-transparent z-10" />
+      {/* Edge fade masks — fade to the section's white background. */}
+      <div className="pointer-events-none absolute left-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-r from-white to-transparent z-10" />
+      <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-16 md:w-32 bg-gradient-to-l from-white to-transparent z-10" />
 
       <div className="flex flex-col gap-4 overflow-hidden py-2 group/track">
         {/* Row 1 — scrolls left */}
