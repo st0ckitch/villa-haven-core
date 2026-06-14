@@ -135,7 +135,7 @@ const Polograph = () => {
       {/* 4. Interactive Site Plan */}
       <div className="container mx-auto px-6 py-12 max-w-6xl">
         <AnimatedSection>
-          <p className="font-sans text-base md:text-lg text-foreground/80 mb-10 max-w-3xl leading-relaxed">
+          <p className="font-sans text-base md:text-lg font-medium text-foreground/90 mb-10 max-w-3xl mx-auto text-center leading-relaxed">
             {t("sitePlan.instruction")}
           </p>
 
