@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback, ReactNode } from "react";
+import { createContext, useContext, useState, useCallback, useEffect, ReactNode } from "react";
 import en from "@/i18n/en.json";
 import ka from "@/i18n/ka.json";
 import ru from "@/i18n/ru.json";
@@ -49,6 +49,19 @@ export const getLocalizedField = <T extends Record<string, any>>(
 
 export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   const [language, setLang] = useState<Language>(getStoredLanguage);
+
+  // Keep <html lang> in sync with the active language. index.html ships a
+  // hard-coded lang="en", so Georgian/Russian content was mislabelled as
+  // English — browsers use `lang` for font selection and text shaping, so on
+  // devices where FiraGO isn't applied this picked the wrong fallback font
+  // for Georgian and rendered it with uneven baselines ("zigzag"). Setting
+  // the correct lang makes the system fall back to a proper Georgian/Cyrillic
+  // font and shape the script correctly. (Client 2026-06-14.)
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = language;
+    }
+  }, [language]);
 
   const setLanguage = useCallback((lang: Language) => {
     setLang(lang);
